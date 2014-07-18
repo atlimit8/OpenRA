@@ -39,7 +39,7 @@ namespace OpenRA.Mods.RA
 				a.CheckFire(self, facing.Value, target);
 
 			if (target.Actor != null)
-				target.Actor.ChangeOwner(self.Owner);
+				self.World.AddFrameEndTask(w => target.Actor.ChangeOwner(self.Owner));
 		}
 	}
 }

@@ -215,25 +215,22 @@ namespace OpenRA
 		// TODO: move elsewhere.
 		public void ChangeOwner(Player newOwner)
 		{
-			World.AddFrameEndTask(w =>
-			{
-				if (this.Destroyed)
-					return;
+			if (this.Destroyed)
+				return;
 
-				var oldOwner = Owner;
+			var oldOwner = Owner;
 
-				// momentarily remove from world if present so the ownership queries don't get confused
-				var inWorld = IsInWorld;
-				if (inWorld)
-					World.Remove(this);
-				Owner = newOwner;
-				Generation++;
-				if (inWorld)
-					World.Add(this);
+			// momentarily remove from world if present so the ownership queries don't get confused
+			var inWorld = IsInWorld;
+			if (inWorld)
+				World.Remove(this);
+			Owner = newOwner;
+			Generation++;
+			if (inWorld)
+				World.Add(this);
 
-				foreach (var t in this.TraitsImplementing<INotifyOwnerChanged>())
-					t.OnOwnerChanged(this, oldOwner, newOwner);
-			});
+			foreach (var t in this.TraitsImplementing<INotifyOwnerChanged>())
+				t.OnOwnerChanged(this, oldOwner, newOwner);
 		}
 
 		public bool IsDead()
