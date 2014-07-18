@@ -27,7 +27,7 @@ namespace OpenRA.Mods.RA
 		public object Create(ActorInitializer init) { return new Passenger(this); }
 	}
 
-	public class Passenger : IIssueOrder, IResolveOrder, IOrderVoice
+	public class Passenger : IIssueOrder, IResolveOrder, IOrderVoice, INotifyHostCapture
 	{
 		public readonly PassengerInfo info;
 		public Passenger(PassengerInfo info) { this.info = info; }
@@ -84,6 +84,14 @@ namespace OpenRA.Mods.RA
 				self.QueueActivity(new MoveAdjacentTo(self, target));
 				self.QueueActivity(new EnterTransport(self, order.TargetActor));
 			}
+		}
+
+		public void BeforeHostCapture(Actor self, Actor host, Actor captor) {}
+
+		public void AfterHostCapture(Actor self, Actor host, Actor captor)
+		{
+			if (host == Transport)
+				self.ChangeOwner(captor.Owner);
 		}
 	}
 }

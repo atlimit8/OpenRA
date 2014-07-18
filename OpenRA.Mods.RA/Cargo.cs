@@ -212,7 +212,15 @@ namespace OpenRA.Mods.RA
 			});
 		}
 		
-		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		{
+			if (cargo == null)
+				return;
+
+			foreach (var p in Passengers)
+				foreach (var t in p.TraitsImplementing<INotifyHostCapture>())
+					t.BeforeHostCapture(p, self, captor);
+		}
 
 		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
@@ -220,7 +228,8 @@ namespace OpenRA.Mods.RA
 				return;
 
 			foreach (var p in Passengers)
-				p.ChangeOwner(newOwner);
+				foreach (var t in p.TraitsImplementing<INotifyHostCapture>())
+					t.AfterHostCapture(p, self, captor);
 		}
 
 		bool initialized;

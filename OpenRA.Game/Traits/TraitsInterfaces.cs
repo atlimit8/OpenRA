@@ -82,6 +82,11 @@ namespace OpenRA.Traits
 		void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner);
 		void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner);
 	}
+	public interface INotifyHostCapture
+	{
+		void BeforeHostCapture(Actor self, Actor host, Actor captor);
+		void AfterHostCapture(Actor self, Actor host, Actor captor);
+	}
 	public interface INotifyHarvest { void Harvested(Actor self, ResourceType resource); }
 	public interface ISeedableResource { void Seed(Actor self); }
 

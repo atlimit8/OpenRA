@@ -123,13 +123,18 @@ namespace OpenRA.Mods.RA
 			foreach (var harv in GetLinkedHarvesters())
 				if (harv.Actor != dockedHarv)
 					harv.Trait.UnlinkProc(harv.Actor, self);
+
+			if (dockedHarv != null)
+				foreach (var t in dockedHarv.TraitsImplementing<INotifyHostCapture>())
+					t.BeforeHostCapture(dockedHarv, self, captor);
 		}
 
 		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			// Steal any docked harv too
 			if (dockedHarv != null)
-				dockedHarv.ChangeOwner(newOwner);
+				foreach (var t in dockedHarv.TraitsImplementing<INotifyHostCapture>())
+					t.AfterHostCapture(dockedHarv, self, captor);
 
 			PlayerResources = newOwner.PlayerActor.Trait<PlayerResources>();
 		}

@@ -43,7 +43,8 @@ namespace OpenRA.Mods.RA
 
 	public class Harvester : IIssueOrder, IResolveOrder, IPips,
 		IExplodeModifier, IOrderVoice, ISpeedModifier, ISync,
-		INotifyResourceClaimLost, INotifyIdle, INotifyBlockingMove
+		INotifyResourceClaimLost, INotifyIdle, INotifyBlockingMove,
+		INotifyHostCapture
 	{
 		Dictionary<ResourceTypeInfo, int> contents = new Dictionary<ResourceTypeInfo, int>();
 
@@ -453,6 +454,14 @@ namespace OpenRA.Mods.RA
 
 				return true;
 			}
+		}
+
+		public void BeforeHostCapture(Actor self, Actor host, Actor captor) {}
+
+		public void AfterHostCapture(Actor self, Actor host, Actor captor)
+		{
+			if (host == LinkedProc)
+				self.ChangeOwner(captor.Owner);
 		}
 	}
 }

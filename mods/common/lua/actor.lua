@@ -181,6 +181,14 @@ Actor.AfterCaptured = function(actor, eh)
 	Actor.Trait(actor, "LuaScriptEvents").AfterCaptured:Add(eh)
 end
 
+Actor.BeforeHostCaptured = function(actor, eh)
+	Actor.Trait(actor, "LuaScriptEvents").BeforeHostCaptured:Add(eh)
+end
+
+Actor.AfterHostCaptured = function(actor, eh)
+	Actor.Trait(actor, "LuaScriptEvents").AfterHostCaptured:Add(eh)
+end
+
 Actor.OnOwnerChanged = function(actor, eh)
 	Actor.Trait(actor, "LuaScriptEvents").OnOwnerChanged:Add(eh)
 end
