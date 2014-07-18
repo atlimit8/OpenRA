@@ -213,9 +213,9 @@ namespace OpenRA
 		}
 
 		// TODO: move elsewhere.
-		public void ChangeOwner(Player newOwner)
+		public void ChangeOwner(Player newOwner, Actor captor = null)
 		{
-			if (this.Destroyed)
+			if (this.Destroyed || (captor != null && captor.Destroyed))
 				return;
 
 			var oldOwner = Owner;
@@ -231,6 +231,12 @@ namespace OpenRA
 
 			foreach (var t in this.TraitsImplementing<INotifyOwnerChanged>())
 				t.OnOwnerChanged(this, oldOwner, newOwner);
+
+			if (captor != null)
+			{
+				foreach (var t in this.TraitsImplementing<INotifyCapture>())
+					t.OnCapture(this, captor, oldOwner, newOwner);
+			}
 		}
 
 		public bool IsDead()

@@ -89,17 +89,7 @@ namespace OpenRA.Mods.RA
 
 		static void ChangeOwnership(Actor self, Actor captor)
 		{
-			self.World.AddFrameEndTask(w =>
-			{
-				if (self.Destroyed || captor.Destroyed) return;
-
-				var previousOwner = self.Owner;
-
-				self.ChangeOwner(captor.Owner);
-
-				foreach (var t in self.TraitsImplementing<INotifyCapture>())
-					t.OnCapture(self, captor, previousOwner, self.Owner);
-			});
+			self.World.AddFrameEndTask(w => self.ChangeOwner(captor.Owner, captor));
 		}
 
 		bool CanBeCapturedBy(Actor a)
