@@ -198,7 +198,7 @@ SetupWorld = function()
 	Production.EventHandlers.Setup(soviets)
 
 	-- RunAfterDelay is used so that the 'Building captured' and 'Mission accomplished' sounds don't play at the same time
-	Actor.OnCaptured(AirForceHQ, function() OpenRA.RunAfterDelay(Utils.Seconds(3), MissionAccomplished) end)
+	Actor.AfterCaptured(AirForceHQ, function() OpenRA.RunAfterDelay(Utils.Seconds(3), MissionAccomplished) end)
 	Actor.OnKilled(AirForceHQ, MissionFailed)
 
 	village = Team.New(Village)

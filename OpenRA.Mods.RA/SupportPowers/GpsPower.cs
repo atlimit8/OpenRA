@@ -132,9 +132,13 @@ namespace OpenRA.Mods.RA
 			owner.RefreshGps(self);
 		}
 
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			RemoveGps(self);
+		}
+
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		{
 			owner = captor.Owner.PlayerActor.Trait<GpsWatcher>();
 			owner.GpsAdd(self);
 		}

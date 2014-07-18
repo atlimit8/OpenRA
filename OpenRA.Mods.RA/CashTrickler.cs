@@ -47,7 +47,9 @@ namespace OpenRA.Mods.RA
 			}
 		}
 
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
+
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			if (Info.CaptureAmount > 0)
 			{

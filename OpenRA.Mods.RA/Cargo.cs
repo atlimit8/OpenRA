@@ -211,17 +211,16 @@ namespace OpenRA.Mods.RA
 				// TODO: this won't work well for >1 actor as they should move towards the next enterable (sub) cell instead
 			});
 		}
+		
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
 
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			if (cargo == null)
 				return;
 
-			self.World.AddFrameEndTask(w =>
-			{
-				foreach (var p in Passengers)
-					p.ChangeOwner(newOwner);
-			});
+			foreach (var p in Passengers)
+				p.ChangeOwner(newOwner);
 		}
 
 		bool initialized;

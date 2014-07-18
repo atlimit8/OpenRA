@@ -116,17 +116,20 @@ namespace OpenRA.Mods.RA
 			}
 			harv.QueueActivity(new CallFunc(() => harv.Trait<Harvester>().ContinueHarvesting(harv)));
 		}
+		
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		{
+			// Unlink any non-docked harvs
+			foreach (var harv in GetLinkedHarvesters())
+				if (harv.Actor != dockedHarv)
+					harv.Trait.UnlinkProc(harv.Actor, self);
+		}
 
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			// Steal any docked harv too
 			if (dockedHarv != null)
 				dockedHarv.ChangeOwner(newOwner);
-
-			// Unlink any non-docked harvs
-			foreach (var harv in GetLinkedHarvesters())
-				if (harv.Actor.Owner == oldOwner)
-					harv.Trait.UnlinkProc(harv.Actor, self);
 
 			PlayerResources = newOwner.PlayerActor.Trait<PlayerResources>();
 		}

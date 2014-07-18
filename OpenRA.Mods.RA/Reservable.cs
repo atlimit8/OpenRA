@@ -59,11 +59,13 @@ namespace OpenRA.Mods.RA
 				reservedForAircraft.UnReserve();
 		}
 
-		public void OnCapture (Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void BeforeCapture (Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			if (reservedForAircraft != null)
 				reservedForAircraft.UnReserve();
 		}
+		
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
 
 		public void Selling (Actor self) { Sold(self); }
 

@@ -54,7 +54,7 @@ WorldLoaded = function()
 	OpenRA.RunAfterDelay(25 * 40, SendFirstAttackWave)
 	OpenRA.RunAfterDelay(25 * 80, SendSecondAttackWave)
 	OpenRA.RunAfterDelay(25 * 140, SendThirdAttackWave)
-	Actor.OnCaptured(TechCenter, MissionAccomplished)
+	Actor.AfterCaptured(TechCenter, MissionAccomplished)
 	Actor.OnKilled(TechCenter, MissionFailed)
 end
 

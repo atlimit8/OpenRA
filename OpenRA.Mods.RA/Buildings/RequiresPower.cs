@@ -31,7 +31,9 @@ namespace OpenRA.Mods.RA.Buildings
 			get { return power.PowerProvided < power.PowerDrained; }
 		}
 
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
+
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			power = newOwner.PlayerActor.Trait<PowerManager>();
 		}

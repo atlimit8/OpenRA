@@ -56,8 +56,10 @@ namespace OpenRA.Mods.RA.Render
 			if (anim.CurrentSequence != null)
 				anim.ReplaceAnim(rs.NormalizeSequence(self, info.Sequence));
 		}
+		
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
 
-		public void OnCapture (Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void AfterCapture (Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			playerResources = newOwner.PlayerActor.Trait<PlayerResources>();
 		}

@@ -36,8 +36,10 @@ namespace OpenRA.Mods.RA.Render
 				? ((10 * DefaultAnimation.CurrentSequence.Length - 1) * playerResources.Resources) / (10 * playerResources.ResourceCapacity)
 					: 0);
 		}
+		
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
 
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			playerResources = newOwner.PlayerActor.Trait<PlayerResources>();
 		}

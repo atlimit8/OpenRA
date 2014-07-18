@@ -173,8 +173,21 @@ Actor.OnRemovedFromWorld = function(actor, eh)
 	Actor.Trait(actor, "LuaScriptEvents").OnRemovedFromWorld:Add(eh)
 end
 
+Actor.BeforeCaptured = function(actor, eh)
+	Actor.Trait(actor, "LuaScriptEvents").BeforeCaptured:Add(eh)
+end
+
+Actor.AfterCaptured = function(actor, eh)
+	Actor.Trait(actor, "LuaScriptEvents").AfterCaptured:Add(eh)
+end
+
+Actor.OnOwnerChanged = function(actor, eh)
+	Actor.Trait(actor, "LuaScriptEvents").OnOwnerChanged:Add(eh)
+end
+
+-- For compatibility with older user maps
 Actor.OnCaptured = function(actor, eh)
-	Actor.Trait(actor, "LuaScriptEvents").OnCaptured:Add(eh)
+	Actor.Trait(actor, "LuaScriptEvents").AfterCaptured:Add(eh)
 end
 
 Actor.OnIdle = function(actor, eh)

@@ -16,12 +16,14 @@ namespace OpenRA.Mods.RA.Scripting
 	public class LuaScriptEventsInfo : TraitInfo<LuaScriptEvents> { }
 
 	public class LuaScriptEvents : INotifyKilled, INotifyAddedToWorld, INotifyRemovedFromWorld,
-		INotifyCapture, INotifyDamage, INotifyIdle, INotifyProduction
+		INotifyCapture, INotifyOwnerChanged, INotifyDamage, INotifyIdle, INotifyProduction
 	{
 		public event Action<Actor, AttackInfo> OnKilled = (self, e) => { };
 		public event Action<Actor> OnAddedToWorld = self => { };
 		public event Action<Actor> OnRemovedFromWorld = self => { };
-		public event Action<Actor, Actor, Player, Player> OnCaptured = (self, captor, oldOwner, newOwner) => { };
+		public event Action<Actor, Actor, Player, Player> BeforeCaptured = (self, captor, oldOwner, newOwner) => { };
+		public event Action<Actor, Actor, Player, Player> AfterCaptured = (self, captor, oldOwner, newOwner) => { };
+		public event Action<Actor, Player, Player> OwnerChanged = (self, oldOwner, newOwner) => { };
 		public event Action<Actor, AttackInfo> OnDamaged = (self, e) => { };
 		public event Action<Actor> OnIdle = self => { };
 		public event Action<Actor, Actor, CPos> OnProduced = (self, other, exit) => { };
@@ -41,9 +43,19 @@ namespace OpenRA.Mods.RA.Scripting
 			OnRemovedFromWorld(self);
 		}
 
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
-			OnCaptured(self, captor, oldOwner, newOwner);
+			BeforeCaptured(self, captor, oldOwner, newOwner);
+		}
+
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		{
+			AfterCaptured(self, captor, oldOwner, newOwner);
+		}
+
+		public void OnOwnerChanged(Actor self, Player oldOwner, Player newOwner)
+		{
+			OwnerChanged(self, oldOwner, newOwner);
 		}
 
 		public void Damaged(Actor self, AttackInfo e)

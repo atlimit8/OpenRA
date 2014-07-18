@@ -28,7 +28,9 @@ namespace OpenRA.Mods.RA
 
 		public TransformOnCapture(TransformOnCaptureInfo info) { Info = info; }
 
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
+
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			var facing = self.TraitOrDefault<IFacing>();
 			var transform = new Transform(self, Info.IntoActor) { ForceHealthPercentage = Info.ForceHealthPercentage };

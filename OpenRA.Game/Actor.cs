@@ -220,6 +220,12 @@ namespace OpenRA
 
 			var oldOwner = Owner;
 
+			if (captor != null)
+			{
+				foreach (var t in this.TraitsImplementing<INotifyCapture>())
+					t.BeforeCapture(this, captor, oldOwner, newOwner);
+			}
+
 			// momentarily remove from world if present so the ownership queries don't get confused
 			var inWorld = IsInWorld;
 			if (inWorld)
@@ -235,7 +241,7 @@ namespace OpenRA
 			if (captor != null)
 			{
 				foreach (var t in this.TraitsImplementing<INotifyCapture>())
-					t.OnCapture(this, captor, oldOwner, newOwner);
+					t.AfterCapture(this, captor, oldOwner, newOwner);
 			}
 		}
 

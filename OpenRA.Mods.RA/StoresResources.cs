@@ -28,6 +28,7 @@ namespace OpenRA.Mods.RA
 		readonly StoresResourcesInfo Info;
 
 		[Sync] public int Stored { get { return Player.ResourceCapacity == 0 ? 0 : Info.Capacity * Player.Resources / Player.ResourceCapacity; } }
+		private int resourcesToCapture = 0;
 
 		PlayerResources Player;
 		public StoresResources(Actor self, StoresResourcesInfo info)
@@ -37,18 +38,24 @@ namespace OpenRA.Mods.RA
 		}
 
 		public int Capacity { get { return Info.Capacity; } }
-
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
-			var resources = Stored;
-			Player.TakeResources(resources);
+			resourcesToCapture = Stored;
+			Player.TakeResources(resourcesToCapture);
+		}
+
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		{
 			Player = newOwner.PlayerActor.Trait<PlayerResources>();
-			Player.GiveResources(resources);
+			Player.GiveResources(resourcesToCapture);
+			resourcesToCapture = 0;
 		}
 
 		public void Killed(Actor self, AttackInfo e)
 		{
-			Player.TakeResources(Stored); // lose the stored resources
+			if (resourcesToCapture == 0)
+				Player.TakeResources(Stored); // lose the stored resources if not already being captured
 		}
 
 		public IEnumerable<PipType> GetPips(Actor self)

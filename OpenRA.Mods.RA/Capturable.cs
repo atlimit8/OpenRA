@@ -50,7 +50,7 @@ namespace OpenRA.Mods.RA
 
 	class Capturable : INotifyCapture
 	{
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			var info = self.Info.Traits.Get<CapturableInfo>();
 			if (info.CancelActivity)
@@ -60,5 +60,7 @@ namespace OpenRA.Mods.RA
 					t.ResolveOrder(self, stop);
 			}
 		}
+
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
 	}
 }

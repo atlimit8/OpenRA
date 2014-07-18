@@ -28,7 +28,9 @@ namespace OpenRA.Mods.RA
 			this.info = info;
 		}
 
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
+
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			if (captor.World.LocalPlayer != captor.Owner)
 				return;

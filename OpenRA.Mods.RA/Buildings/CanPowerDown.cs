@@ -46,8 +46,10 @@ namespace OpenRA.Mods.RA.Buildings
 						w => w.Add(new PowerdownIndicator(self)));
 			}
 		}
+		
+		public void BeforeCapture(Actor self, Actor captor, Player oldOwner, Player newOwner) {}
 
-		public void OnCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
+		public void AfterCapture(Actor self, Actor captor, Player oldOwner, Player newOwner)
 		{
 			PowerManager = newOwner.PlayerActor.Trait<PowerManager>();
 		}
