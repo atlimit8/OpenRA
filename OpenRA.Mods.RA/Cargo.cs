@@ -220,7 +220,7 @@ namespace OpenRA.Mods.RA
 			self.World.AddFrameEndTask(w =>
 			{
 				foreach (var p in Passengers)
-					p.Owner = newOwner;
+					p.ChangeOwner(newOwner);
 			});
 		}
 

@@ -26,7 +26,7 @@ namespace OpenRA.Mods.RA
 		public object Create(ActorInitializer init) { return new ProximityCapturable(init.self, this); }
 	}
 
-	public class ProximityCapturable : ITick
+	public class ProximityCapturable : ITick, INotifyOwnerChanged
 	{
 		public readonly Player OriginalOwner;
 		public bool Captured { get { return Self.Owner != OriginalOwner; } }
@@ -81,6 +81,12 @@ namespace OpenRA.Mods.RA
 			}
 		}
 
+		public void OnOwnerChanged(Actor self, Player oldOwner, Player newOwner)
+		{
+			if (newOwner == self.World.LocalPlayer)
+				self.World.Add(new FlashTarget(self));
+		}
+
 		static void ChangeOwnership(Actor self, Actor captor)
 		{
 			self.World.AddFrameEndTask(w =>
@@ -89,13 +95,7 @@ namespace OpenRA.Mods.RA
 
 				var previousOwner = self.Owner;
 
-				// momentarily remove from world so the ownership queries don't get confused
-				w.Remove(self);
-				self.Owner = captor.Owner;
-				w.Add(self);
-
-				if (self.Owner == self.World.LocalPlayer)
-					w.Add(new FlashTarget(self));
+				self.ChangeOwner(captor.Owner);
 
 				foreach (var t in self.TraitsImplementing<INotifyCapture>())
 					t.OnCapture(self, captor, previousOwner, self.Owner);
