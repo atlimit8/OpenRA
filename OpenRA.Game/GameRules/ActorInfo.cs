@@ -16,12 +16,19 @@ using OpenRA.Traits;
 
 namespace OpenRA
 {
-	public class MultipleOfExcluisveTraitException : YamlException
+	public class MultipleOfExclusiveTraitException : YamlException
 	{
-		public MultipleOfExcluisveTraitException(Type info, string actor)
+		public MultipleOfExclusiveTraitException(Type info, string actor)
 			: base("Multiple occurances of exclusive trait "
 				+ info.Name.Substring(0, info.Name.Length - 4)
 				+ " when there only can be one.") { }
+
+		public MultipleOfExclusiveTraitException(Type iface, string actor, Type first, Type next)
+			: base("Multiple occurances of exclusive trait interface "
+				+ iface.Name.Substring(0, iface.Name.Length - 4) + " including "
+				+ first.Name.Substring(0, first.Name.Length - 4) + " & "
+				+ next.Name.Substring(0, next.Name.Length - 4)
+				+ " when there can be no more than one.") { }
 	}
 
 	/// <summary>
@@ -133,24 +140,37 @@ namespace OpenRA
 				return constructOrderCache;
 
 			List<ITraitInfo> traitInfos = new List<ITraitInfo>(Traits.WithInterface<ITraitInfo>());
-			HashSet<Type> markedSingletons = new HashSet<Type>(); // Track marked singletons added
+			Dictionary<Type, Type> markedSingletons = new Dictionary<Type, Type>(); // Track singletons added
 
 			// Note explicit singletons and throw if there are multiple of the same type.
 			foreach (var ti in traitInfos)
-				if (!(ti is IImplicitTraitInfo))
-					continue;
-				else if (markedSingletons.Contains(ti.GetType()))
-					throw new MultipleOfExcluisveTraitException(ti.GetType(), Name);
-				else
-					markedSingletons.Add(ti.GetType());
+				if (ti is ISingletonTraitInfo)
+				{
+					if (markedSingletons.ContainsKey(ti.GetType()))
+						throw new MultipleOfExclusiveTraitException(ti.GetType(), Name);
+					else
+					{
+						var type = ti.GetType();
+						markedSingletons.Add(type, type);
+						foreach (var i in ti.GetType().GetInterfaces().Where(s =>
+							s != typeof(ISingletonTraitInfo) && s != typeof(IImplicitTraitInfo)
+							&& typeof(ISingletonTraitInfo).IsAssignableFrom(s)))
+						{
+							if (markedSingletons.ContainsKey(i))
+								throw new MultipleOfExclusiveTraitException(i, Name, type, markedSingletons[i]);
+							else
+								markedSingletons.Add(i, type);
+						}
+					}
+				}
 
 			// Add implicit singletons recursively
 			Queue<ITraitInfo> queue = new Queue<ITraitInfo>(traitInfos);
 			while (queue.Any())
-				foreach (var t in SingletonsFor(queue.Dequeue()))
-					if (!markedSingletons.Contains(t))
+				foreach (var t in ImplicitsFor(queue.Dequeue()))
+					if (!markedSingletons.ContainsKey(t))
 					{
-						markedSingletons.Add(t);
+						markedSingletons.Add(t, t);
 						ITraitInfo s = (ITraitInfo)t.GetConstructor(NoTypes).Invoke(NoObjects);
 						Traits.Add(s);
 						traitInfos.Add(s);
@@ -225,7 +245,7 @@ namespace OpenRA
 				.Select(t => t.GetGenericArguments()[0]);
 		}
 
-		static IEnumerable<Type> SingletonsFor(ITraitInfo info)
+		static IEnumerable<Type> ImplicitsFor(ITraitInfo info)
 		{
 			return info
 				.GetType()
