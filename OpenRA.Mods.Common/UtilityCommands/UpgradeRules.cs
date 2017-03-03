@@ -318,8 +318,34 @@ namespace OpenRA.Mods.Common.UtilityCommands
 
 					if (node.Key.StartsWith("UpgradeOnDamageState", StringComparison.Ordinal))
 					{
-						RenameNodeKey(node, "GrantConditionOnDamageState");
+						RenameNodeKey(node, "GrantConditionWithSound");
 						ConvertUpgradesToCondition(parent, node, "Upgrades", "Condition");
+						var validDamageStates = node.Value.Nodes.FirstOrDefault(n => n.Key == "ValidDamageStates");
+						if (validDamageStates != null)
+						{
+							validDamageStates.Key = "RequiresCondition";
+							switch (validDamageStates.Value.Value.ToLowerInvariant())
+							{
+								case "Undamaged":
+									validDamageStates.Value.Value = "damage.undamaged";
+									break;
+								case "Light":
+									validDamageStates.Value.Value = "damage.light";
+									break;
+								case "Medium":
+									validDamageStates.Value.Value = "damage.medium";
+									break;
+								case "Heavy":
+									validDamageStates.Value.Value = "damage.heav";
+									break;
+								case "Critical":
+									validDamageStates.Value.Value = "damage.critical";
+									break;
+								case "Dead":
+									validDamageStates.Value.Value = "damage.dead";
+									break;
+							}
+						}
 					}
 
 					if (node.Key.StartsWith("UpgradeOnMovement", StringComparison.Ordinal))
