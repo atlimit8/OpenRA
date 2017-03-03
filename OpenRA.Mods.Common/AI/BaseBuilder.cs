@@ -194,6 +194,9 @@ namespace OpenRA.Mods.Common.AI
 
 		bool HasSufficientPowerForActor(ActorInfo actorInfo)
 		{
+			var buildable = actorInfo.TraitInfoOrDefault<BuildableInfo>();
+			if (buildable != null && buildable.Power != null)
+				return buildable.Power + playerPower.ExcessPower >= ai.Info.MinimumExcessPower;
 			return (actorInfo.TraitInfos<PowerInfo>().Where(i => i.EnabledByDefault)
 				.Sum(p => p.Amount) + playerPower.ExcessPower) >= ai.Info.MinimumExcessPower;
 		}
@@ -204,12 +207,15 @@ namespace OpenRA.Mods.Common.AI
 
 			// This gets used quite a bit, so let's cache it here
 			var power = GetProducibleBuilding(ai.Info.BuildingCommonNames.Power, buildableThings,
-				a => a.TraitInfos<PowerInfo>().Where(i => i.EnabledByDefault).Sum(p => p.Amount));
+				a => a.TraitInfos<BuildableInfo>().Select(b => b.Power).FirstOrDefault()
+					?? a.TraitInfos<PowerInfo>().Where(i => i.EnabledByDefault).Sum(p => p.Amount));
 
 			// First priority is to get out of a low power situation
 			if (playerPower.ExcessPower < ai.Info.MinimumExcessPower)
 			{
-				if (power != null && power.TraitInfos<PowerInfo>().Where(i => i.EnabledByDefault).Sum(p => p.Amount) > 0)
+				if (power != null
+					 && (power.TraitInfos<BuildableInfo>().Select(b => b.Power).FirstOrDefault()
+						?? power.TraitInfos<PowerInfo>().Where(i => i.EnabledByDefault).Sum(p => p.Amount)) > 0)
 				{
 					HackyAI.BotDebug("AI: {0} decided to build {1}: Priority override (low power)", queue.Actor.Owner, power.Name);
 					return power;
@@ -315,7 +321,9 @@ namespace OpenRA.Mods.Common.AI
 				if (playerPower.ExcessPower < ai.Info.MinimumExcessPower || !HasSufficientPowerForActor(actor))
 				{
 					// Try building a power plant instead
-					if (power != null && power.TraitInfos<PowerInfo>().Where(i => i.EnabledByDefault).Sum(pi => pi.Amount) > 0)
+					if (power != null
+						&& (power.TraitInfos<BuildableInfo>().Select(b => b.Power).FirstOrDefault()
+							?? power.TraitInfos<PowerInfo>().Where(i => i.EnabledByDefault).Sum(pi => pi.Amount)) > 0)
 					{
 						if (playerPower.PowerOutageRemainingTicks > 0)
 							HackyAI.BotDebug("{0} decided to build {1}: Priority override (is low power)", queue.Actor.Owner, power.Name);

@@ -146,10 +146,9 @@ GAVULC:
 		BuildPaletteOrder: 40
 		Prerequisites: gactwr, gapile, ~structures.gdi
 		Description: Basic base defense.\nDoes not require power to operate.\n  Strong vs Infantry, Light armor\n  Weak vs Aircraft
+		Power: -20
 	Plug:
 		Type: tower.vulcan
-	Power:
-		Amount: -20
 
 GAROCK:
 	Inherits: ^BuildingPlug
@@ -162,10 +161,9 @@ GAROCK:
 		BuildPaletteOrder: 40
 		Prerequisites: gactwr, gapile, ~structures.gdi
 		Description: GDI Advanced base defense.\nDoes not require power to operate.\n  Strong vs Armored ground units\n  Weak vs Aircraft
+		Power: -20
 	Plug:
 		Type: tower.rocket
-	Power:
-		Amount: -20
 
 GACSAM:
 	Inherits: ^BuildingPlug
@@ -178,10 +176,9 @@ GACSAM:
 		BuildPaletteOrder: 40
 		Prerequisites: gactwr, garadr, ~structures.gdi
 		Description: GDI Anti-Air base defense.\nDoes not require power to operate.\n  Strong vs Aircraft\n  Weak vs Ground units
+		Power: -30
 	Plug:
 		Type: tower.sam
-	Power:
-		Amount: -30
 
 GAPOWRUP:
 	Inherits: ^BuildingPlug
@@ -194,10 +191,9 @@ GAPOWRUP:
 		BuildPaletteOrder: 10
 		Prerequisites: gapowr, ~structures.gdi
 		Description: Provides extra power generation.
+		Power: 50
 	Plug:
 		Type: powrup
-	Power:
-		Amount: 50
 
 GAPLUG2:
 	Inherits: ^BuildingPlug
@@ -210,10 +206,9 @@ GAPLUG2:
 		BuildPaletteOrder: 1000
 		Prerequisites: gaplug, gatech, gaweap, ~structures.gdi
 		Description: Enables use of the hunter-seeker droid.
+		Power: -50
 	Plug:
 		Type: plug.hunterseeker
-	Power:
-		Amount: -50
 
 GAPLUG3:
 	Inherits: ^BuildingPlug
@@ -226,7 +221,6 @@ GAPLUG3:
 		BuildPaletteOrder: 1000
 		Prerequisites: gaplug, gatech, ~structures.gdi
 		Description: Enables use of the Ion Cannon.
+		Power: -100
 	Plug:
 		Type: plug.ioncannon
-	Power:
-		Amount: -100

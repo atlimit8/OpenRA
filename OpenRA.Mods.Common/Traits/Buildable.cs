@@ -46,6 +46,9 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Percentage modifier to apply to the build duration.")]
 		public readonly int BuildDurationModifier = 60;
 
+		[Desc("Amount of power provided (or consumed if negative) when first built.", "Use for plugs.")]
+		public readonly int? Power = null;
+
 		// TODO: UI fluff; doesn't belong here
 		public readonly int BuildPaletteOrder = 9999;
 
