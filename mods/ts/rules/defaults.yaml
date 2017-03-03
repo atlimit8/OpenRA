@@ -556,10 +556,10 @@
 		Pieces: 3, 7
 		Range: 2c0, 5c0
 	GrantCondition@DAMAGED:
-		RequiresCondition: damage.heavy
+		RequiresCondition: damage.isHeavy
 		Condition: damagedspeed
 	GrantCondition@CRITICAL:
-		RequiresCondition: damage.critical
+		RequiresCondition: damage.isCritical
 		Condition: criticalspeed
 	SpeedMultiplier@DAMAGED:
 		RequiresCondition: damagedspeed
