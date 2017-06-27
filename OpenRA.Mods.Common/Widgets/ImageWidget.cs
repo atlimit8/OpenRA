@@ -15,45 +15,54 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class ImageWidget : Widget
+	public class ImageWidgetInfo : WidgetInfo
 	{
 		public readonly string TooltipTemplate;
 		public readonly string TooltipContainer;
-
-		public string ImageCollection = "";
-		public string ImageName = "";
-		public bool ClickThrough = true;
-		public Func<string> GetImageName;
-		public Func<string> GetImageCollection;
+		public readonly string ImageCollection = "";
+		public readonly string ImageName = "";
+		public readonly bool ClickThrough = true;
 
 		[Translate] public string TooltipText;
 
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ImageWidget(this, args, parent);
+		}
+	}
+
+	public class ImageWidget : Widget
+	{
+		public new ImageWidgetInfo Info { get { return (ImageWidgetInfo)WidgetInfo; } }
+
+		public string ImageCollection;
+
+		public Func<string> GetImageName;
+		public Func<string> GetImageCollection;
 		Lazy<TooltipContainerWidget> tooltipContainer;
 		public Func<string> GetTooltipText;
 
-		public ImageWidget()
+		public ImageWidget(ImageWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			GetImageName = () => ImageName;
+			ImageCollection = info.ImageCollection;
+			GetImageName = () => info.ImageName;
 			GetImageCollection = () => ImageCollection;
-			GetTooltipText = () => TooltipText;
+			GetTooltipText = () => info.TooltipText;
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 		}
 
 		protected ImageWidget(ImageWidget other)
 			: base(other)
 		{
-			ClickThrough = other.ClickThrough;
-			ImageName = other.ImageName;
-			GetImageName = other.GetImageName;
 			ImageCollection = other.ImageCollection;
+			GetImageName = other.GetImageName;
 			GetImageCollection = other.GetImageCollection;
 
-			TooltipTemplate = other.TooltipTemplate;
-			TooltipContainer = other.TooltipContainer;
 			GetTooltipText = other.GetTooltipText;
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(Info.TooltipContainer));
 		}
 
 		public override Widget Clone() { return new ImageWidget(this); }
@@ -72,20 +81,20 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override bool HandleMouseInput(MouseInput mi)
 		{
-			return !ClickThrough && RenderBounds.Contains(mi.Location);
+			return !Info.ClickThrough && RenderBounds.Contains(mi.Location);
 		}
 
 		public override void MouseEntered()
 		{
-			if (TooltipContainer == null || GetTooltipText == null)
+			if (Info.TooltipContainer == null || GetTooltipText == null)
 				return;
 
-			tooltipContainer.Value.SetTooltip(TooltipTemplate, new WidgetArgs() { { "getText", GetTooltipText } });
+			tooltipContainer.Value.SetTooltip(Info.TooltipTemplate, new WidgetArgs() { { "getText", GetTooltipText } });
 		}
 
 		public override void MouseExited()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 
 			tooltipContainer.Value.RemoveTooltip();

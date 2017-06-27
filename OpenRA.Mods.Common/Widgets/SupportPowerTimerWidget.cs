@@ -9,11 +9,9 @@
  */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Primitives;
 using OpenRA.Traits;
@@ -21,20 +19,33 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class SupportPowerTimerWidget : Widget
+	public class SupportPowerTimerWidgetInfo : WidgetInfo
 	{
+		public enum TimerOrder { Ascending = -1, Descending = 1 }
+
 		public readonly string Font = "Bold";
 		public readonly string Format = "{0}: {1}";
 		public readonly TimerOrder Order = TimerOrder.Descending;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new SupportPowerTimerWidget(this, args, parent);
+		}
+	}
+
+	public class SupportPowerTimerWidget : Widget
+	{
+		public new SupportPowerTimerWidgetInfo Info { get { return (SupportPowerTimerWidgetInfo)WidgetInfo; } }
 
 		readonly int timestep;
 		readonly IEnumerable<SupportPowerInstance> powers;
 		readonly Color bgDark, bgLight;
 		Pair<string, Color>[] texts;
 
-		[ObjectCreator.UseCtor]
-		public SupportPowerTimerWidget(World world)
+		public SupportPowerTimerWidget(SupportPowerTimerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
+			var world = args.Get<World>("world");
 			powers = world.ActorsWithTrait<SupportPowerManager>()
 				.Where(p => !p.Actor.IsDead && !p.Actor.Owner.NonCombatant)
 				.SelectMany(s => s.Trait.Powers.Values)
@@ -61,7 +72,7 @@ namespace OpenRA.Mods.Common.Widgets
 			texts = displayedPowers.Select(p =>
 			{
 				var time = WidgetUtils.FormatTime(p.RemainingTime, false, timestep);
-				var text = Format.F(p.Info.Description, time);
+				var text = Info.Format.F(p.Info.Description, time);
 				var self = p.Instances[0].Self;
 				var playerColor = self.Owner.Color.RGB;
 
@@ -82,12 +93,10 @@ namespace OpenRA.Mods.Common.Widgets
 			var y = 0;
 			foreach (var t in texts)
 			{
-				var font = Game.Renderer.Fonts[Font];
+				var font = Game.Renderer.Fonts[Info.Font];
 				font.DrawTextWithShadow(t.First, new float2(Bounds.Location) + new float2(0, y), t.Second, bgDark, bgLight, 1);
-				y += (font.Measure(t.First).Y + 5) * (int)Order;
+				y += (font.Measure(t.First).Y + 5) * (int)Info.Order;
 			}
 		}
-
-		public enum TimerOrder { Ascending = -1, Descending = 1 }
 	}
 }

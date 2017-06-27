@@ -94,7 +94,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			disableSystemButtons = true;
 			var cachedPause = world.PredictedPaused;
 
-			if (button.HideIngameUI)
+			if (button.Info.HideIngameUI)
 			{
 				// Cancel custom input modes (guard, building placement, etc)
 				world.CancelInputMode();
@@ -102,30 +102,30 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 				worldRoot.IsVisible = () => false;
 			}
 
-			if (button.Pause && world.LobbyInfo.IsSinglePlayer)
+			if (button.Info.Pause && world.LobbyInfo.IsSinglePlayer)
 				world.SetPauseState(true);
 
 			var cachedDisableWorldSounds = Game.Sound.DisableWorldSounds;
-			if (button.DisableWorldSounds)
+			if (button.Info.DisableWorldSounds)
 				Game.Sound.DisableWorldSounds = true;
 
 			widgetArgs = widgetArgs ?? new WidgetArgs();
 			widgetArgs.Add("onExit", () =>
 			{
-				if (button.HideIngameUI)
+				if (button.Info.HideIngameUI)
 					worldRoot.IsVisible = () => true;
 
-				if (button.DisableWorldSounds)
+				if (button.Info.DisableWorldSounds)
 					Game.Sound.DisableWorldSounds = cachedDisableWorldSounds;
 
-				if (button.Pause && world.LobbyInfo.IsSinglePlayer)
+				if (button.Info.Pause && world.LobbyInfo.IsSinglePlayer)
 					world.SetPauseState(cachedPause);
 
 				menuRoot.RemoveChild(currentWidget);
 				disableSystemButtons = false;
 			});
 
-			currentWidget = Game.LoadWidget(world, button.MenuContainer, menuRoot, widgetArgs);
+			currentWidget = Game.LoadWidget(world, button.Info.MenuContainer, menuRoot, widgetArgs);
 			Game.RunAfterTick(Ui.ResetTooltips);
 		}
 	}

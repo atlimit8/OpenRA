@@ -30,22 +30,32 @@ namespace OpenRA.Mods.Common.Widgets
 		Top
 	}
 
+	public class ScrollPanelWidgetInfo : WidgetInfo
+	{
+		public readonly int ScrollbarWidth = 24;
+		public readonly int BorderWidth = 1;
+		public readonly int TopBottomSpacing = 2;
+		public readonly int ItemSpacing = 0;
+		public readonly int ButtonDepth = ChromeMetrics.Get<int>("ButtonDepth");
+		public readonly string Background = "scrollpanel-bg";
+		public readonly string Button = "scrollpanel-button";
+		public readonly int MinimumThumbSize = 10;
+		public readonly ScrollPanelAlign Align = ScrollPanelAlign.Top;
+		public readonly bool CollapseHiddenChildren;
+		public readonly float SmoothScrollSpeed = 0.333f;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ScrollPanelWidget(this, args, parent);
+		}
+	}
+
 	public class ScrollPanelWidget : Widget
 	{
+		public new ScrollPanelWidgetInfo Info { get { return (ScrollPanelWidgetInfo)WidgetInfo; } }
 		readonly Ruleset modRules;
-		public int ScrollbarWidth = 24;
-		public int BorderWidth = 1;
-		public int TopBottomSpacing = 2;
-		public int ItemSpacing = 0;
-		public int ButtonDepth = ChromeMetrics.Get<int>("ButtonDepth");
-		public string Background = "scrollpanel-bg";
-		public string Button = "scrollpanel-button";
 		public int ContentHeight;
 		public ILayout Layout;
-		public int MinimumThumbSize = 10;
-		public ScrollPanelAlign Align = ScrollPanelAlign.Top;
-		public bool CollapseHiddenChildren;
-		public float SmoothScrollSpeed = 0.333f;
 
 		protected bool upPressed;
 		protected bool downPressed;
@@ -86,10 +96,10 @@ namespace OpenRA.Mods.Common.Widgets
 			}
 		}
 
-		[ObjectCreator.UseCtor]
-		public ScrollPanelWidget(ModData modData)
+		public ScrollPanelWidget(ScrollPanelWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.modRules = modData.DefaultRules;
+			modRules = args.Get<ModData>("modData").DefaultRules;
 
 			Layout = new ListLayout(this);
 		}
@@ -130,18 +140,18 @@ namespace OpenRA.Mods.Common.Widgets
 
 			var rb = RenderBounds;
 
-			var scrollbarHeight = rb.Height - 2 * ScrollbarWidth;
+			var scrollbarHeight = rb.Height - 2 * Info.ScrollbarWidth;
 
-			var thumbHeight = ContentHeight == 0 ? 0 : Math.Max(MinimumThumbSize, (int)(scrollbarHeight * Math.Min(rb.Height * 1f / ContentHeight, 1f)));
-			var thumbOrigin = rb.Y + ScrollbarWidth + (int)((scrollbarHeight - thumbHeight) * (-1f * currentListOffset / (ContentHeight - rb.Height)));
+			var thumbHeight = ContentHeight == 0 ? 0 : Math.Max(Info.MinimumThumbSize, (int)(scrollbarHeight * Math.Min(rb.Height * 1f / ContentHeight, 1f)));
+			var thumbOrigin = rb.Y + Info.ScrollbarWidth + (int)((scrollbarHeight - thumbHeight) * (-1f * currentListOffset / (ContentHeight - rb.Height)));
 			if (thumbHeight == scrollbarHeight)
 				thumbHeight = 0;
 
-			backgroundRect = new Rectangle(rb.X, rb.Y, rb.Width - ScrollbarWidth + 1, rb.Height);
-			upButtonRect = new Rectangle(rb.Right - ScrollbarWidth, rb.Y, ScrollbarWidth, ScrollbarWidth);
-			downButtonRect = new Rectangle(rb.Right - ScrollbarWidth, rb.Bottom - ScrollbarWidth, ScrollbarWidth, ScrollbarWidth);
-			scrollbarRect = new Rectangle(rb.Right - ScrollbarWidth, rb.Y + ScrollbarWidth - 1, ScrollbarWidth, scrollbarHeight + 2);
-			thumbRect = new Rectangle(rb.Right - ScrollbarWidth, thumbOrigin, ScrollbarWidth, thumbHeight);
+			backgroundRect = new Rectangle(rb.X, rb.Y, rb.Width - Info.ScrollbarWidth + 1, rb.Height);
+			upButtonRect = new Rectangle(rb.Right - Info.ScrollbarWidth, rb.Y, Info.ScrollbarWidth, Info.ScrollbarWidth);
+			downButtonRect = new Rectangle(rb.Right - Info.ScrollbarWidth, rb.Bottom - Info.ScrollbarWidth, Info.ScrollbarWidth, Info.ScrollbarWidth);
+			scrollbarRect = new Rectangle(rb.Right - Info.ScrollbarWidth, rb.Y + Info.ScrollbarWidth - 1, Info.ScrollbarWidth, scrollbarHeight + 2);
+			thumbRect = new Rectangle(rb.Right - Info.ScrollbarWidth, thumbOrigin, Info.ScrollbarWidth, thumbHeight);
 
 			var upHover = Ui.MouseOverWidget == this && upButtonRect.Contains(Viewport.LastMousePos);
 			upDisabled = thumbHeight == 0 || currentListOffset >= 0;
@@ -150,23 +160,23 @@ namespace OpenRA.Mods.Common.Widgets
 			downDisabled = thumbHeight == 0 || currentListOffset <= Bounds.Height - ContentHeight;
 
 			var thumbHover = Ui.MouseOverWidget == this && thumbRect.Contains(Viewport.LastMousePos);
-			WidgetUtils.DrawPanel(Background, backgroundRect);
-			WidgetUtils.DrawPanel(Background, scrollbarRect);
-			ButtonWidget.DrawBackground(Button, upButtonRect, upDisabled, upPressed, upHover, false);
-			ButtonWidget.DrawBackground(Button, downButtonRect, downDisabled, downPressed, downHover, false);
+			WidgetUtils.DrawPanel(Info.Background, backgroundRect);
+			WidgetUtils.DrawPanel(Info.Background, scrollbarRect);
+			ButtonWidget.DrawBackground(Info.Button, upButtonRect, upDisabled, upPressed, upHover, false);
+			ButtonWidget.DrawBackground(Info.Button, downButtonRect, downDisabled, downPressed, downHover, false);
 
 			if (thumbHeight > 0)
-				ButtonWidget.DrawBackground(Button, thumbRect, false, HasMouseFocus && thumbHover, thumbHover, false);
+				ButtonWidget.DrawBackground(Info.Button, thumbRect, false, HasMouseFocus && thumbHover, thumbHover, false);
 
-			var upOffset = !upPressed || upDisabled ? 4 : 4 + ButtonDepth;
-			var downOffset = !downPressed || downDisabled ? 4 : 4 + ButtonDepth;
+			var upOffset = !upPressed || upDisabled ? 4 : 4 + Info.ButtonDepth;
+			var downOffset = !downPressed || downDisabled ? 4 : 4 + Info.ButtonDepth;
 
 			WidgetUtils.DrawRGBA(ChromeProvider.GetImage("scrollbar", upPressed || upDisabled ? "up_pressed" : "up_arrow"),
 				new float2(upButtonRect.Left + upOffset, upButtonRect.Top + upOffset));
 			WidgetUtils.DrawRGBA(ChromeProvider.GetImage("scrollbar", downPressed || downDisabled ? "down_pressed" : "down_arrow"),
 				new float2(downButtonRect.Left + downOffset, downButtonRect.Top + downOffset));
 
-			var drawBounds = backgroundRect.InflateBy(-BorderWidth, -BorderWidth, -BorderWidth, -BorderWidth);
+			var drawBounds = backgroundRect.InflateBy(-Info.BorderWidth, -Info.BorderWidth, -Info.BorderWidth, -Info.BorderWidth);
 			Game.Renderer.EnableScissor(drawBounds);
 
 			drawBounds.Offset((-ChildOrigin).ToPoint());
@@ -194,7 +204,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public void ScrollToBottom(bool smooth = false)
 		{
-			var value = Align == ScrollPanelAlign.Top ?
+			var value = Info.Align == ScrollPanelAlign.Top ?
 				Math.Min(0, Bounds.Height - ContentHeight) :
 				Bounds.Height - ContentHeight;
 
@@ -203,7 +213,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public void ScrollToTop(bool smooth = false)
 		{
-			var value = Align == ScrollPanelAlign.Top ? 0 :
+			var value = Info.Align == ScrollPanelAlign.Top ? 0 :
 				Math.Max(0, Bounds.Height - ContentHeight);
 
 			SetListOffset(value, smooth);
@@ -219,10 +229,10 @@ namespace OpenRA.Mods.Common.Widgets
 			// Scroll the item to be visible
 			float? newOffset = null;
 			if (item.Bounds.Top + currentListOffset < 0)
-				newOffset = ItemSpacing - item.Bounds.Top;
+				newOffset = Info.ItemSpacing - item.Bounds.Top;
 
 			if (item.Bounds.Bottom + currentListOffset > RenderBounds.Height)
-				newOffset = RenderBounds.Height - item.Bounds.Bottom - ItemSpacing;
+				newOffset = RenderBounds.Height - item.Bounds.Bottom - Info.ItemSpacing;
 
 			if (newOffset.HasValue)
 				SetListOffset(newOffset.Value, smooth);
@@ -264,7 +274,7 @@ namespace OpenRA.Mods.Common.Widgets
 			var absOffsetDiff = Math.Abs(offsetDiff);
 			if (absOffsetDiff > 1f)
 			{
-				currentListOffset += offsetDiff * SmoothScrollSpeed.Clamp(0.1f, 1.0f);
+				currentListOffset += offsetDiff * Info.SmoothScrollSpeed.Clamp(0.1f, 1.0f);
 
 				Ui.ResetTooltips();
 			}
@@ -303,8 +313,8 @@ namespace OpenRA.Mods.Common.Widgets
 			if (thumbPressed && mi.Event == MouseInputEvent.Move)
 			{
 				var rb = RenderBounds;
-				var scrollbarHeight = rb.Height - 2 * ScrollbarWidth;
-				var thumbHeight = ContentHeight == 0 ? 0 : Math.Max(MinimumThumbSize, (int)(scrollbarHeight * Math.Min(rb.Height * 1f / ContentHeight, 1f)));
+				var scrollbarHeight = rb.Height - 2 * Info.ScrollbarWidth;
+				var thumbHeight = ContentHeight == 0 ? 0 : Math.Max(Info.MinimumThumbSize, (int)(scrollbarHeight * Math.Min(rb.Height * 1f / ContentHeight, 1f)));
 				var oldOffset = currentListOffset;
 
 				var newOffset = currentListOffset + ((int)((lastMouseLocation.Y - mi.Location.Y) * (ContentHeight - rb.Height) * 1f / (scrollbarHeight - thumbHeight)));

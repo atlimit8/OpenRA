@@ -165,7 +165,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 				RefreshServerList();
 			};
 
-			var filtersPanel = Ui.LoadWidget("MULTIPLAYER_FILTER_PANEL", null, new WidgetArgs());
+			var filtersPanel = Ui.CreateWidget("MULTIPLAYER_FILTER_PANEL", null, new WidgetArgs());
 			var showWaitingCheckbox = filtersPanel.GetOrNull<CheckboxWidget>("WAITING_FOR_PLAYERS");
 			if (showWaitingCheckbox != null)
 			{
@@ -222,7 +222,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			var mapTitle = widget.GetOrNull<LabelWidget>("SELECTED_MAP");
 			if (mapTitle != null)
 			{
-				var font = Game.Renderer.Fonts[mapTitle.Font];
+				var font = Game.Renderer.Fonts[mapTitle.Info.Font];
 				var title = new CachedTransform<MapPreview, string>(m => m == null ? "No Server Selected" :
 					WidgetUtils.TruncateText(m.Title, mapTitle.Bounds.Width, font));
 				mapTitle.GetText = () => title.Update(currentMap);
@@ -247,9 +247,9 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			if (modVersion != null)
 			{
 				modVersion.IsVisible = () => currentServer != null;
-				modVersion.GetColor = () => currentServer.IsCompatible ? modVersion.TextColor : incompatibleVersionColor;
+				modVersion.GetColor = () => currentServer.IsCompatible ? modVersion.Info.TextColor : incompatibleVersionColor;
 
-				var font = Game.Renderer.Fonts[modVersion.Font];
+				var font = Game.Renderer.Fonts[modVersion.Info.Font];
 				var version = new CachedTransform<GameServer, string>(s => WidgetUtils.TruncateText(s.ModLabel, mapTitle.Bounds.Width, font));
 				modVersion.GetText = () => version.Update(currentServer);
 			}
@@ -483,10 +483,10 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 						var title = item.GetOrNull<LabelWidget>("TITLE");
 						if (title != null)
 						{
-							var font = Game.Renderer.Fonts[title.Font];
+							var font = Game.Renderer.Fonts[title.Info.Font];
 							var label = WidgetUtils.TruncateText(game.Name, title.Bounds.Width, font);
 							title.GetText = () => label;
-							title.GetColor = () => canJoin ? title.TextColor : incompatibleGameColor;
+							title.GetColor = () => canJoin ? title.Info.TextColor : incompatibleGameColor;
 						}
 
 						var password = item.GetOrNull<ImageWidget>("PASSWORD_PROTECTED");
@@ -502,7 +502,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 							players.GetText = () => "{0} / {1}".F(game.Players, game.MaxPlayers)
 								+ (game.Spectators > 0 ? " + {0}".F(game.Spectators) : "");
 
-							players.GetColor = () => canJoin ? players.TextColor : incompatibleGameColor;
+							players.GetColor = () => canJoin ? players.Info.TextColor : incompatibleGameColor;
 						}
 
 						var state = item.GetOrNull<LabelWidget>("STATUS");
@@ -519,11 +519,11 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 						var location = item.GetOrNull<LabelWidget>("LOCATION");
 						if (location != null)
 						{
-							var font = Game.Renderer.Fonts[location.Font];
+							var font = Game.Renderer.Fonts[location.Info.Font];
 							var cachedServerLocation = game.Id != -1 ? GeoIP.LookupCountry(game.Address.Split(':')[0]) : "Local Network";
 							var label = WidgetUtils.TruncateText(cachedServerLocation, location.Bounds.Width, font);
 							location.GetText = () => label;
-							location.GetColor = () => canJoin ? location.TextColor : incompatibleGameColor;
+							location.GetColor = () => canJoin ? location.Info.TextColor : incompatibleGameColor;
 						}
 
 						if (currentServer != null && game.Address == currentServer.Address)
@@ -623,7 +623,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			if (game.State == (int)ServerState.GameStarted)
 				return darkened ? incompatibleGameStartedColor : gameStartedColor;
 
-			return label.TextColor;
+			return label.Info.TextColor;
 		}
 
 		bool Filtered(GameServer game)

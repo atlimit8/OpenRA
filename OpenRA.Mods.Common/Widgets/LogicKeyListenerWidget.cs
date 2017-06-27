@@ -14,9 +14,20 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class LogicKeyListenerWidgetInfo : WidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new LogicKeyListenerWidget(this, args, parent);
+		}
+	}
+
 	public class LogicKeyListenerWidget : Widget
 	{
 		public Func<KeyInput, bool> OnKeyPress = _ => false;
+
+		public LogicKeyListenerWidget(LogicKeyListenerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent) { }
 
 		public override bool HandleKeyPress(KeyInput e)
 		{

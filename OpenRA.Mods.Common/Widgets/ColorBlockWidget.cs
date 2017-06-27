@@ -15,11 +15,20 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class ColorBlockWidgetInfo : WidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ColorBlockWidget(this, args, parent);
+		}
+	}
+
 	public class ColorBlockWidget : Widget
 	{
 		public Func<Color> GetColor;
 
-		public ColorBlockWidget()
+		public ColorBlockWidget(ColorBlockWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
 			GetColor = () => Color.White;
 		}

@@ -9,33 +9,44 @@
  */
 #endregion
 
+using System;
 using System.Drawing;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class BackgroundWidget : Widget
+	public class BackgroundWidgetInfo : WidgetInfo
 	{
 		public readonly string Background = "dialog";
 		public readonly bool ClickThrough = false;
 		public readonly bool Draggable = false;
 
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new BackgroundWidget(this, args, parent);
+		}
+	}
+
+	public class BackgroundWidget : Widget
+	{
+		public new BackgroundWidgetInfo Info { get { return (BackgroundWidgetInfo)WidgetInfo; } }
+
 		public override void Draw()
 		{
-			WidgetUtils.DrawPanel(Background, RenderBounds);
+			WidgetUtils.DrawPanel(Info.Background, RenderBounds);
 		}
 
-		public BackgroundWidget() { }
+		public BackgroundWidget(BackgroundWidgetInfo info, WidgetArgs args, Widget parent) : base(info, args, parent) { }
 
 		bool moving;
 		int2? prevMouseLocation;
 
 		public override bool HandleMouseInput(MouseInput mi)
 		{
-			if (ClickThrough || !RenderBounds.Contains(mi.Location))
+			if (Info.ClickThrough || !RenderBounds.Contains(mi.Location))
 				return false;
 
-			if (!Draggable || (moving && (!TakeMouseFocus(mi) || mi.Button != MouseButton.Left)))
+			if (!Info.Draggable || (moving && (!TakeMouseFocus(mi) || mi.Button != MouseButton.Left)))
 				return true;
 
 			if (prevMouseLocation == null)
@@ -61,13 +72,7 @@ namespace OpenRA.Mods.Common.Widgets
 			return true;
 		}
 
-		protected BackgroundWidget(BackgroundWidget other)
-			: base(other)
-		{
-			Background = other.Background;
-			ClickThrough = other.ClickThrough;
-			Draggable = other.Draggable;
-		}
+		protected BackgroundWidget(BackgroundWidget other) : base(other) { }
 
 		public override Widget Clone() { return new BackgroundWidget(this); }
 	}

@@ -25,9 +25,9 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			var hotkeyLabel = widget.Get<LabelWidget>("HOTKEY");
 			var timeLabel = widget.Get<LabelWidget>("TIME");
 			var descLabel = widget.Get<LabelWidget>("DESC");
-			var nameFont = Game.Renderer.Fonts[nameLabel.Font];
-			var timeFont = Game.Renderer.Fonts[timeLabel.Font];
-			var descFont = Game.Renderer.Fonts[descLabel.Font];
+			var nameFont = Game.Renderer.Fonts[nameLabel.Info.Font];
+			var timeFont = Game.Renderer.Fonts[timeLabel.Info.Font];
+			var descFont = Game.Renderer.Fonts[descLabel.Info.Font];
 			var name = "";
 			var time = "";
 			var desc = "";

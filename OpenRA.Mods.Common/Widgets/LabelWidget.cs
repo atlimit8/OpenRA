@@ -19,42 +19,50 @@ namespace OpenRA.Mods.Common.Widgets
 	public enum TextAlign { Left, Center, Right }
 	public enum TextVAlign { Top, Middle, Bottom }
 
+	public class LabelWidgetInfo : WidgetInfo
+	{
+		[Translate] public readonly string Text = null;
+		public readonly TextAlign Align = TextAlign.Left;
+		public readonly TextVAlign VAlign = TextVAlign.Middle;
+		public readonly string Font = ChromeMetrics.Get<string>("TextFont");
+		public readonly Color TextColor = ChromeMetrics.Get<Color>("TextColor");
+		public readonly bool Contrast = ChromeMetrics.Get<bool>("TextContrast");
+		public readonly bool Shadow = ChromeMetrics.Get<bool>("TextShadow");
+		public readonly Color ContrastColorDark = ChromeMetrics.Get<Color>("TextContrastColorDark");
+		public readonly Color ContrastColorLight = ChromeMetrics.Get<Color>("TextContrastColorLight");
+		public readonly bool WordWrap = false;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new LabelWidget(this, args, parent);
+		}
+	}
+
 	public class LabelWidget : Widget
 	{
-		[Translate] public string Text = null;
-		public TextAlign Align = TextAlign.Left;
-		public TextVAlign VAlign = TextVAlign.Middle;
-		public string Font = ChromeMetrics.Get<string>("TextFont");
-		public Color TextColor = ChromeMetrics.Get<Color>("TextColor");
-		public bool Contrast = ChromeMetrics.Get<bool>("TextContrast");
-		public bool Shadow = ChromeMetrics.Get<bool>("TextShadow");
-		public Color ContrastColorDark = ChromeMetrics.Get<Color>("TextContrastColorDark");
-		public Color ContrastColorLight = ChromeMetrics.Get<Color>("TextContrastColorLight");
+		public new LabelWidgetInfo Info { get { return (LabelWidgetInfo)WidgetInfo; } }
+
+		public string Text;
 		public bool WordWrap = false;
 		public Func<string> GetText;
 		public Func<Color> GetColor;
 		public Func<Color> GetContrastColorDark;
 		public Func<Color> GetContrastColorLight;
 
-		public LabelWidget()
+		public LabelWidget(LabelWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
+			Text = info.Text;
 			GetText = () => Text;
-			GetColor = () => TextColor;
-			GetContrastColorDark = () => ContrastColorDark;
-			GetContrastColorLight = () => ContrastColorLight;
+			GetColor = () => info.TextColor;
+			GetContrastColorDark = () => info.ContrastColorDark;
+			GetContrastColorLight = () => info.ContrastColorLight;
 		}
 
 		protected LabelWidget(LabelWidget other)
 			: base(other)
 		{
 			Text = other.Text;
-			Align = other.Align;
-			Font = other.Font;
-			TextColor = other.TextColor;
-			Contrast = other.Contrast;
-			ContrastColorDark = other.ContrastColorDark;
-			ContrastColorLight = other.ContrastColorLight;
-			Shadow = other.Shadow;
 			WordWrap = other.WordWrap;
 			GetText = other.GetText;
 			GetColor = other.GetColor;
@@ -65,8 +73,8 @@ namespace OpenRA.Mods.Common.Widgets
 		public override void Draw()
 		{
 			SpriteFont font;
-			if (!Game.Renderer.Fonts.TryGetValue(Font, out font))
-				throw new ArgumentException("Requested font '{0}' was not found.".F(Font));
+			if (!Game.Renderer.Fonts.TryGetValue(Info.Font, out font))
+				throw new ArgumentException("Requested font '{0}' was not found.".F(Info.Font));
 
 			var text = GetText();
 			if (text == null)
@@ -75,16 +83,16 @@ namespace OpenRA.Mods.Common.Widgets
 			var textSize = font.Measure(text);
 			var position = RenderOrigin;
 
-			if (VAlign == TextVAlign.Middle)
+			if (Info.VAlign == TextVAlign.Middle)
 				position += new int2(0, (Bounds.Height - textSize.Y) / 2);
 
-			if (VAlign == TextVAlign.Bottom)
+			if (Info.VAlign == TextVAlign.Bottom)
 				position += new int2(0, Bounds.Height - textSize.Y);
 
-			if (Align == TextAlign.Center)
+			if (Info.Align == TextAlign.Center)
 				position += new int2((Bounds.Width - textSize.X) / 2, 0);
 
-			if (Align == TextAlign.Right)
+			if (Info.Align == TextAlign.Right)
 				position += new int2(Bounds.Width - textSize.X, 0);
 
 			if (WordWrap)
@@ -93,9 +101,9 @@ namespace OpenRA.Mods.Common.Widgets
 			var color = GetColor();
 			var bgDark = GetContrastColorDark();
 			var bgLight = GetContrastColorLight();
-			if (Contrast)
+			if (Info.Contrast)
 				font.DrawTextWithContrast(text, position, color, bgDark, bgLight, 2);
-			else if (Shadow)
+			else if (Info.Shadow)
 				font.DrawTextWithShadow(text, position, color, bgDark, bgLight, 1);
 			else
 				font.DrawText(text, position, color);

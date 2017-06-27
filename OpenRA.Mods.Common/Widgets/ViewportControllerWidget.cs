@@ -21,12 +21,24 @@ namespace OpenRA.Mods.Common.Widgets
 {
 	public enum WorldTooltipType { None, Unexplored, Actor, FrozenActor, Resource }
 
-	public class ViewportControllerWidget : Widget
+	public class ViewportControllerWidgetInfo : WidgetInfo
 	{
-		readonly ResourceLayer resourceLayer;
-
 		public readonly string TooltipTemplate = "WORLD_TOOLTIP";
 		public readonly string TooltipContainer;
+
+		public readonly int EdgeScrollThreshold = 5;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ViewportControllerWidget(this, args, parent);
+		}
+	}
+
+	public class ViewportControllerWidget : Widget
+	{
+		public new ViewportControllerWidgetInfo Info { get { return (ViewportControllerWidgetInfo)WidgetInfo; } }
+		readonly ResourceLayer resourceLayer;
+
 		Lazy<TooltipContainerWidget> tooltipContainer;
 
 		public WorldTooltipType TooltipType { get; private set; }
@@ -34,8 +46,6 @@ namespace OpenRA.Mods.Common.Widgets
 		public IProvideTooltipInfo[] ActorTooltipExtra { get; private set; }
 		public FrozenActor FrozenActorTooltip { get; private set; }
 		public ResourceType ResourceTooltip { get; private set; }
-
-		public int EdgeScrollThreshold = 5;
 
 		int2? joystickScrollStart, joystickScrollEnd;
 		int2? standardScrollStart;
@@ -101,29 +111,29 @@ namespace OpenRA.Mods.Common.Widgets
 				worldRenderer.Viewport.Center((WPos)bookmark);
 		}
 
-		[ObjectCreator.UseCtor]
-		public ViewportControllerWidget(World world, WorldRenderer worldRenderer)
+		public ViewportControllerWidget(ViewportControllerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.world = world;
-			this.worldRenderer = worldRenderer;
+			world = args.Get<World>("world");
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 
 			resourceLayer = world.WorldActor.TraitOrDefault<ResourceLayer>();
 		}
 
 		public override void MouseEntered()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 
-			tooltipContainer.Value.SetTooltip(TooltipTemplate,
+			tooltipContainer.Value.SetTooltip(Info.TooltipTemplate,
 				new WidgetArgs() { { "world", world }, { "viewport", this } });
 		}
 
 		public override void MouseExited()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 
 			tooltipContainer.Value.RemoveTooltip();
@@ -464,13 +474,13 @@ namespace OpenRA.Mods.Common.Widgets
 		ScrollDirection CheckForDirections()
 		{
 			var directions = ScrollDirection.None;
-			if (Viewport.LastMousePos.X < EdgeScrollThreshold)
+			if (Viewport.LastMousePos.X < Info.EdgeScrollThreshold)
 				directions |= ScrollDirection.Left;
-			if (Viewport.LastMousePos.Y < EdgeScrollThreshold)
+			if (Viewport.LastMousePos.Y < Info.EdgeScrollThreshold)
 				directions |= ScrollDirection.Up;
-			if (Viewport.LastMousePos.X >= Game.Renderer.Resolution.Width - EdgeScrollThreshold)
+			if (Viewport.LastMousePos.X >= Game.Renderer.Resolution.Width - Info.EdgeScrollThreshold)
 				directions |= ScrollDirection.Right;
-			if (Viewport.LastMousePos.Y >= Game.Renderer.Resolution.Height - EdgeScrollThreshold)
+			if (Viewport.LastMousePos.Y >= Game.Renderer.Resolution.Height - Info.EdgeScrollThreshold)
 				directions |= ScrollDirection.Down;
 
 			return directions;

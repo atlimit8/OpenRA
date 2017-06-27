@@ -36,7 +36,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 				Action<int, int> updateBackground = (_, icons) =>
 				{
-					var rowHeight = palette.IconSize.Y + palette.IconMargin;
+					var rowHeight = palette.Info.IconSize.Y + palette.Info.IconMargin;
 
 					if (background != null)
 					{

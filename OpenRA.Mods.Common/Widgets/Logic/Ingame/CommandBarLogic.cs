@@ -188,7 +188,7 @@ namespace OpenRA.Mods.Common.Widgets
 		void BindButtonIcon(ButtonWidget button)
 		{
 			var icon = button.Get<ImageWidget>("ICON");
-			icon.GetImageName = () => button.IsDisabled() ? icon.ImageName + "-disabled" : icon.ImageName;
+			icon.GetImageName = () => button.IsDisabled() ? icon.Info.ImageName + "-disabled" : icon.Info.ImageName;
 		}
 
 		bool IsForceModifiersActive(Modifiers modifiers)

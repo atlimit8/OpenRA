@@ -9,21 +9,29 @@
  */
 #endregion
 
+using OpenRA.Widgets;
+
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class ProductionTypeButtonWidget : ButtonWidget
+	public class ProductionTypeButtonWidgetInfo : ButtonWidgetInfo
 	{
 		public readonly string ProductionGroup;
 		public readonly string HotkeyName;
 
-		[ObjectCreator.UseCtor]
-		public ProductionTypeButtonWidget(ModData modData)
-			: base(modData) { }
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ProductionTypeButtonWidget(this, args, parent);
+		}
+	}
+
+	public class ProductionTypeButtonWidget : ButtonWidget
+	{
+		public new ProductionTypeButtonWidgetInfo Info { get { return (ProductionTypeButtonWidgetInfo)WidgetInfo; } }
+
+		public ProductionTypeButtonWidget(ProductionTypeButtonWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent) { }
 
 		protected ProductionTypeButtonWidget(ProductionTypeButtonWidget other)
-			: base(other)
-		{
-			ProductionGroup = other.ProductionGroup;
-		}
+			: base(other) { }
 	}
 }

@@ -301,7 +301,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 		public static void SetupNameWidget(Widget parent, Session.Slot s, Session.Client c)
 		{
 			var name = parent.Get<LabelWidget>("NAME");
-			var font = Game.Renderer.Fonts[name.Font];
+			var font = Game.Renderer.Fonts[name.Info.Font];
 			var label = WidgetUtils.TruncateText(c.Name, name.Bounds.Width, font);
 			name.GetText = () => label;
 		}
@@ -491,7 +491,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 			var client = player.World.LobbyInfo.ClientWithIndex(player.ClientIndex);
 			var playerName = template.Get<LabelWidget>("PLAYER");
-			var playerNameFont = Game.Renderer.Fonts[playerName.Font];
+			var playerNameFont = Game.Renderer.Fonts[playerName.Info.Font];
 			var suffixLength = new CachedTransform<string, int>(s => playerNameFont.Measure(s).X);
 			var name = new CachedTransform<Pair<string, int>, string>(c =>
 				WidgetUtils.TruncateText(c.First, playerName.Bounds.Width - c.Second, playerNameFont));
@@ -531,7 +531,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			var textLabel = template.Get<LabelWidget>("TEXT");
 
 			var name = from + ":";
-			var font = Game.Renderer.Fonts[nameLabel.Font];
+			var font = Game.Renderer.Fonts[nameLabel.Info.Font];
 			var nameSize = font.Measure(from);
 
 			var time = DateTime.Now;

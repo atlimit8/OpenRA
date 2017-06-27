@@ -20,9 +20,19 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class ActorPreviewWidgetInfo : WidgetInfo
+	{
+		public readonly bool Animate = false;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ActorPreviewWidget(this, args, parent);
+		}
+	}
+
 	public class ActorPreviewWidget : Widget
 	{
-		public bool Animate = false;
+		public new ActorPreviewWidgetInfo Info { get { return (ActorPreviewWidgetInfo)WidgetInfo; } }
 		public Func<float> GetScale = () => 1f;
 
 		readonly WorldRenderer worldRenderer;
@@ -31,10 +41,10 @@ namespace OpenRA.Mods.Common.Widgets
 		public int2 PreviewOffset { get; private set; }
 		public int2 IdealPreviewSize { get; private set; }
 
-		[ObjectCreator.UseCtor]
-		public ActorPreviewWidget(WorldRenderer worldRenderer)
+		public ActorPreviewWidget(ActorPreviewWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.worldRenderer = worldRenderer;
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
 		}
 
 		protected ActorPreviewWidget(ActorPreviewWidget other)
@@ -108,7 +118,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void Tick()
 		{
-			if (Animate)
+			if (Info.Animate)
 				foreach (var p in preview)
 					p.Tick();
 		}

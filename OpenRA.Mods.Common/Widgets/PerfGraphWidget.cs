@@ -9,6 +9,7 @@
  */
 #endregion
 
+using System;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Support;
@@ -16,8 +17,19 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class PerfGraphWidgetInfo : WidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new PerfGraphWidget(this, args, parent);
+		}
+	}
+
 	public class PerfGraphWidget : Widget
 	{
+		public PerfGraphWidget(PerfGraphWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent) { }
+
 		public override void Draw()
 		{
 			var cr = Game.Renderer.RgbaColorRenderer;

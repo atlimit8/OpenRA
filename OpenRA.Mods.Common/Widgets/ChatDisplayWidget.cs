@@ -17,19 +17,30 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class ChatDisplayWidget : Widget
+	public class ChatDisplayWidgetInfo : WidgetInfo
 	{
+		public readonly string Notification = "";
+		public readonly int LogLength = 9;
 		public readonly int RemoveTime = 0;
 		public readonly bool UseContrast = false;
 		public readonly bool UseShadow = false;
 		public readonly Color BackgroundColorDark = ChromeMetrics.Get<Color>("TextContrastColorDark");
 		public readonly Color BackgroundColorLight = ChromeMetrics.Get<Color>("TextContrastColorLight");
-		public string Notification = "";
 
-		const int LogLength = 9;
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ChatDisplayWidget(this, args, parent);
+		}
+	}
+
+	public class ChatDisplayWidget : Widget
+	{
+		public new ChatDisplayWidgetInfo Info { get { return (ChatDisplayWidgetInfo)WidgetInfo; } }
 		List<ChatLine> recentLines = new List<ChatLine>();
 
 		public override Rectangle EventBounds { get { return Rectangle.Empty; } }
+
+		public ChatDisplayWidget(ChatDisplayWidgetInfo info, WidgetArgs args, Widget parent) : base(info, args, parent) { }
 
 		public override void Draw()
 		{
@@ -59,20 +70,20 @@ namespace OpenRA.Mods.Common.Widgets
 
 				if (owner != null)
 				{
-					if (UseContrast)
+					if (Info.UseContrast)
 						font.DrawTextWithContrast(owner, chatpos,
-							line.Color, BackgroundColorDark, BackgroundColorLight, 1);
-					else if (UseShadow)
+							line.Color, Info.BackgroundColorDark, Info.BackgroundColorLight, 1);
+					else if (Info.UseShadow)
 						font.DrawTextWithShadow(owner, chatpos,
-							line.Color, BackgroundColorDark, BackgroundColorLight, 1);
+							line.Color, Info.BackgroundColorDark, Info.BackgroundColorLight, 1);
 					else
 						font.DrawText(owner, chatpos, line.Color);
 				}
 
-				if (UseContrast)
+				if (Info.UseContrast)
 					font.DrawTextWithContrast(text, chatpos + new int2(inset, 0),
 						Color.White, Color.Black, 1);
-				else if (UseShadow)
+				else if (Info.UseShadow)
 					font.DrawTextWithShadow(text, chatpos + new int2(inset, 0),
 						Color.White, Color.Black, 1);
 				else
@@ -84,12 +95,12 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public void AddLine(Color c, string from, string text)
 		{
-			recentLines.Add(new ChatLine(from, text, Game.LocalTick + RemoveTime, c));
+			recentLines.Add(new ChatLine(from, text, Game.LocalTick + Info.RemoveTime, c));
 
-			if (Notification != null)
-				Game.Sound.Play(SoundType.UI, Notification);
+			if (Info.Notification != null)
+				Game.Sound.Play(SoundType.UI, Info.Notification);
 
-			while (recentLines.Count > LogLength)
+			while (recentLines.Count > Info.LogLength)
 				recentLines.RemoveAt(0);
 		}
 
@@ -101,7 +112,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void Tick()
 		{
-			if (RemoveTime == 0)
+			if (Info.RemoveTime == 0)
 				return;
 
 			// This takes advantage of the fact that recentLines is ordered by expiration, from sooner to later

@@ -14,30 +14,38 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class LabelWithTooltipWidget : LabelWidget
+	public class LabelWithTooltipWidgetInfo : LabelWidgetInfo
 	{
 		public readonly string TooltipTemplate;
 		public readonly string TooltipContainer;
-		Lazy<TooltipContainerWidget> tooltipContainer;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new LabelWithTooltipWidget(this, args, parent);
+		}
+	}
+
+	public class LabelWithTooltipWidget : LabelWidget
+	{
+		public new LabelWithTooltipWidgetInfo Info { get { return (LabelWithTooltipWidgetInfo)WidgetInfo; } }
+
+		readonly Lazy<TooltipContainerWidget> tooltipContainer;
 
 		public Func<string> GetTooltipText = () => "";
 
-		[ObjectCreator.UseCtor]
-		public LabelWithTooltipWidget()
-			: base()
+		public LabelWithTooltipWidget(LabelWithTooltipWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 		}
 
 		protected LabelWithTooltipWidget(LabelWithTooltipWidget other)
 			: base(other)
 		{
-			TooltipTemplate = other.TooltipTemplate;
-			TooltipContainer = other.TooltipContainer;
-
+			var info = other.Info;
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 
 			GetTooltipText = other.GetTooltipText;
 		}
@@ -46,16 +54,16 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void MouseEntered()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 
 			if (GetTooltipText != null)
-				tooltipContainer.Value.SetTooltip(TooltipTemplate, new WidgetArgs() { { "getText", GetTooltipText } });
+				tooltipContainer.Value.SetTooltip(Info.TooltipTemplate, new WidgetArgs() { { "getText", GetTooltipText } });
 		}
 
 		public override void MouseExited()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 
 			tooltipContainer.Value.RemoveTooltip();

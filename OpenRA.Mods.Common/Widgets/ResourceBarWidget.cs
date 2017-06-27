@@ -18,17 +18,30 @@ namespace OpenRA.Mods.Common.Widgets
 {
 	public enum ResourceBarOrientation { Vertical, Horizontal }
 	public enum ResourceBarStyle { Flat, Bevelled }
-	public class ResourceBarWidget : Widget
+
+	public class ResourceBarWidgetInfo : WidgetInfo
 	{
 		public readonly string TooltipTemplate;
 		public readonly string TooltipContainer;
+
+		public readonly string TooltipFormat = "";
+		public readonly ResourceBarOrientation Orientation = ResourceBarOrientation.Vertical;
+		public readonly ResourceBarStyle Style = ResourceBarStyle.Flat;
+		public readonly string IndicatorCollection = "sidebar-bits";
+		public readonly string IndicatorImage = "indicator";
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ResourceBarWidget(this, args, parent);
+		}
+	}
+
+	public class ResourceBarWidget : Widget
+	{
+		public new ResourceBarWidgetInfo Info { get { return (ResourceBarWidgetInfo)WidgetInfo; } }
 		Lazy<TooltipContainerWidget> tooltipContainer;
 
 		public string TooltipFormat = "";
-		public ResourceBarOrientation Orientation = ResourceBarOrientation.Vertical;
-		public ResourceBarStyle Style = ResourceBarStyle.Flat;
-		public string IndicatorCollection = "sidebar-bits";
-		public string IndicatorImage = "indicator";
 
 		public Func<float> GetProvided = () => 0;
 		public Func<float> GetUsed = () => 0;
@@ -36,25 +49,26 @@ namespace OpenRA.Mods.Common.Widgets
 		EWMA providedLerp = new EWMA(0.3f);
 		EWMA usedLerp = new EWMA(0.3f);
 
-		[ObjectCreator.UseCtor]
-		public ResourceBarWidget(World world)
+		public ResourceBarWidget(ResourceBarWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
+			TooltipFormat = info.TooltipFormat;
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 		}
 
 		public override void MouseEntered()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 
 			Func<string> getText = () => TooltipFormat.F(GetUsed(), GetProvided());
-			tooltipContainer.Value.SetTooltip(TooltipTemplate, new WidgetArgs() { { "getText", getText } });
+			tooltipContainer.Value.SetTooltip(Info.TooltipTemplate, new WidgetArgs() { { "getText", getText } });
 		}
 
 		public override void MouseExited()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 			tooltipContainer.Value.RemoveTooltip();
 		}
@@ -72,12 +86,12 @@ namespace OpenRA.Mods.Common.Widgets
 			var usedFrac = usedLerp.Update(used / scaleBy);
 
 			var b = RenderBounds;
-			var indicator = ChromeProvider.GetImage(IndicatorCollection, IndicatorImage);
+			var indicator = ChromeProvider.GetImage(Info.IndicatorCollection, Info.IndicatorImage);
 
 			var color = GetBarColor();
-			if (Orientation == ResourceBarOrientation.Vertical)
+			if (Info.Orientation == ResourceBarOrientation.Vertical)
 			{
-				if (Style == ResourceBarStyle.Bevelled)
+				if (Info.Style == ResourceBarStyle.Bevelled)
 				{
 					var colorDark = Exts.ColorLerp(0.25f, color, Color.Black);
 					for (var i = 0; i < b.Height; i++)
@@ -109,7 +123,7 @@ namespace OpenRA.Mods.Common.Widgets
 			}
 			else
 			{
-				if (Style == ResourceBarStyle.Bevelled)
+				if (Info.Style == ResourceBarStyle.Bevelled)
 				{
 					var colorDark = Exts.ColorLerp(0.25f, color, Color.Black);
 					for (var i = 0; i < b.Height; i++)

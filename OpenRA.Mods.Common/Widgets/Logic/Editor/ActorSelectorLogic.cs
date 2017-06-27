@@ -122,7 +122,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 					// Scale templates to fit within the panel
 					var scale = 1f;
 					if (scale * preview.IdealPreviewSize.X > itemTemplate.Bounds.Width)
-						scale = (itemTemplate.Bounds.Width - panel.ItemSpacing) / (float)preview.IdealPreviewSize.X;
+						scale = (itemTemplate.Bounds.Width - panel.Info.ItemSpacing) / (float)preview.IdealPreviewSize.X;
 
 					preview.GetScale = () => scale;
 					preview.Bounds.Width = (int)(scale * preview.IdealPreviewSize.X);

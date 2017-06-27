@@ -49,8 +49,8 @@ namespace OpenRA.Mods.Common.Widgets
 		void BindStanceButton(ButtonWidget button, UnitStance stance, Func<ButtonWidget, Hotkey> getHotkey)
 		{
 			var icon = button.Get<ImageWidget>("ICON");
-			icon.GetImageName = () => button.IsDisabled() ? icon.ImageName + "-disabled" :
-				button.IsHighlighted() ? icon.ImageName + "-active" : icon.ImageName;
+			icon.GetImageName = () => button.IsDisabled() ? icon.Info.ImageName + "-disabled" :
+				button.IsHighlighted() ? icon.Info.ImageName + "-active" : icon.Info.ImageName;
 
 			button.GetKey = getHotkey;
 			button.IsDisabled = () => { UpdateStateIfNecessary(); return !actorStances.Any(); };

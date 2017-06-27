@@ -14,36 +14,45 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class ScrollItemWidgetInfo : ButtonWidgetInfo
+	{
+		public readonly string ItemKey;
+		public readonly string BaseName = "scrollitem";
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ScrollItemWidget(this, args, parent);
+		}
+	}
+
 	public class ScrollItemWidget : ButtonWidget
 	{
+		public new ScrollItemWidgetInfo Info { get { return (ScrollItemWidgetInfo)WidgetInfo; } }
 		public string ItemKey;
-		public string BaseName = "scrollitem";
 
-		[ObjectCreator.UseCtor]
-		public ScrollItemWidget(ModData modData)
-			: base(modData)
+		public ScrollItemWidget(ScrollItemWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
 			IsVisible = () => false;
 			VisualHeight = 0;
 			IgnoreChildMouseOver = true;
+			ItemKey = info.ItemKey;
 		}
 
-		protected ScrollItemWidget(ScrollItemWidget other)
+		public ScrollItemWidget(ScrollItemWidget other)
 			: base(other)
 		{
 			IsVisible = () => false;
 			VisualHeight = 0;
 			IgnoreChildMouseOver = true;
-			Key = other.Key;
-			BaseName = other.BaseName;
 		}
 
 		public Func<bool> IsSelected = () => false;
 
 		public override void Draw()
 		{
-			var state = IsSelected() ? BaseName + "-selected" :
-				Ui.MouseOverWidget == this ? BaseName + "-hover" :
+			var state = IsSelected() ? Info.BaseName + "-selected" :
+				Ui.MouseOverWidget == this ? Info.BaseName + "-hover" :
 				null;
 
 			if (state != null)

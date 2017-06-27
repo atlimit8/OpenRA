@@ -16,6 +16,14 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class TerrainTemplatePreviewWidgetInfo : WidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new TerrainTemplatePreviewWidget(this, args, parent);
+		}
+	}
+
 	public class TerrainTemplatePreviewWidget : Widget
 	{
 		public Func<float> GetScale = () => 1f;
@@ -44,11 +52,11 @@ namespace OpenRA.Mods.Common.Widgets
 			}
 		}
 
-		[ObjectCreator.UseCtor]
-		public TerrainTemplatePreviewWidget(WorldRenderer worldRenderer, World world)
+		public TerrainTemplatePreviewWidget(TerrainTemplatePreviewWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.worldRenderer = worldRenderer;
-			tileset = world.Map.Rules.TileSet;
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
+			tileset = args.Get<World>("world").Map.Rules.TileSet;
 		}
 
 		protected TerrainTemplatePreviewWidget(TerrainTemplatePreviewWidget other)

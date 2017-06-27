@@ -20,22 +20,32 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class ObserverProductionIconsWidget : Widget
+	public class ObserverProductionIconsWidgetInfo : WidgetInfo
 	{
 		public readonly string TooltipTemplate = "PRODUCTION_TOOLTIP";
 		public readonly string TooltipContainer;
+
+		public readonly int IconWidth = 32;
+		public readonly int IconHeight = 24;
+		public readonly int IconSpacing = 8;
+
+		public readonly string ClockAnimation = "clock";
+		public readonly string ClockSequence = "idle";
+		public readonly string ClockPalette = "chrome";
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ObserverProductionIconsWidget(this, args, parent);
+		}
+	}
+
+	public class ObserverProductionIconsWidget : Widget
+	{
+		public new ObserverProductionIconsWidgetInfo Info { get { return (ObserverProductionIconsWidgetInfo)WidgetInfo; } }
 		public Func<Player> GetPlayer;
 		readonly World world;
 		readonly WorldRenderer worldRenderer;
 		readonly int timestep;
-
-		public int IconWidth = 32;
-		public int IconHeight = 24;
-		public int IconSpacing = 8;
-
-		public string ClockAnimation = "clock";
-		public string ClockSequence = "idle";
-		public string ClockPalette = "chrome";
 
 		public ProductionIcon TooltipIcon { get; private set; }
 		public Func<ProductionIcon> GetTooltipIcon;
@@ -48,45 +58,36 @@ namespace OpenRA.Mods.Common.Widgets
 		int lastIconIdx;
 		Lazy<TooltipContainerWidget> tooltipContainer;
 
-		[ObjectCreator.UseCtor]
-		public ObserverProductionIconsWidget(World world, WorldRenderer worldRenderer)
+		public ObserverProductionIconsWidget(ObserverProductionIconsWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.world = world;
-			this.worldRenderer = worldRenderer;
+			world = args.Get<World>("world");
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
 			clocks = new Dictionary<ProductionQueue, Animation>();
 			timestep = world.IsReplay ? world.WorldActor.Trait<MapOptions>().GameSpeed.Timestep : world.Timestep;
 			GetTooltipIcon = () => TooltipIcon;
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
-			iconSize = new float2(IconWidth, IconHeight);
+				Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
+			iconSize = new float2(Info.IconWidth, Info.IconHeight);
 		}
 
 		protected ObserverProductionIconsWidget(ObserverProductionIconsWidget other)
 			: base(other)
 		{
+			var info = other.Info;
 			GetPlayer = other.GetPlayer;
 			world = other.world;
 			worldRenderer = other.worldRenderer;
 			timestep = other.timestep;
 			clocks = other.clocks;
 
-			IconWidth = other.IconWidth;
-			IconHeight = other.IconHeight;
-			IconSpacing = other.IconSpacing;
-			iconSize = new float2(IconWidth, IconHeight);
-
-			ClockAnimation = other.ClockAnimation;
-			ClockSequence = other.ClockSequence;
-			ClockPalette = other.ClockPalette;
+			iconSize = new float2(info.IconWidth, info.IconHeight);
 
 			TooltipIcon = other.TooltipIcon;
 			GetTooltipIcon = () => TooltipIcon;
 
-			TooltipTemplate = other.TooltipTemplate;
-			TooltipContainer = other.TooltipContainer;
-
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 			renderBounds = Rectangle.Empty;
 		}
 
@@ -112,7 +113,7 @@ namespace OpenRA.Mods.Common.Widgets
 			foreach (var queue in queues)
 			{
 				if (!clocks.ContainsKey(queue.Trait))
-					clocks.Add(queue.Trait, new Animation(world, ClockAnimation));
+					clocks.Add(queue.Trait, new Animation(world, Info.ClockAnimation));
 
 				var current = queue.Trait.CurrentItem();
 				if (current == null || queue.i >= icons.Length)
@@ -140,11 +141,11 @@ namespace OpenRA.Mods.Common.Widgets
 						worldRenderer.Palette(pio.Palette), 0.5f);
 
 				var clock = clocks[queue.Trait];
-				clock.PlayFetchIndex(ClockSequence,
+				clock.PlayFetchIndex(Info.ClockSequence,
 					() => current.TotalTime == 0 ? 0 : ((current.TotalTime - current.RemainingTime)
 					* (clock.CurrentSequence.Length - 1) / current.TotalTime));
 				clock.Tick();
-				WidgetUtils.DrawSHPCentered(clock.Image, location + 0.5f * iconSize, worldRenderer.Palette(ClockPalette), 0.5f);
+				WidgetUtils.DrawSHPCentered(clock.Image, location + 0.5f * iconSize, worldRenderer.Palette(Info.ClockPalette), 0.5f);
 
 				var tiny = Game.Renderer.Fonts["Tiny"];
 				var text = GetOverlayForItem(current, timestep);
@@ -172,14 +173,14 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void MouseEntered()
 		{
-			if (TooltipContainer != null)
-				tooltipContainer.Value.SetTooltip(TooltipTemplate,
+			if (Info.TooltipContainer != null)
+				tooltipContainer.Value.SetTooltip(Info.TooltipTemplate,
 					new WidgetArgs() { { "player", GetPlayer() }, { "getTooltipIcon", GetTooltipIcon } });
 		}
 
 		public override void MouseExited()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 
 			tooltipContainer.Value.RemoveTooltip();
@@ -205,14 +206,14 @@ namespace OpenRA.Mods.Common.Widgets
 
 		void InitIcons(Rectangle renderBounds)
 		{
-			var iconWidthWithSpacing = IconWidth + IconSpacing;
+			var iconWidthWithSpacing = Info.IconWidth + Info.IconSpacing;
 			var numOfIcons = renderBounds.Width / iconWidthWithSpacing;
 			iconRects = new Rectangle[numOfIcons];
 			icons = new ProductionIcon[numOfIcons];
 
 			for (var i = 0; i < numOfIcons; i++)
 			{
-				iconRects[i] = new Rectangle(renderBounds.X + i * iconWidthWithSpacing, renderBounds.Y, IconWidth, IconHeight);
+				iconRects[i] = new Rectangle(renderBounds.X + i * iconWidthWithSpacing, renderBounds.Y, Info.IconWidth, Info.IconHeight);
 				icons[i] = new ProductionIcon();
 			}
 		}

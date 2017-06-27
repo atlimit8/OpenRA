@@ -128,6 +128,7 @@ namespace OpenRA
 			// horribly when you use ModData in unexpected ways.
 			ChromeMetrics.Initialize(this);
 			ChromeProvider.Initialize(this);
+			WidgetLoader.Initialize();
 
 			Game.Sound.Initialize(SoundLoaders, fileSystem);
 

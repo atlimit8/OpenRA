@@ -17,10 +17,20 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class ColorMixerWidgetInfo : WidgetInfo
+	{
+		public readonly float STrim = 0.025f;
+		public readonly float VTrim = 0.025f;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ColorMixerWidget(this, args, parent);
+		}
+	}
+
 	public class ColorMixerWidget : Widget
 	{
-		public float STrim = 0.025f;
-		public float VTrim = 0.025f;
+		public new ColorMixerWidgetInfo Info { get { return (ColorMixerWidgetInfo)WidgetInfo; } }
 
 		public event Action OnChange = () => { };
 
@@ -41,41 +51,13 @@ namespace OpenRA.Mods.Common.Widgets
 		float[] sRange = { 0.0f, 1.0f };
 		float[] vRange = { 0.0f, 1.0f };
 
-		public ColorMixerWidget() { }
-		public ColorMixerWidget(ColorMixerWidget other)
-			: base(other)
+		public ColorMixerWidget(ColorMixerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			OnChange = other.OnChange;
-			H = other.H;
-			S = other.S;
-			V = other.V;
-
-			sRange = (float[])other.sRange.Clone();
-			vRange = (float[])other.vRange.Clone();
-
-			STrim = other.STrim;
-			VTrim = other.VTrim;
-		}
-
-		public void SetPaletteRange(float sMin, float sMax, float vMin, float vMax)
-		{
-			sRange[0] = sMin + STrim;
-			sRange[1] = sMax - STrim;
-			vRange[0] = vMin + VTrim;
-			vRange[1] = vMax - VTrim;
-
-			var rect = new Rectangle((int)(255 * sRange[0]), (int)(255 * (1 - vRange[1])), (int)(255 * (sRange[1] - sRange[0])) + 1, (int)(255 * (vRange[1] - vRange[0])) + 1);
-			mixerSprite = new Sprite(mixerSprite.Sheet, rect, TextureChannel.Alpha);
-		}
-
-		public override void Initialize(WidgetArgs args)
-		{
-			base.Initialize(args);
-
-			sRange[0] += STrim;
-			sRange[1] -= STrim;
-			vRange[0] += VTrim;
-			vRange[1] -= VTrim;
+			sRange[0] += info.STrim;
+			sRange[1] -= info.STrim;
+			vRange[0] += info.VTrim;
+			vRange[1] -= info.VTrim;
 
 			// Bitmap data is generated in a background thread and then flipped
 			front = new byte[4 * 256 * 256];
@@ -86,6 +68,29 @@ namespace OpenRA.Mods.Common.Widgets
 			mixerSheet.GetTexture().SetData(front, 256, 256);
 			mixerSprite = new Sprite(mixerSheet, rect, TextureChannel.Alpha);
 			GenerateBitmap();
+		}
+
+		public ColorMixerWidget(ColorMixerWidget other)
+			: base(other)
+		{
+			OnChange = other.OnChange;
+			H = other.H;
+			S = other.S;
+			V = other.V;
+
+			sRange = (float[])other.sRange.Clone();
+			vRange = (float[])other.vRange.Clone();
+		}
+
+		public void SetPaletteRange(float sMin, float sMax, float vMin, float vMax)
+		{
+			sRange[0] = sMin + Info.STrim;
+			sRange[1] = sMax - Info.STrim;
+			vRange[0] = vMin + Info.VTrim;
+			vRange[1] = vMax - Info.VTrim;
+
+			var rect = new Rectangle((int)(255 * sRange[0]), (int)(255 * (1 - vRange[1])), (int)(255 * (sRange[1] - sRange[0])) + 1, (int)(255 * (vRange[1] - vRange[0])) + 1);
+			mixerSprite = new Sprite(mixerSprite.Sheet, rect, TextureChannel.Alpha);
 		}
 
 		void GenerateBitmap()

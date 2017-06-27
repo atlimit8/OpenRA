@@ -14,9 +14,19 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class LogicTickerWidgetInfo : WidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new LogicTickerWidget(this, args, parent);
+		}
+	}
+
 	public class LogicTickerWidget : Widget
 	{
 		public Action OnTick = () => { };
 		public override void Tick() { OnTick(); }
+		public LogicTickerWidget(LogicTickerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent) { }
 	}
 }

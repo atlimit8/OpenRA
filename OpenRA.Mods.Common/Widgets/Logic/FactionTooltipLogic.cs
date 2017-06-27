@@ -24,7 +24,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 			var header = widget.Get<LabelWidget>("HEADER");
 			var headerLine = lines[0];
-			var headerFont = Game.Renderer.Fonts[header.Font];
+			var headerFont = Game.Renderer.Fonts[header.Info.Font];
 			var headerSize = headerFont.Measure(headerLine);
 			header.Bounds.Width += headerSize.X;
 			header.Bounds.Height += headerSize.Y;
@@ -34,7 +34,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			{
 				var description = widget.Get<LabelWidget>("DESCRIPTION");
 				var descriptionLines = lines.Skip(1).ToArray();
-				var descriptionFont = Game.Renderer.Fonts[description.Font];
+				var descriptionFont = Game.Renderer.Fonts[description.Info.Font];
 				description.Bounds.Y += header.Bounds.Y + header.Bounds.Height;
 				description.Bounds.Width += descriptionLines.Select(l => descriptionFont.Measure(l).X).Max();
 				description.Bounds.Height += descriptionFont.Measure(descriptionLines.First()).Y * descriptionLines.Length;

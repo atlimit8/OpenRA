@@ -74,12 +74,12 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 			videoPlayer = widget.Get<VqaPlayerWidget>("MISSION_VIDEO");
 			widget.Get("MISSION_BIN").IsVisible = () => playingVideo != PlayingVideo.None;
-			fullscreenVideoPlayer = Ui.LoadWidget<BackgroundWidget>("FULLSCREEN_PLAYER", Ui.Root, new WidgetArgs { { "world", world } });
+			fullscreenVideoPlayer = Ui.CreateWidget<BackgroundWidget>("FULLSCREEN_PLAYER", Ui.Root, new WidgetArgs { { "world", world } });
 
 			descriptionPanel = widget.Get<ScrollPanelWidget>("MISSION_DESCRIPTION_PANEL");
 
 			description = descriptionPanel.Get<LabelWidget>("MISSION_DESCRIPTION");
-			descriptionFont = Game.Renderer.Fonts[description.Font];
+			descriptionFont = Game.Renderer.Fonts[description.Info.Font];
 
 			difficultyButton = widget.Get<DropDownButtonWidget>("DIFFICULTY_DROPDOWNBUTTON");
 			gameSpeedButton = widget.GetOrNull<DropDownButtonWidget>("GAMESPEED_DROPDOWNBUTTON");

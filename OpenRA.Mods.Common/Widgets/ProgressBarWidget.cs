@@ -16,11 +16,21 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class ProgressBarWidgetInfo : WidgetInfo
+	{
+		public readonly string Background = "progressbar-bg";
+		public readonly string Bar = "progressbar-thumb";
+		public readonly Size BarMargin = new Size(2, 2);
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ProgressBarWidget(this, args, parent);
+		}
+	}
+
 	public class ProgressBarWidget : Widget
 	{
-		public string Background = "progressbar-bg";
-		public string Bar = "progressbar-thumb";
-		public Size BarMargin = new Size(2, 2);
+		public new ProgressBarWidgetInfo Info { get { return (ProgressBarWidgetInfo)WidgetInfo; } }
 
 		public int Percentage = 0;
 		public bool Indeterminate = false;
@@ -32,7 +42,8 @@ namespace OpenRA.Mods.Common.Widgets
 		float offset = 0f;
 		float tickStep = 0.04f;
 
-		public ProgressBarWidget()
+		public ProgressBarWidget(ProgressBarWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
 			GetPercentage = () => Percentage;
 			IsIndeterminate = () => Indeterminate;
@@ -50,16 +61,16 @@ namespace OpenRA.Mods.Common.Widgets
 		{
 			var rb = RenderBounds;
 			var percentage = GetPercentage();
-			WidgetUtils.DrawPanel(Background, rb);
+			WidgetUtils.DrawPanel(Info.Background, rb);
 
-			var minBarWidth = (int)(ChromeProvider.GetImage(Bar, "border-l").Size.X + ChromeProvider.GetImage(Bar, "border-r").Size.X);
-			var maxBarWidth = rb.Width - BarMargin.Width * 2;
+			var minBarWidth = (int)(ChromeProvider.GetImage(Info.Bar, "border-l").Size.X + ChromeProvider.GetImage(Info.Bar, "border-r").Size.X);
+			var maxBarWidth = rb.Width - Info.BarMargin.Width * 2;
 			var barWidth = wasIndeterminate ? maxBarWidth / 4 : percentage * maxBarWidth / 100;
 			barWidth = Math.Max(barWidth, minBarWidth);
 
 			var barOffset = wasIndeterminate ? (int)(0.75 * offset * maxBarWidth) : 0;
-			var barRect = new Rectangle(rb.X + BarMargin.Width + barOffset, rb.Y + BarMargin.Height, barWidth, rb.Height - 2 * BarMargin.Height);
-			WidgetUtils.DrawPanel(Bar, barRect);
+			var barRect = new Rectangle(rb.X + Info.BarMargin.Width + barOffset, rb.Y + Info.BarMargin.Height, barWidth, rb.Height - 2 * Info.BarMargin.Height);
+			WidgetUtils.DrawPanel(Info.Bar, barRect);
 		}
 
 		bool wasIndeterminate;

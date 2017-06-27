@@ -20,7 +20,7 @@ namespace OpenRA.Widgets
 {
 	public static class Ui
 	{
-		public static Widget Root = new ContainerWidget();
+		public static Widget Root = new ContainerWidget(new ContainerWidgetInfo(), new WidgetArgs(), null);
 
 		public static long LastTickTime = Game.RunTime;
 
@@ -59,7 +59,7 @@ namespace OpenRA.Widgets
 
 		public static Widget OpenWindow(string id, WidgetArgs args)
 		{
-			var window = Game.ModData.WidgetLoader.LoadWidget(args, Root, id);
+			var window = Game.ModData.WidgetLoader.CreateWidget(args, Root, id);
 			if (WindowList.Count > 0)
 				Root.HideChild(WindowList.Peek());
 			WindowList.Push(window);
@@ -71,18 +71,18 @@ namespace OpenRA.Widgets
 			return WindowList.Count > 0 ? WindowList.Peek() : null;
 		}
 
-		public static T LoadWidget<T>(string id, Widget parent, WidgetArgs args) where T : Widget
+		public static T CreateWidget<T>(string id, Widget parent, WidgetArgs args) where T : Widget
 		{
-			var widget = LoadWidget(id, parent, args) as T;
+			var widget = CreateWidget(id, parent, args) as T;
 			if (widget == null)
 				throw new InvalidOperationException(
 					"Widget {0} is not of type {1}".F(id, typeof(T).Name));
 			return widget;
 		}
 
-		public static Widget LoadWidget(string id, Widget parent, WidgetArgs args)
+		public static Widget CreateWidget(string id, Widget parent, WidgetArgs args)
 		{
-			return Game.ModData.WidgetLoader.LoadWidget(args, parent, id);
+			return Game.ModData.WidgetLoader.CreateWidget(args, parent, id);
 		}
 
 		public static void Tick() { Root.TickOuter(); }
@@ -190,18 +190,110 @@ namespace OpenRA.Widgets
 		protected virtual void Dispose(bool disposing) { }
 	}
 
+	public abstract class WidgetInfo
+	{
+		static readonly Dictionary<string, MiniYaml> NoLogicArgs = new Dictionary<string, MiniYaml>();
+
+		[FieldLoader.Ignore]
+		public readonly string Id = null;
+
+		[FieldLoader.LoadUsing("LoadChildren")]
+		public readonly List<WidgetInfo> Children = new List<WidgetInfo>();
+
+		[FieldLoader.LoadUsing("LoadLogicArgs")]
+		public readonly Dictionary<string, MiniYaml> LogicArgs = new Dictionary<string, MiniYaml>();
+
+		public readonly IntegerExpression X;
+		public readonly IntegerExpression Y;
+		public readonly IntegerExpression Width;
+		public readonly IntegerExpression Height;
+		public readonly string[] Logic = { };
+		public readonly bool Visible = true;
+		public readonly bool IgnoreMouseOver;
+		public readonly bool IgnoreChildMouseOver;
+
+		public static WidgetInfo Load(MiniYamlNode node)
+		{
+			var keyParts = node.Key.Split('@');
+			var info = Game.ModData.ObjectCreator.CreateObject<WidgetInfo>(keyParts[0] + "WidgetInfo");
+			FieldLoader.Load(info, node.Value);
+			if (keyParts.Length > 1)
+				FieldLoader.LoadField(info, "Id", keyParts[1]);
+
+			return info;
+		}
+
+		protected abstract Widget Construct(WidgetArgs args, Widget parent = null);
+
+		public Widget Create(WidgetArgs args, Widget parent = null)
+		{
+			var widget = Construct(args, parent);
+			foreach (var child in Children)
+				child.Create(args, widget);
+
+			if (Logic.Any())
+			{
+				args.Add("logicArgs", LogicArgs);
+				args.Add("widget", widget);
+				widget.LogicObjects = Logic.Select(l => Game.ModData.ObjectCreator.CreateObject<ChromeLogic>(l, args)).ToArray();
+				args.Remove("widget");
+				args.Remove("logicArgs");
+			}
+
+			return widget;
+		}
+
+		public Rectangle GetBounds(WidgetArgs args, Widget parent)
+		{
+			// Parse the YAML equations to find the widget bounds
+			var parentBounds = (parent == null)
+				? new Rectangle(0, 0, Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height)
+				: parent.Bounds;
+
+			var substitutions = args.ContainsKey("substitutions") ?
+				new Dictionary<string, int>(args.Get<Dictionary<string, int>>("substitutions")) :
+				new Dictionary<string, int>();
+
+			substitutions.Add("WINDOW_RIGHT", Game.Renderer.Resolution.Width);
+			substitutions.Add("WINDOW_BOTTOM", Game.Renderer.Resolution.Height);
+			substitutions.Add("PARENT_RIGHT", parentBounds.Width);
+			substitutions.Add("PARENT_LEFT", parentBounds.Left);
+			substitutions.Add("PARENT_TOP", parentBounds.Top);
+			substitutions.Add("PARENT_BOTTOM", parentBounds.Height);
+
+			var readOnlySubstitutions = new ReadOnlyDictionary<string, int>(substitutions);
+			var width = Width != null ? Width.Evaluate(readOnlySubstitutions) : 0;
+			var height = Height != null ? Height.Evaluate(readOnlySubstitutions) : 0;
+
+			substitutions.Add("WIDTH", width);
+			substitutions.Add("HEIGHT", height);
+
+			var x = X != null ? X.Evaluate(readOnlySubstitutions) : 0;
+			var y = Y != null ? Y.Evaluate(readOnlySubstitutions) : 0;
+			return new Rectangle(x, y, width, height);
+		}
+
+		public static List<WidgetInfo> LoadChildren(MiniYaml root)
+		{
+			var node = root.Nodes.FirstOrDefault(n => n.Key == "Children");
+			return node != null ? new List<WidgetInfo>(node.Value.Nodes.Select(Load)) : new List<WidgetInfo>();
+		}
+
+		public static Dictionary<string, MiniYaml> LoadLogicArgs(MiniYaml root)
+		{
+			var node = root.Nodes.FirstOrDefault(n => n.Key == "Logic");
+			return node != null ? node.Value.ToDictionary() : NoLogicArgs;
+		}
+	}
+
 	public abstract class Widget
 	{
 		public readonly List<Widget> Children = new List<Widget>();
+		public readonly WidgetInfo WidgetInfo;
+		public WidgetInfo Info { get { return WidgetInfo; } }
 
-		// Info defined in YAML
 		public string Id = null;
-		public IntegerExpression X;
-		public IntegerExpression Y;
-		public IntegerExpression Width;
-		public IntegerExpression Height;
-		public string[] Logic = { };
-		public ChromeLogic[] LogicObjects { get; private set; }
+		public ChromeLogic[] LogicObjects { get; internal set; }
 		public bool Visible = true;
 		public bool IgnoreMouseOver;
 		public bool IgnoreChildMouseOver;
@@ -210,20 +302,14 @@ namespace OpenRA.Widgets
 		public Rectangle Bounds;
 		public Widget Parent = null;
 		public Func<bool> IsVisible;
-		public Widget() { IsVisible = () => Visible; }
 
-		public Widget(Widget widget)
+		protected Widget(Widget widget)
 		{
+			WidgetInfo = widget.WidgetInfo;
 			Id = widget.Id;
-			X = widget.X;
-			Y = widget.Y;
-			Width = widget.Width;
-			Height = widget.Height;
-			Logic = widget.Logic;
 			Visible = widget.Visible;
 
 			Bounds = widget.Bounds;
-			Parent = widget.Parent;
 
 			IsVisible = widget.IsVisible;
 			IgnoreChildMouseOver = widget.IgnoreChildMouseOver;
@@ -231,6 +317,20 @@ namespace OpenRA.Widgets
 
 			foreach (var child in widget.Children)
 				AddChild(child.Clone());
+		}
+
+		protected Widget(WidgetInfo info, WidgetArgs args, Widget parent)
+		{
+			WidgetInfo = info;
+			Id = info.Id;
+			Bounds = info.GetBounds(args, parent);
+			Visible = info.Visible;
+			IsVisible = () => Visible;
+			IgnoreChildMouseOver = info.IgnoreChildMouseOver;
+			IgnoreMouseOver = info.IgnoreMouseOver;
+
+			if (parent != null)
+				parent.AddChild(this);
 		}
 
 		public virtual Widget Clone()
@@ -258,47 +358,10 @@ namespace OpenRA.Widgets
 			}
 		}
 
-		public virtual void Initialize(WidgetArgs args)
+		internal void SetLogicObjects(WidgetInfo info, WidgetArgs args)
 		{
-			// Parse the YAML equations to find the widget bounds
-			var parentBounds = (Parent == null)
-				? new Rectangle(0, 0, Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height)
-				: Parent.Bounds;
-
-			var substitutions = args.ContainsKey("substitutions") ?
-				new Dictionary<string, int>((Dictionary<string, int>)args["substitutions"]) :
-				new Dictionary<string, int>();
-
-			substitutions.Add("WINDOW_RIGHT", Game.Renderer.Resolution.Width);
-			substitutions.Add("WINDOW_BOTTOM", Game.Renderer.Resolution.Height);
-			substitutions.Add("PARENT_RIGHT", parentBounds.Width);
-			substitutions.Add("PARENT_LEFT", parentBounds.Left);
-			substitutions.Add("PARENT_TOP", parentBounds.Top);
-			substitutions.Add("PARENT_BOTTOM", parentBounds.Height);
-
-			var readOnlySubstitutions = new ReadOnlyDictionary<string, int>(substitutions);
-			var width = Width != null ? Width.Evaluate(readOnlySubstitutions) : 0;
-			var height = Height != null ? Height.Evaluate(readOnlySubstitutions) : 0;
-
-			substitutions.Add("WIDTH", width);
-			substitutions.Add("HEIGHT", height);
-
-			var x = X != null ? X.Evaluate(readOnlySubstitutions) : 0;
-			var y = Y != null ? Y.Evaluate(readOnlySubstitutions) : 0;
-			Bounds = new Rectangle(x, y, width, height);
-		}
-
-		public void PostInit(WidgetArgs args)
-		{
-			if (!Logic.Any())
-				return;
-
-			args["widget"] = this;
-
-			LogicObjects = Logic.Select(l => Game.ModData.ObjectCreator.CreateObject<ChromeLogic>(l, args))
+			LogicObjects = info.Logic.Select(l => Game.ModData.ObjectCreator.CreateObject<ChromeLogic>(l, args))
 				.ToArray();
-
-			args.Remove("widget");
 		}
 
 		public virtual Rectangle EventBounds { get { return RenderBounds; } }
@@ -582,13 +645,33 @@ namespace OpenRA.Widgets
 		public Widget Get(string id) { return Get<Widget>(id); }
 	}
 
+	public class ContainerWidgetInfo : WidgetInfo
+	{
+		public readonly bool ClickThrough = true;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ContainerWidget(this, args, parent);
+		}
+	}
+
 	public class ContainerWidget : Widget
 	{
 		public readonly bool ClickThrough = true;
 
-		public ContainerWidget() { IgnoreMouseOver = true; }
 		public ContainerWidget(ContainerWidget other)
-			: base(other) { IgnoreMouseOver = true; }
+			: base(other)
+		{
+			IgnoreMouseOver = true;
+			ClickThrough = other.ClickThrough;
+		}
+
+		public ContainerWidget(ContainerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
+		{
+			IgnoreMouseOver = true;
+			ClickThrough = info.ClickThrough;
+		}
 
 		public override string GetCursor(int2 pos) { return null; }
 		public override Widget Clone() { return new ContainerWidget(this); }
@@ -606,5 +689,11 @@ namespace OpenRA.Widgets
 		public WidgetArgs() { }
 		public WidgetArgs(Dictionary<string, object> args) : base(args) { }
 		public void Add(string key, Action val) { base.Add(key, val); }
+		public T Get<T>(string key) { return (T)this[key]; }
+		public T GetOrDefault<T>(string key)
+		{
+			object value;
+			return TryGetValue(key, out value) ? (T)value : default(T);
+		}
 	}
 }

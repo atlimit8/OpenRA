@@ -15,11 +15,41 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class ButtonWidget : Widget
+	public class ButtonWidgetInfo : WidgetInfo
 	{
 		public readonly string TooltipContainer;
 		public readonly string TooltipTemplate = "BUTTON_TOOLTIP";
+
+		public readonly bool DisableKeyRepeat = false;
+
+		[Translate] public readonly string Text = "";
+
+		public readonly string Background = "button";
+		public readonly int VisualHeight = ChromeMetrics.Get<int>("ButtonDepth");
+		public readonly int BaseLine = ChromeMetrics.Get<int>("ButtonBaseLine");
+		public readonly string Font = ChromeMetrics.Get<string>("ButtonFont");
+		public readonly Color TextColor = ChromeMetrics.Get<Color>("ButtonTextColor");
+		public readonly Color TextColorDisabled = ChromeMetrics.Get<Color>("ButtonTextColorDisabled");
+		public readonly bool Contrast = ChromeMetrics.Get<bool>("ButtonTextContrast");
+		public readonly bool Shadow = ChromeMetrics.Get<bool>("ButtonTextShadow");
+		public readonly Color ContrastColorDark = ChromeMetrics.Get<Color>("ButtonTextContrastColorDark");
+		public readonly Color ContrastColorLight = ChromeMetrics.Get<Color>("ButtonTextContrastColorLight");
+		public readonly bool Disabled = false;
+		public readonly bool Highlighted = false;
+		[Translate] public readonly string TooltipText;
+		[Translate] public readonly string TooltipDesc;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ButtonWidget(this, args, parent);
+		}
+	}
+
+	public class ButtonWidget : Widget
+	{
+		public new ButtonWidgetInfo Info { get { return (ButtonWidgetInfo)WidgetInfo; } }
 		public Func<ButtonWidget, Hotkey> GetKey = _ => Hotkey.Invalid;
+		public int VisualHeight;
 
 		public Hotkey Key
 		{
@@ -27,22 +57,11 @@ namespace OpenRA.Mods.Common.Widgets
 			set { GetKey = _ => value; }
 		}
 
-		public bool DisableKeyRepeat = false;
-
-		[Translate] public string Text = "";
+		public string Text = "";
 		public string Background = "button";
 		public bool Depressed = false;
-		public int VisualHeight = ChromeMetrics.Get<int>("ButtonDepth");
-		public int BaseLine = ChromeMetrics.Get<int>("ButtonBaseLine");
-		public string Font = ChromeMetrics.Get<string>("ButtonFont");
-		public Color TextColor = ChromeMetrics.Get<Color>("ButtonTextColor");
-		public Color TextColorDisabled = ChromeMetrics.Get<Color>("ButtonTextColorDisabled");
-		public bool Contrast = ChromeMetrics.Get<bool>("ButtonTextContrast");
-		public bool Shadow = ChromeMetrics.Get<bool>("ButtonTextShadow");
-		public Color ContrastColorDark = ChromeMetrics.Get<Color>("ButtonTextContrastColorDark");
-		public Color ContrastColorLight = ChromeMetrics.Get<Color>("ButtonTextContrastColorLight");
 		public bool Disabled = false;
-		public bool Highlighted = false;
+		public Color TextColor;
 		public Func<string> GetText;
 		public Func<Color> GetColor;
 		public Func<Color> GetColorDisabled;
@@ -54,9 +73,7 @@ namespace OpenRA.Mods.Common.Widgets
 		public Action<MouseInput> OnMouseUp = _ => { };
 
 		Lazy<TooltipContainerWidget> tooltipContainer;
-		[Translate] public string TooltipText;
 		public Func<string> GetTooltipText;
-		[Translate] public string TooltipDesc;
 		public Func<string> GetTooltipDesc;
 
 		// Equivalent to OnMouseUp, but without an input arg
@@ -66,24 +83,29 @@ namespace OpenRA.Mods.Common.Widgets
 
 		protected readonly Ruleset ModRules;
 
-		[ObjectCreator.UseCtor]
-		public ButtonWidget(ModData modData)
+		public ButtonWidget(ButtonWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			ModRules = modData.DefaultRules;
+			ModRules = args.Get<ModData>("modData").DefaultRules;
+			Text = info.Text;
+			TextColor = info.TextColor;
+			Background = info.Background;
+			Disabled = info.Disabled;
+			VisualHeight = info.VisualHeight;
 
 			GetText = () => Text;
 			GetColor = () => TextColor;
-			GetColorDisabled = () => TextColorDisabled;
-			GetContrastColorDark = () => ContrastColorDark;
-			GetContrastColorLight = () => ContrastColorLight;
+			GetColorDisabled = () => info.TextColorDisabled;
+			GetContrastColorDark = () => info.ContrastColorDark;
+			GetContrastColorLight = () => info.ContrastColorLight;
 			OnMouseUp = _ => OnClick();
 			OnKeyPress = _ => OnClick();
 			IsDisabled = () => Disabled;
-			IsHighlighted = () => Highlighted;
-			GetTooltipText = () => TooltipText;
-			GetTooltipDesc = () => TooltipDesc;
+			IsHighlighted = () => info.Highlighted;
+			GetTooltipText = () => info.TooltipText;
+			GetTooltipDesc = () => info.TooltipDesc;
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 		}
 
 		protected ButtonWidget(ButtonWidget other)
@@ -92,39 +114,26 @@ namespace OpenRA.Mods.Common.Widgets
 			ModRules = other.ModRules;
 
 			Text = other.Text;
-			Font = other.Font;
-			BaseLine = other.BaseLine;
-			TextColor = other.TextColor;
-			TextColorDisabled = other.TextColorDisabled;
-			Contrast = other.Contrast;
-			Shadow = other.Shadow;
 			Depressed = other.Depressed;
 			Background = other.Background;
 			VisualHeight = other.VisualHeight;
 			GetText = other.GetText;
 			GetColor = other.GetColor;
 			GetColorDisabled = other.GetColorDisabled;
-			ContrastColorDark = other.ContrastColorDark;
-			ContrastColorLight = other.ContrastColorLight;
 			GetContrastColorDark = other.GetContrastColorDark;
 			GetContrastColorLight = other.GetContrastColorLight;
 			OnMouseDown = other.OnMouseDown;
 			Disabled = other.Disabled;
 			IsDisabled = other.IsDisabled;
-			Highlighted = other.Highlighted;
 			IsHighlighted = other.IsHighlighted;
 
 			OnMouseUp = mi => OnClick();
 			OnKeyPress = _ => OnClick();
 
-			TooltipTemplate = other.TooltipTemplate;
-			TooltipText = other.TooltipText;
 			GetTooltipText = other.GetTooltipText;
-			TooltipDesc = other.TooltipDesc;
 			GetTooltipDesc = other.GetTooltipDesc;
-			TooltipContainer = other.TooltipContainer;
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(Info.TooltipContainer));
 		}
 
 		public override bool YieldMouseFocus(MouseInput mi)
@@ -135,7 +144,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override bool HandleKeyPress(KeyInput e)
 		{
-			if (Hotkey.FromKeyInput(e) != Key || e.Event != KeyInputEvent.Down || (DisableKeyRepeat && e.IsRepeat))
+			if (Hotkey.FromKeyInput(e) != Key || e.Event != KeyInputEvent.Down || (Info.DisableKeyRepeat && e.IsRepeat))
 				return false;
 
 			if (!IsDisabled())
@@ -198,16 +207,16 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void MouseEntered()
 		{
-			if (TooltipContainer == null || GetTooltipText() == null)
+			if (Info.TooltipContainer == null || GetTooltipText() == null)
 				return;
 
-			tooltipContainer.Value.SetTooltip(TooltipTemplate,
+			tooltipContainer.Value.SetTooltip(Info.TooltipTemplate,
 				new WidgetArgs { { "button", this }, { "getText", GetTooltipText }, { "getDesc", GetTooltipDesc } });
 		}
 
 		public override void MouseExited()
 		{
-			if (TooltipContainer == null || !tooltipContainer.IsValueCreated)
+			if (Info.TooltipContainer == null || !tooltipContainer.IsValueCreated)
 				return;
 
 			tooltipContainer.Value.RemoveTooltip();
@@ -218,7 +227,7 @@ namespace OpenRA.Mods.Common.Widgets
 			get
 			{
 				return RenderOrigin +
-					(Depressed ? new int2(VisualHeight, VisualHeight) : new int2(0, 0));
+					(Depressed ? new int2(Info.VisualHeight, Info.VisualHeight) : new int2(0, 0));
 			}
 		}
 
@@ -227,21 +236,21 @@ namespace OpenRA.Mods.Common.Widgets
 			var rb = RenderBounds;
 			var disabled = IsDisabled();
 			var highlighted = IsHighlighted();
-			var font = Game.Renderer.Fonts[Font];
+			var font = Game.Renderer.Fonts[Info.Font];
 			var text = GetText();
 			var color = GetColor();
 			var colordisabled = GetColorDisabled();
 			var bgDark = GetContrastColorDark();
 			var bgLight = GetContrastColorLight();
 			var s = font.Measure(text);
-			var stateOffset = Depressed ? new int2(VisualHeight, VisualHeight) : new int2(0, 0);
-			var position = new int2(rb.X + (UsableWidth - s.X) / 2, rb.Y - BaseLine + (Bounds.Height - s.Y) / 2);
+			var stateOffset = Depressed ? new int2(Info.VisualHeight, Info.VisualHeight) : new int2(0, 0);
+			var position = new int2(rb.X + (UsableWidth - s.X) / 2, rb.Y - Info.BaseLine + (Bounds.Height - s.Y) / 2);
 
 			DrawBackground(rb, disabled, Depressed, Ui.MouseOverWidget == this, highlighted);
-			if (Contrast)
+			if (Info.Contrast)
 				font.DrawTextWithContrast(text, position + stateOffset,
 					disabled ? colordisabled : color, bgDark, bgLight, 2);
-			else if (Shadow)
+			else if (Info.Shadow)
 				font.DrawTextWithShadow(text, position, color, bgDark, bgLight, 1);
 			else
 				font.DrawText(text, position + stateOffset,

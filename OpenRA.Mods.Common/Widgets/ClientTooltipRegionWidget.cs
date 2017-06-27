@@ -15,25 +15,35 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class ClientTooltipRegionWidget : Widget
+	public class ClientTooltipRegionWidgetInfo : WidgetInfo
 	{
 		public readonly string Template;
 		public readonly string TooltipContainer;
-		Lazy<TooltipContainerWidget> tooltipContainer;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ClientTooltipRegionWidget(this, args, parent);
+		}
+	}
+
+	public class ClientTooltipRegionWidget : Widget
+	{
+		public new ClientTooltipRegionWidgetInfo Info { get { return (ClientTooltipRegionWidgetInfo)WidgetInfo; } }
+
+		readonly Lazy<TooltipContainerWidget> tooltipContainer;
 		OrderManager orderManager;
 		int clientIndex;
 
-		public ClientTooltipRegionWidget()
+		public ClientTooltipRegionWidget(ClientTooltipRegionWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			tooltipContainer = Exts.Lazy(() => Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+			tooltipContainer = Exts.Lazy(() => Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 		}
 
 		protected ClientTooltipRegionWidget(ClientTooltipRegionWidget other)
 			: base(other)
 		{
-			Template = other.Template;
-			TooltipContainer = other.TooltipContainer;
-			tooltipContainer = Exts.Lazy(() => Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+			tooltipContainer = Exts.Lazy(() => Ui.Root.Get<TooltipContainerWidget>(Info.TooltipContainer));
 			orderManager = other.orderManager;
 			clientIndex = other.clientIndex;
 		}
@@ -48,14 +58,14 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void MouseEntered()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
-			tooltipContainer.Value.SetTooltip(Template, new WidgetArgs() { { "orderManager", orderManager }, { "clientIndex", clientIndex } });
+			tooltipContainer.Value.SetTooltip(Info.Template, new WidgetArgs() { { "orderManager", orderManager }, { "clientIndex", clientIndex } });
 		}
 
 		public override void MouseExited()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 			tooltipContainer.Value.RemoveTooltip();
 		}

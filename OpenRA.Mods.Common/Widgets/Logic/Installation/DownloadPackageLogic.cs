@@ -46,7 +46,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			progressBar = panel.Get<ProgressBarWidget>("PROGRESS_BAR");
 
 			var statusLabel = panel.Get<LabelWidget>("STATUS_LABEL");
-			var statusFont = Game.Renderer.Fonts[statusLabel.Font];
+			var statusFont = Game.Renderer.Fonts[statusLabel.Info.Font];
 			var status = new CachedTransform<string, string>(s => WidgetUtils.TruncateText(s, statusLabel.Bounds.Width, statusFont));
 			statusLabel.GetText = () => status.Update(getStatusText());
 

@@ -17,27 +17,34 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class DropDownButtonWidget : ButtonWidget
+	public class DropDownButtonWidgetInfo : ButtonWidgetInfo
 	{
 		public readonly string SeparatorCollection = "dropdown";
 		public readonly string SeparatorImage = "separator";
+		public readonly string PanelRoot;
+		public readonly string SelectedItem;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new DropDownButtonWidget(this, args, parent);
+		}
+	}
+
+	public class DropDownButtonWidget : ButtonWidget
+	{
+		public new DropDownButtonWidgetInfo Info { get { return (DropDownButtonWidgetInfo)WidgetInfo; } }
 
 		Widget panel;
 		MaskWidget fullscreenMask;
 		Widget panelRoot;
 
-		public string PanelRoot;
 		public string SelectedItem;
 
-		[ObjectCreator.UseCtor]
-		public DropDownButtonWidget(ModData modData)
-			: base(modData) { }
+		public DropDownButtonWidget(DropDownButtonWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent) { SelectedItem = info.SelectedItem; }
 
 		protected DropDownButtonWidget(DropDownButtonWidget widget)
-			: base(widget)
-		{
-			PanelRoot = widget.PanelRoot;
-		}
+			: base(widget) { }
 
 		public override void Draw()
 		{
@@ -49,7 +56,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 			WidgetUtils.DrawRGBA(image, stateOffset + new float2(rb.Right - rb.Height + 4, rb.Top + (rb.Height - image.Bounds.Height) / 2));
 
-			var separator = ChromeProvider.GetImage(SeparatorCollection, SeparatorImage);
+			var separator = ChromeProvider.GetImage(Info.SeparatorCollection, Info.SeparatorImage);
 			WidgetUtils.DrawRGBA(separator, new float2(-3, 0) + new float2(rb.Right - rb.Height + 4, rb.Top + (rb.Height - separator.Bounds.Height) / 2));
 		}
 
@@ -96,7 +103,7 @@ namespace OpenRA.Mods.Common.Widgets
 			if (onCancel != null)
 				fullscreenMask.OnMouseDown += _ => onCancel();
 
-			panelRoot = PanelRoot == null ? Ui.Root : Ui.Root.Get(PanelRoot);
+			panelRoot = Info.PanelRoot == null ? Ui.Root : Ui.Root.Get(Info.PanelRoot);
 
 			panelRoot.AddChild(fullscreenMask);
 
@@ -116,7 +123,7 @@ namespace OpenRA.Mods.Common.Widgets
 		public void ShowDropDown<T>(string panelTemplate, int maxHeight, IEnumerable<T> options, Func<T, ScrollItemWidget, ScrollItemWidget> setupItem)
 		{
 			var substitutions = new Dictionary<string, int>() { { "DROPDOWN_WIDTH", Bounds.Width } };
-			var panel = (ScrollPanelWidget)Ui.LoadWidget(panelTemplate, null, new WidgetArgs() { { "substitutions", substitutions } });
+			var panel = (ScrollPanelWidget)Ui.CreateWidget(panelTemplate, null, new WidgetArgs() { { "substitutions", substitutions } });
 
 			var itemTemplate = panel.Get<ScrollItemWidget>("TEMPLATE");
 			panel.RemoveChildren();
@@ -138,7 +145,7 @@ namespace OpenRA.Mods.Common.Widgets
 		public void ShowDropDown<T>(string panelTemplate, int height, Dictionary<string, IEnumerable<T>> groups, Func<T, ScrollItemWidget, ScrollItemWidget> setupItem)
 		{
 			var substitutions = new Dictionary<string, int>() { { "DROPDOWN_WIDTH", Bounds.Width } };
-			var panel = (ScrollPanelWidget)Ui.LoadWidget(panelTemplate, null, new WidgetArgs() { { "substitutions", substitutions } });
+			var panel = (ScrollPanelWidget)Ui.CreateWidget(panelTemplate, null, new WidgetArgs() { { "substitutions", substitutions } });
 
 			var headerTemplate = panel.GetOrNull<ScrollItemWidget>("HEADER");
 			var itemTemplate = panel.Get<ScrollItemWidget>("TEMPLATE");
@@ -173,8 +180,17 @@ namespace OpenRA.Mods.Common.Widgets
 
 	public class MaskWidget : Widget
 	{
+		class MaskWidgetInfo : WidgetInfo
+		{
+			public static readonly MaskWidgetInfo Instance = new MaskWidgetInfo();
+			protected override Widget Construct(WidgetArgs args, Widget parent = null)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
 		public event Action<MouseInput> OnMouseDown = _ => { };
-		public MaskWidget() { }
+		public MaskWidget() : base(MaskWidgetInfo.Instance, new WidgetArgs(), null) { }
 		public MaskWidget(MaskWidget other)
 			: base(other)
 		{

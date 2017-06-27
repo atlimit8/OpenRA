@@ -16,26 +16,36 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class TooltipContainerWidgetInfo : WidgetInfo
+	{
+		public readonly int2 CursorOffset = new int2(0, 20);
+		public readonly int BottomEdgeYOffset = -5;
+		public readonly int TooltipDelayMilliseconds = 200;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new TooltipContainerWidget(this, args, parent);
+		}
+	}
+
 	public class TooltipContainerWidget : Widget
 	{
 		static readonly Action Nothing = () => { };
 
-		public int2 CursorOffset = new int2(0, 20);
-		public int BottomEdgeYOffset = -5;
-
+		public new TooltipContainerWidgetInfo Info { get { return (TooltipContainerWidgetInfo)WidgetInfo; } }
 		public Action BeforeRender = Nothing;
-		public int TooltipDelayMilliseconds = 200;
 		Widget tooltip;
 
-		public TooltipContainerWidget()
+		public TooltipContainerWidget(TooltipContainerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			IsVisible = () => Game.RunTime > Viewport.LastMoveRunTime + TooltipDelayMilliseconds;
+			IsVisible = () => Game.RunTime > Viewport.LastMoveRunTime + info.TooltipDelayMilliseconds;
 		}
 
 		public void SetTooltip(string id, WidgetArgs args)
 		{
 			RemoveTooltip();
-			tooltip = Ui.LoadWidget(id, this, new WidgetArgs(args) { { "tooltipContainer", this } });
+			tooltip = Ui.CreateWidget(id, this, new WidgetArgs(args) { { "tooltipContainer", this } });
 		}
 
 		public void RemoveTooltip()
@@ -52,7 +62,7 @@ namespace OpenRA.Mods.Common.Widgets
 		{
 			get
 			{
-				var pos = Viewport.LastMousePos + (CursorProvider.CursorViewportZoomed ? CursorOffset * 2 : CursorOffset);
+				var pos = Viewport.LastMousePos + (CursorProvider.CursorViewportZoomed ? Info.CursorOffset * 2 : Info.CursorOffset);
 				if (tooltip != null)
 				{
 					// If the tooltip overlaps the right edge of the screen, move it left until it fits
@@ -61,7 +71,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 					// If the tooltip overlaps the bottom edge of the screen, switch tooltip above cursor
 					if (pos.Y + tooltip.Bounds.Bottom > Game.Renderer.Resolution.Height)
-						pos = pos.WithY(Viewport.LastMousePos.Y + (CursorProvider.CursorViewportZoomed ? 2 : 1) * BottomEdgeYOffset - tooltip.Bounds.Height);
+						pos = pos.WithY(Viewport.LastMousePos.Y + (CursorProvider.CursorViewportZoomed ? 2 : 1) * Info.BottomEdgeYOffset - tooltip.Bounds.Height);
 				}
 
 				return pos;

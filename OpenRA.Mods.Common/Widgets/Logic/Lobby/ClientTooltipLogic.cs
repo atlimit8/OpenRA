@@ -25,21 +25,21 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 		public ClientTooltipLogic(Widget widget, TooltipContainerWidget tooltipContainer, OrderManager orderManager, int clientIndex)
 		{
 			var admin = widget.Get<LabelWidget>("ADMIN");
-			var adminFont = Game.Renderer.Fonts[admin.Font];
+			var adminFont = Game.Renderer.Fonts[admin.Info.Font];
 
 			var latency = widget.GetOrNull<LabelWidget>("LATENCY");
 			if (latency != null)
-				latencyFont = Game.Renderer.Fonts[latency.Font];
+				latencyFont = Game.Renderer.Fonts[latency.Info.Font];
 
 			var latencyPrefix = widget.GetOrNull<LabelWidget>("LATENCY_PREFIX");
 			if (latencyPrefix != null)
-				latencyPrefixFont = Game.Renderer.Fonts[latencyPrefix.Font];
+				latencyPrefixFont = Game.Renderer.Fonts[latencyPrefix.Info.Font];
 
 			var ip = widget.Get<LabelWidget>("IP");
-			var addressFont = Game.Renderer.Fonts[ip.Font];
+			var addressFont = Game.Renderer.Fonts[ip.Info.Font];
 
 			var location = widget.Get<LabelWidget>("LOCATION");
-			var locationFont = Game.Renderer.Fonts[location.Font];
+			var locationFont = Game.Renderer.Fonts[location.Info.Font];
 
 			var locationOffset = location.Bounds.Y;
 			var addressOffset = ip.Bounds.Y;

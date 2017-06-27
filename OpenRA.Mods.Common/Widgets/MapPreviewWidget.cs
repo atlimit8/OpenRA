@@ -49,13 +49,23 @@ namespace OpenRA.Mods.Common.Widgets
 		}
 	}
 
-	public class MapPreviewWidget : Widget
+	public class MapPreviewWidgetInfo : WidgetInfo
 	{
 		public readonly bool IgnoreMouseInput = false;
 		public readonly bool ShowSpawnPoints = true;
 
 		public readonly string TooltipContainer;
 		public readonly string TooltipTemplate = "SPAWN_TOOLTIP";
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new MapPreviewWidget(this, args, parent);
+		}
+	}
+
+	public class MapPreviewWidget : Widget
+	{
+		public new MapPreviewWidgetInfo Info { get { return (MapPreviewWidgetInfo)WidgetInfo; } }
 		readonly Lazy<TooltipContainerWidget> tooltipContainer;
 
 		readonly Sprite spawnClaimed, spawnUnclaimed;
@@ -73,9 +83,10 @@ namespace OpenRA.Mods.Common.Widgets
 		float previewScale = 0;
 		Sprite minimap;
 
-		public MapPreviewWidget()
+		public MapPreviewWidget(MapPreviewWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			tooltipContainer = Exts.Lazy(() => Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+			tooltipContainer = Exts.Lazy(() => Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 
 			spawnClaimed = ChromeProvider.GetImage("lobby-bits", "spawn-claimed");
 			spawnUnclaimed = ChromeProvider.GetImage("lobby-bits", "spawn-unclaimed");
@@ -88,15 +99,12 @@ namespace OpenRA.Mods.Common.Widgets
 		protected MapPreviewWidget(MapPreviewWidget other)
 			: base(other)
 		{
+			var info = other.Info;
 			Preview = other.Preview;
 
-			IgnoreMouseInput = other.IgnoreMouseInput;
-			ShowSpawnPoints = other.ShowSpawnPoints;
-			TooltipTemplate = other.TooltipTemplate;
-			TooltipContainer = other.TooltipContainer;
 			SpawnOccupants = other.SpawnOccupants;
 
-			tooltipContainer = Exts.Lazy(() => Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+			tooltipContainer = Exts.Lazy(() => Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 
 			spawnClaimed = ChromeProvider.GetImage("lobby-bits", "spawn-claimed");
 			spawnUnclaimed = ChromeProvider.GetImage("lobby-bits", "spawn-unclaimed");
@@ -110,7 +118,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override bool HandleMouseInput(MouseInput mi)
 		{
-			if (IgnoreMouseInput)
+			if (Info.IgnoreMouseInput)
 				return base.HandleMouseInput(mi);
 
 			if (mi.Event != MouseInputEvent.Down)
@@ -122,8 +130,8 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void MouseEntered()
 		{
-			if (TooltipContainer != null)
-				tooltipContainer.Value.SetTooltip(TooltipTemplate, new WidgetArgs()
+			if (Info.TooltipContainer != null)
+				tooltipContainer.Value.SetTooltip(Info.TooltipTemplate, new WidgetArgs()
 					{
 						{ "preview", this },
 						{ "showUnoccupiedSpawnpoints", ShowUnoccupiedSpawnpoints }
@@ -132,7 +140,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void MouseExited()
 		{
-			if (TooltipContainer != null)
+			if (Info.TooltipContainer != null)
 				tooltipContainer.Value.RemoveTooltip();
 		}
 
@@ -174,7 +182,7 @@ namespace OpenRA.Mods.Common.Widgets
 			Game.Renderer.RgbaSpriteRenderer.DrawSprite(minimap, new float2(mapRect.Location), new float2(mapRect.Size));
 
 			TooltipSpawnIndex = -1;
-			if (ShowSpawnPoints)
+			if (Info.ShowSpawnPoints)
 			{
 				var colors = SpawnOccupants().ToDictionary(c => c.Key, c => c.Value.Color.RGB);
 

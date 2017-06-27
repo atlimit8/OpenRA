@@ -15,21 +15,35 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class TextFieldWidgetInfo : WidgetInfo
+	{
+		public readonly int MaxLength = 0;
+		public readonly int VisualHeight = 1;
+		public readonly int LeftMargin = 5;
+		public readonly int RightMargin = 5;
+
+		public readonly bool Disabled = false;
+
+		public readonly string Font = ChromeMetrics.Get<string>("TextfieldFont");
+		public readonly Color TextColor = ChromeMetrics.Get<Color>("TextfieldColor");
+		public readonly Color TextColorDisabled = ChromeMetrics.Get<Color>("TextfieldColorDisabled");
+		public readonly Color TextColorInvalid = ChromeMetrics.Get<Color>("TextfieldColorInvalid");
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new TextFieldWidget(this, args, parent);
+		}
+	}
+
 	public class TextFieldWidget : Widget
 	{
+		public new TextFieldWidgetInfo Info { get { return (TextFieldWidgetInfo)WidgetInfo; } }
 		string text = "";
 		public string Text
 		{
 			get { return text; }
 			set { text = value ?? ""; CursorPosition = CursorPosition.Clamp(0, text.Length); }
 		}
-
-		public int MaxLength = 0;
-		public int VisualHeight = 1;
-		public int LeftMargin = 5;
-		public int RightMargin = 5;
-
-		public bool Disabled = false;
 
 		public Func<bool> OnEnterKey = () => false;
 		public Func<bool> OnTabKey = () => false;
@@ -41,26 +55,17 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public Func<bool> IsDisabled;
 		public Func<bool> IsValid = () => true;
-		public string Font = ChromeMetrics.Get<string>("TextfieldFont");
-		public Color TextColor = ChromeMetrics.Get<Color>("TextfieldColor");
-		public Color TextColorDisabled = ChromeMetrics.Get<Color>("TextfieldColorDisabled");
-		public Color TextColorInvalid = ChromeMetrics.Get<Color>("TextfieldColorInvalid");
 
-		public TextFieldWidget()
+		public TextFieldWidget(TextFieldWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			IsDisabled = () => Disabled;
+			IsDisabled = () => info.Disabled;
 		}
 
 		protected TextFieldWidget(TextFieldWidget widget)
 			: base(widget)
 		{
 			Text = widget.Text;
-			MaxLength = widget.MaxLength;
-			Font = widget.Font;
-			TextColor = widget.TextColor;
-			TextColorDisabled = widget.TextColorDisabled;
-			TextColorInvalid = widget.TextColorInvalid;
-			VisualHeight = widget.VisualHeight;
 			IsDisabled = widget.IsDisabled;
 		}
 
@@ -98,12 +103,12 @@ namespace OpenRA.Mods.Common.Widgets
 		int ClosestCursorPosition(int x)
 		{
 			var apparentText = GetApparentText();
-			var font = Game.Renderer.Fonts[Font];
+			var font = Game.Renderer.Fonts[Info.Font];
 			var textSize = font.Measure(apparentText);
 
-			var start = RenderOrigin.X + LeftMargin;
-			if (textSize.X > Bounds.Width - LeftMargin - RightMargin && HasKeyboardFocus)
-				start += Bounds.Width - LeftMargin - RightMargin - textSize.X;
+			var start = RenderOrigin.X + Info.LeftMargin;
+			if (textSize.X > Bounds.Width - Info.LeftMargin - Info.RightMargin && HasKeyboardFocus)
+				start += Bounds.Width - Info.LeftMargin - Info.RightMargin - textSize.X;
 
 			var minIndex = -1;
 			var minValue = int.MaxValue;
@@ -326,14 +331,14 @@ namespace OpenRA.Mods.Common.Widgets
 			if (!HasKeyboardFocus || IsDisabled())
 				return false;
 
-			if (MaxLength > 0 && Text.Length >= MaxLength)
+			if (Info.MaxLength > 0 && Text.Length >= Info.MaxLength)
 				return true;
 
 			var pasteLength = text.Length;
 
 			// Truncate the pasted string if the total length (current + paste) is greater than the maximum.
-			if (MaxLength > 0 && MaxLength > Text.Length)
-				pasteLength = Math.Min(text.Length, MaxLength - Text.Length);
+			if (Info.MaxLength > 0 && Info.MaxLength > Text.Length)
+				pasteLength = Math.Min(text.Length, Info.MaxLength - Text.Length);
 
 			Text = Text.Insert(CursorPosition, text.Substring(0, pasteLength));
 			CursorPosition += pasteLength;
@@ -367,7 +372,7 @@ namespace OpenRA.Mods.Common.Widgets
 		public override void Draw()
 		{
 			var apparentText = GetApparentText();
-			var font = Game.Renderer.Fonts[Font];
+			var font = Game.Renderer.Fonts[Info.Font];
 			var pos = RenderOrigin;
 
 			var textSize = font.Measure(apparentText);
@@ -383,28 +388,28 @@ namespace OpenRA.Mods.Common.Widgets
 				new Rectangle(pos.X, pos.Y, Bounds.Width, Bounds.Height));
 
 			// Inset text by the margin and center vertically
-			var textPos = pos + new int2(LeftMargin, (Bounds.Height - textSize.Y) / 2 - VisualHeight);
+			var textPos = pos + new int2(Info.LeftMargin, (Bounds.Height - textSize.Y) / 2 - Info.VisualHeight);
 
 			// Right align when editing and scissor when the text overflows
-			if (textSize.X > Bounds.Width - LeftMargin - RightMargin)
+			if (textSize.X > Bounds.Width - Info.LeftMargin - Info.RightMargin)
 			{
 				if (HasKeyboardFocus)
-					textPos += new int2(Bounds.Width - LeftMargin - RightMargin - textSize.X, 0);
+					textPos += new int2(Bounds.Width - Info.LeftMargin - Info.RightMargin - textSize.X, 0);
 
-				Game.Renderer.EnableScissor(new Rectangle(pos.X + LeftMargin, pos.Y,
-					Bounds.Width - LeftMargin - RightMargin, Bounds.Bottom));
+				Game.Renderer.EnableScissor(new Rectangle(pos.X + Info.LeftMargin, pos.Y,
+					Bounds.Width - Info.LeftMargin - Info.RightMargin, Bounds.Bottom));
 			}
 
 			var color =
-				disabled ? TextColorDisabled
-				: IsValid() ? TextColor
-				: TextColorInvalid;
+				disabled ? Info.TextColorDisabled
+				: IsValid() ? Info.TextColor
+				: Info.TextColorInvalid;
 			font.DrawText(apparentText, textPos, color);
 
 			if (showCursor && HasKeyboardFocus)
-				font.DrawText("|", new float2(textPos.X + cursorPosition.X - 2, textPos.Y), TextColor);
+				font.DrawText("|", new float2(textPos.X + cursorPosition.X - 2, textPos.Y), Info.TextColor);
 
-			if (textSize.X > Bounds.Width - LeftMargin - RightMargin)
+			if (textSize.X > Bounds.Width - Info.LeftMargin - Info.RightMargin)
 				Game.Renderer.DisableScissor();
 		}
 

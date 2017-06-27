@@ -15,27 +15,40 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class SpriteWidgetInfo : WidgetInfo
+	{
+		public readonly string Palette = "chrome";
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new SpriteWidget(this, args, parent);
+		}
+	}
+
 	public class SpriteWidget : Widget
 	{
+		public new SpriteWidgetInfo Info { get { return (SpriteWidgetInfo)WidgetInfo; } }
+
+		public string Palette;
+
 		public Func<float> GetScale = () => 1f;
-		public string Palette = "chrome";
 		public Func<string> GetPalette;
 		public Func<Sprite> GetSprite;
 
 		protected readonly WorldRenderer WorldRenderer;
 
-		[ObjectCreator.UseCtor]
-		public SpriteWidget(WorldRenderer worldRenderer)
+		public SpriteWidget(SpriteWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
+			Palette = info.Palette;
 			GetPalette = () => Palette;
 
-			WorldRenderer = worldRenderer;
+			WorldRenderer = args.Get<WorldRenderer>("worldRenderer");
 		}
 
 		protected SpriteWidget(SpriteWidget other)
 			: base(other)
 		{
-			Palette = other.Palette;
 			GetPalette = other.GetPalette;
 			GetSprite = other.GetSprite;
 

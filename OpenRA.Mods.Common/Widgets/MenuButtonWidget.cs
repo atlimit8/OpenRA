@@ -9,25 +9,31 @@
  */
 #endregion
 
+using OpenRA.Widgets;
+
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class MenuButtonWidget : ButtonWidget
+	public class MenuButtonWidgetInfo : ButtonWidgetInfo
 	{
 		public readonly string MenuContainer = "INGAME_MENU";
 		public readonly bool Pause = true;
 		public readonly bool HideIngameUI = true;
 		public readonly bool DisableWorldSounds = false;
 
-		[ObjectCreator.UseCtor]
-		public MenuButtonWidget(ModData modData)
-			: base(modData) { }
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new MenuButtonWidget(this, args, parent);
+		}
+	}
+
+	public class MenuButtonWidget : ButtonWidget
+	{
+		public new MenuButtonWidgetInfo Info { get { return (MenuButtonWidgetInfo)WidgetInfo; } }
+
+		public MenuButtonWidget(MenuButtonWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent) { }
 
 		protected MenuButtonWidget(MenuButtonWidget other)
-			: base(other)
-		{
-			MenuContainer = other.MenuContainer;
-			Pause = other.Pause;
-			HideIngameUI = other.HideIngameUI;
-		}
+			: base(other) { }
 	}
 }

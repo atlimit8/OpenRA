@@ -16,36 +16,47 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class CheckboxWidgetInfo : ButtonWidgetInfo
+	{
+		public readonly string CheckType = "checked";
+		public readonly Func<string> GetCheckType;
+		public readonly Func<bool> IsChecked = () => false;
+		public readonly int CheckOffset = 2;
+		public readonly bool HasPressedState = ChromeMetrics.Get<bool>("CheckboxPressedState");
+
+		public CheckboxWidgetInfo() { GetCheckType = () => CheckType; }
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new CheckboxWidget(this, args, parent);
+		}
+	}
+
 	public class CheckboxWidget : ButtonWidget
 	{
-		public string CheckType = "checked";
+		public new CheckboxWidgetInfo Info { get { return (CheckboxWidgetInfo)WidgetInfo; } }
 		public Func<string> GetCheckType;
-		public Func<bool> IsChecked = () => false;
-		public int CheckOffset = 2;
-		public bool HasPressedState = ChromeMetrics.Get<bool>("CheckboxPressedState");
+		public Func<bool> IsChecked;
 
-		[ObjectCreator.UseCtor]
-		public CheckboxWidget(ModData modData)
-			: base(modData)
+		public CheckboxWidget(CheckboxWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			GetCheckType = () => CheckType;
+			GetCheckType = info.GetCheckType;
+			IsChecked = info.IsChecked;
 		}
 
 		protected CheckboxWidget(CheckboxWidget other)
 			: base(other)
 		{
-			CheckType = other.CheckType;
 			GetCheckType = other.GetCheckType;
 			IsChecked = other.IsChecked;
-			CheckOffset = other.CheckOffset;
-			HasPressedState = other.HasPressedState;
 		}
 
 		public override void Draw()
 		{
 			var disabled = IsDisabled();
 			var highlighted = IsHighlighted();
-			var font = Game.Renderer.Fonts[Font];
+			var font = Game.Renderer.Fonts[Info.Font];
 			var color = GetColor();
 			var colordisabled = GetColorDisabled();
 			var bgDark = GetContrastColorDark();
@@ -56,27 +67,27 @@ namespace OpenRA.Mods.Common.Widgets
 			var check = new Rectangle(rect.Location, new Size(Bounds.Height, Bounds.Height));
 			var state = disabled ? "checkbox-disabled" :
 						highlighted ? "checkbox-highlighted" :
-						Depressed && HasPressedState ? "checkbox-pressed" :
+						Depressed && Info.HasPressedState ? "checkbox-pressed" :
 						Ui.MouseOverWidget == this ? "checkbox-hover" :
 						"checkbox";
 
 			WidgetUtils.DrawPanel(state, check);
-			var position = new float2(rect.Left + rect.Height * 1.5f, RenderOrigin.Y - BaseLine + (Bounds.Height - textSize.Y) / 2);
+			var position = new float2(rect.Left + rect.Height * 1.5f, RenderOrigin.Y - Info.BaseLine + (Bounds.Height - textSize.Y) / 2);
 
-			if (Contrast)
+			if (Info.Contrast)
 				font.DrawTextWithContrast(text, position,
 					disabled ? colordisabled : color, bgDark, bgLight, 2);
 			else
 				font.DrawText(text, position,
 					disabled ? colordisabled : color);
 
-			if (IsChecked() || (Depressed && HasPressedState && !disabled))
+			if (IsChecked() || (Depressed && Info.HasPressedState && !disabled))
 			{
 				var checkType = GetCheckType();
-				if (HasPressedState && (Depressed || disabled))
+				if (Info.HasPressedState && (Depressed || disabled))
 					checkType += "-disabled";
 
-				var offset = new float2(rect.Left + CheckOffset, rect.Top + CheckOffset);
+				var offset = new float2(rect.Left + Info.CheckOffset, rect.Top + Info.CheckOffset);
 				WidgetUtils.DrawRGBA(ChromeProvider.GetImage("checkbox-bits", checkType), offset);
 			}
 		}

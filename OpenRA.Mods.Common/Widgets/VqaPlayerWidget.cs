@@ -17,15 +17,26 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class VqaPlayerWidgetInfo : WidgetInfo
+	{
+		public readonly Hotkey CancelKey = new Hotkey(Keycode.ESCAPE, Modifiers.None);
+		public readonly float AspectRatio = 1.2f;
+		public readonly bool DrawOverlay = true;
+		public readonly bool Skippable = true;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new VqaPlayerWidget(this, args, parent);
+		}
+	}
+
 	public class VqaPlayerWidget : Widget
 	{
-		public Hotkey CancelKey = new Hotkey(Keycode.ESCAPE, Modifiers.None);
-		public float AspectRatio = 1.2f;
-		public bool DrawOverlay = true;
-		public bool Skippable = true;
-
+		public new VqaPlayerWidgetInfo Info { get { return (VqaPlayerWidgetInfo)WidgetInfo; } }
 		public bool Paused { get { return paused; } }
 		public VqaReader Video { get { return video; } }
+
+		public bool DrawOverlay;
 
 		Sprite videoSprite, overlaySprite;
 		VqaReader video = null;
@@ -37,6 +48,12 @@ namespace OpenRA.Mods.Common.Widgets
 		bool paused;
 
 		Action onComplete;
+
+		public VqaPlayerWidget(VqaPlayerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
+		{
+			DrawOverlay = info.DrawOverlay;
+		}
 
 		public void Load(string filename)
 		{
@@ -74,13 +91,13 @@ namespace OpenRA.Mods.Common.Widgets
 					video.Height),
 				TextureChannel.Alpha);
 
-			var scale = Math.Min((float)RenderBounds.Width / video.Width, (float)RenderBounds.Height / video.Height * AspectRatio);
+			var scale = Math.Min((float)RenderBounds.Width / video.Width, (float)RenderBounds.Height / video.Height * Info.AspectRatio);
 			videoOrigin = new float2(
 				RenderBounds.X + (RenderBounds.Width - scale * video.Width) / 2,
-				RenderBounds.Y + (RenderBounds.Height - scale * video.Height * AspectRatio) / 2);
+				RenderBounds.Y + (RenderBounds.Height - scale * video.Height * Info.AspectRatio) / 2);
 
 			// Round size to integer pixels. Round up to be consistent with the scale calculation.
-			videoSize = new float2((int)Math.Ceiling(video.Width * scale), (int)Math.Ceiling(video.Height * AspectRatio * scale));
+			videoSize = new float2((int)Math.Ceiling(video.Width * scale), (int)Math.Ceiling(video.Height * Info.AspectRatio * scale));
 
 			if (!DrawOverlay)
 				return;
@@ -139,7 +156,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override bool HandleKeyPress(KeyInput e)
 		{
-			if (Hotkey.FromKeyInput(e) != CancelKey || e.Event != KeyInputEvent.Down || !Skippable)
+			if (Hotkey.FromKeyInput(e) != Info.CancelKey || e.Event != KeyInputEvent.Down || !Info.Skippable)
 				return false;
 
 			Stop();
@@ -148,7 +165,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override bool HandleMouseInput(MouseInput mi)
 		{
-			return RenderBounds.Contains(mi.Location) && Skippable;
+			return RenderBounds.Contains(mi.Location) && Info.Skippable;
 		}
 
 		public override string GetCursor(int2 pos)

@@ -17,8 +17,30 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class LineGraphWidgetInfo : WidgetInfo
+	{
+		public readonly string ValueFormat = "{0}";
+		public readonly string XAxisValueFormat = "{0}";
+		public readonly string YAxisValueFormat = "{0}";
+		public readonly int XAxisSize = 10;
+		public readonly int YAxisSize = 10;
+		public readonly string XAxisLabel = "";
+		public readonly string YAxisLabel = "";
+		public readonly bool DisplayFirstYAxisValue = false;
+		public readonly string LabelFont;
+		public readonly string AxisFont;
+		public readonly Color BackgroundColorDark = ChromeMetrics.Get<Color>("TextContrastColorDark");
+		public readonly Color BackgroundColorLight = ChromeMetrics.Get<Color>("TextContrastColorLight");
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new LineGraphWidget(this, args, parent);
+		}
+	}
+
 	public class LineGraphWidget : Widget
 	{
+		public new LineGraphWidgetInfo Info { get { return (LineGraphWidgetInfo)WidgetInfo; } }
 		public Func<IEnumerable<LineGraphSeries>> GetSeries;
 		public Func<string> GetValueFormat;
 		public Func<string> GetXAxisValueFormat;
@@ -30,31 +52,20 @@ namespace OpenRA.Mods.Common.Widgets
 		public Func<bool> GetDisplayFirstYAxisValue;
 		public Func<string> GetLabelFont;
 		public Func<string> GetAxisFont;
-		public string ValueFormat = "{0}";
-		public string XAxisValueFormat = "{0}";
-		public string YAxisValueFormat = "{0}";
-		public int XAxisSize = 10;
-		public int YAxisSize = 10;
-		public string XAxisLabel = "";
-		public string YAxisLabel = "";
-		public bool DisplayFirstYAxisValue = false;
-		public string LabelFont;
-		public string AxisFont;
-		public Color BackgroundColorDark = ChromeMetrics.Get<Color>("TextContrastColorDark");
-		public Color BackgroundColorLight = ChromeMetrics.Get<Color>("TextContrastColorLight");
 
-		public LineGraphWidget()
+		public LineGraphWidget(LineGraphWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			GetValueFormat = () => ValueFormat;
-			GetXAxisValueFormat = () => XAxisValueFormat;
-			GetYAxisValueFormat = () => YAxisValueFormat;
-			GetXAxisSize = () => XAxisSize;
-			GetYAxisSize = () => YAxisSize;
-			GetXAxisLabel = () => XAxisLabel;
-			GetYAxisLabel = () => YAxisLabel;
-			GetDisplayFirstYAxisValue = () => DisplayFirstYAxisValue;
-			GetLabelFont = () => LabelFont;
-			GetAxisFont = () => AxisFont;
+			GetValueFormat = () => info.ValueFormat;
+			GetXAxisValueFormat = () => info.XAxisValueFormat;
+			GetYAxisValueFormat = () => info.YAxisValueFormat;
+			GetXAxisSize = () => info.XAxisSize;
+			GetYAxisSize = () => info.YAxisSize;
+			GetXAxisLabel = () => info.XAxisLabel;
+			GetYAxisLabel = () => info.YAxisLabel;
+			GetDisplayFirstYAxisValue = () => info.DisplayFirstYAxisValue;
+			GetLabelFont = () => info.LabelFont;
+			GetAxisFont = () => info.AxisFont;
 		}
 
 		protected LineGraphWidget(LineGraphWidget other)
@@ -71,18 +82,6 @@ namespace OpenRA.Mods.Common.Widgets
 			GetDisplayFirstYAxisValue = other.GetDisplayFirstYAxisValue;
 			GetLabelFont = other.GetLabelFont;
 			GetAxisFont = other.GetAxisFont;
-			ValueFormat = other.ValueFormat;
-			XAxisValueFormat = other.XAxisValueFormat;
-			YAxisValueFormat = other.YAxisValueFormat;
-			XAxisSize = other.XAxisSize;
-			YAxisSize = other.YAxisSize;
-			XAxisLabel = other.XAxisLabel;
-			YAxisLabel = other.YAxisLabel;
-			DisplayFirstYAxisValue = other.DisplayFirstYAxisValue;
-			LabelFont = other.LabelFont;
-			AxisFont = other.AxisFont;
-			BackgroundColorDark = other.BackgroundColorDark;
-			BackgroundColorLight = other.BackgroundColorLight;
 		}
 
 		public override void Draw()
@@ -136,11 +135,11 @@ namespace OpenRA.Mods.Common.Widgets
 
 					if (lastPoint != 0f)
 						tiny.DrawTextWithShadow(GetValueFormat().F(lastPoint), origin + new float2(lastX * xStep, -lastPoint * scale - 2),
-							color, BackgroundColorDark, BackgroundColorLight, 1);
+							color, Info.BackgroundColorDark, Info.BackgroundColorLight, 1);
 				}
 
 				tiny.DrawTextWithShadow(key, new float2(rect.Left, rect.Top) + new float2(5, 10 * keyOffset + 3),
-					color, BackgroundColorDark, BackgroundColorLight, 1);
+					color, Info.BackgroundColorDark, Info.BackgroundColorLight, 1);
 				keyOffset++;
 			}
 

@@ -219,7 +219,7 @@ Background@DISC_INSTALL_PANEL:
 					Align: Left
 		Container@MESSAGE:
 			Width: PARENT_RIGHT
-			Height: PARENT_BOTTOM
+			#Height: PARENT_BOTTOM
 			Height: 157
 			Visible: false
 			Children:

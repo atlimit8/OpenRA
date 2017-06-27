@@ -58,16 +58,26 @@ namespace OpenRA.Mods.Common.Widgets
 		}
 	}
 
-	public class ProductionTabsWidget : Widget
+	public class ProductionTabsWidgetInfo : WidgetInfo
 	{
-		readonly World world;
-
 		public readonly string PaletteWidget = null;
 		public readonly string TypesContainer = null;
 		public readonly string BackgroundContainer = null;
 
 		public readonly int TabWidth = 30;
 		public readonly int ArrowWidth = 20;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ProductionTabsWidget(this, args, parent);
+		}
+	}
+
+	public class ProductionTabsWidget : Widget
+	{
+		public new ProductionTabsWidgetInfo Info { get { return (ProductionTabsWidgetInfo)WidgetInfo; } }
+		readonly World world;
+
 		public Dictionary<string, ProductionTabGroup> Groups;
 
 		int contentWidth = 0;
@@ -79,10 +89,10 @@ namespace OpenRA.Mods.Common.Widgets
 		Lazy<ProductionPaletteWidget> paletteWidget;
 		string queueGroup;
 
-		[ObjectCreator.UseCtor]
-		public ProductionTabsWidget(World world)
+		public ProductionTabsWidget(ProductionTabsWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.world = world;
+			world = args.Get<World>("world");
 
 			Groups = world.Map.Rules.Actors.Values.SelectMany(a => a.TraitInfos<ProductionQueueInfo>())
 				.Select(q => q.Group).Distinct().ToDictionary(g => g, g => new ProductionTabGroup() { Group = g });
@@ -90,7 +100,7 @@ namespace OpenRA.Mods.Common.Widgets
 			// Only visible if the production palette has icons to display
 			IsVisible = () => queueGroup != null && Groups[queueGroup].Tabs.Count > 0;
 
-			paletteWidget = Exts.Lazy(() => Ui.Root.Get<ProductionPaletteWidget>(PaletteWidget));
+			paletteWidget = Exts.Lazy(() => Ui.Root.Get<ProductionPaletteWidget>(info.PaletteWidget));
 		}
 
 		public bool SelectNextTab(bool reverse)
@@ -151,8 +161,8 @@ namespace OpenRA.Mods.Common.Widgets
 		public override void Draw()
 		{
 			var rb = RenderBounds;
-			leftButtonRect = new Rectangle(rb.X, rb.Y, ArrowWidth, rb.Height);
-			rightButtonRect = new Rectangle(rb.Right - ArrowWidth, rb.Y, ArrowWidth, rb.Height);
+			leftButtonRect = new Rectangle(rb.X, rb.Y, Info.ArrowWidth, rb.Height);
+			rightButtonRect = new Rectangle(rb.Right - Info.ArrowWidth, rb.Y, Info.ArrowWidth, rb.Height);
 
 			var leftDisabled = listOffset >= 0;
 			var leftHover = Ui.MouseOverWidget == this && leftButtonRect.Contains(Viewport.LastMousePos);
@@ -176,11 +186,11 @@ namespace OpenRA.Mods.Common.Widgets
 
 			foreach (var tab in Groups[queueGroup].Tabs)
 			{
-				var rect = new Rectangle(origin.X + contentWidth, origin.Y, TabWidth, rb.Height);
+				var rect = new Rectangle(origin.X + contentWidth, origin.Y, Info.TabWidth, rb.Height);
 				var hover = !leftHover && !rightHover && Ui.MouseOverWidget == this && rect.Contains(Viewport.LastMousePos);
 				var baseName = tab.Queue == CurrentQueue ? "button-highlighted" : "button";
 				ButtonWidget.DrawBackground(baseName, rect, false, false, hover, false);
-				contentWidth += TabWidth - 1;
+				contentWidth += Info.TabWidth - 1;
 
 				var textSize = font.Measure(tab.Name);
 				var position = new int2(rect.X + (rect.Width - textSize.X) / 2, rect.Y + (rect.Height - textSize.Y) / 2);
@@ -271,7 +281,7 @@ namespace OpenRA.Mods.Common.Widgets
 			var offsetloc = mi.Location - new int2(leftButtonRect.Right - 1 + (int)listOffset, leftButtonRect.Y);
 			if (offsetloc.X > 0 && offsetloc.X < contentWidth)
 			{
-				CurrentQueue = Groups[queueGroup].Tabs[offsetloc.X / (TabWidth - 1)].Queue;
+				CurrentQueue = Groups[queueGroup].Tabs[offsetloc.X / (Info.TabWidth - 1)].Queue;
 				Game.Sound.PlayNotification(world.Map.Rules, null, "Sounds", "ClickSound", null);
 			}
 

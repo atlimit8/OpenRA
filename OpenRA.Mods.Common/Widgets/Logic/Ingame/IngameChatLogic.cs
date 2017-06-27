@@ -196,7 +196,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			if (!string.IsNullOrEmpty(from))
 				name = from + ":";
 
-			var font = Game.Renderer.Fonts[nameLabel.Font];
+			var font = Game.Renderer.Fonts[nameLabel.Info.Font];
 			var nameSize = font.Measure(from);
 
 			nameLabel.GetColor = () => c;

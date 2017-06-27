@@ -16,30 +16,34 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class HotkeyEntryWidgetInfo : WidgetInfo
+	{
+		public readonly Hotkey Key;
+		public readonly int VisualHeight = 1;
+		public readonly int LeftMargin = 5;
+		public readonly int RightMargin = 5;
+		public readonly string Font = ChromeMetrics.Get<string>("HotkeyFont");
+		public readonly Color TextColor = ChromeMetrics.Get<Color>("HotkeyColor");
+		public readonly Color TextColorDisabled = ChromeMetrics.Get<Color>("HotkeyColorDisabled");
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new HotkeyEntryWidget(this, args, parent);
+		}
+	}
+
 	public class HotkeyEntryWidget : Widget
 	{
+		public new HotkeyEntryWidgetInfo Info { get { return (HotkeyEntryWidgetInfo)WidgetInfo; } }
 		public Hotkey Key;
-
-		public int VisualHeight = 1;
-		public int LeftMargin = 5;
-		public int RightMargin = 5;
-
 		public Action OnLoseFocus = () => { };
 
 		public Func<bool> IsDisabled = () => false;
-		public string Font = ChromeMetrics.Get<string>("HotkeyFont");
-		public Color TextColor = ChromeMetrics.Get<Color>("HotkeyColor");
-		public Color TextColorDisabled = ChromeMetrics.Get<Color>("HotkeyColorDisabled");
 
-		public HotkeyEntryWidget() { }
+		public HotkeyEntryWidget(HotkeyEntryWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent) { }
 		protected HotkeyEntryWidget(HotkeyEntryWidget widget)
-			: base(widget)
-		{
-			Font = widget.Font;
-			TextColor = widget.TextColor;
-			TextColorDisabled = widget.TextColorDisabled;
-			VisualHeight = widget.VisualHeight;
-		}
+			: base(widget) { }
 
 		public override bool YieldKeyboardFocus()
 		{
@@ -103,7 +107,7 @@ namespace OpenRA.Mods.Common.Widgets
 		{
 			var apparentText = Key.DisplayString();
 
-			var font = Game.Renderer.Fonts[Font];
+			var font = Game.Renderer.Fonts[Info.Font];
 			var pos = RenderOrigin;
 
 			var textSize = font.Measure(apparentText);
@@ -121,19 +125,19 @@ namespace OpenRA.Mods.Common.Widgets
 				return;
 
 			// Inset text by the margin and center vertically
-			var textPos = pos + new int2(LeftMargin, (Bounds.Height - textSize.Y) / 2 - VisualHeight);
+			var textPos = pos + new int2(Info.LeftMargin, (Bounds.Height - textSize.Y) / 2 - Info.VisualHeight);
 
 			// Scissor when the text overflows
-			if (textSize.X > Bounds.Width - LeftMargin - RightMargin)
+			if (textSize.X > Bounds.Width - Info.LeftMargin - Info.RightMargin)
 			{
-				Game.Renderer.EnableScissor(new Rectangle(pos.X + LeftMargin, pos.Y,
-					Bounds.Width - LeftMargin - RightMargin, Bounds.Bottom));
+				Game.Renderer.EnableScissor(new Rectangle(pos.X + Info.LeftMargin, pos.Y,
+					Bounds.Width - Info.LeftMargin - Info.RightMargin, Bounds.Bottom));
 			}
 
-			var color = disabled ? TextColorDisabled : TextColor;
+			var color = disabled ? Info.TextColorDisabled : Info.TextColor;
 			font.DrawText(apparentText, textPos, color);
 
-			if (textSize.X > Bounds.Width - LeftMargin - RightMargin)
+			if (textSize.X > Bounds.Width - Info.LeftMargin - Info.RightMargin)
 				Game.Renderer.DisableScissor();
 		}
 

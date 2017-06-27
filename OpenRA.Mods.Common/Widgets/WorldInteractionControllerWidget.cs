@@ -20,6 +20,14 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class WorldInteractionControllerWidgetInfo : WidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new WorldInteractionControllerWidget(this, args, parent);
+		}
+	}
+
 	public class WorldInteractionControllerWidget : Widget
 	{
 		protected readonly World World;
@@ -35,11 +43,11 @@ namespace OpenRA.Mods.Common.Widgets
 			}
 		}
 
-		[ObjectCreator.UseCtor]
-		public WorldInteractionControllerWidget(World world, WorldRenderer worldRenderer)
+		public WorldInteractionControllerWidget(WorldInteractionControllerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			World = world;
-			this.worldRenderer = worldRenderer;
+			World = args.Get<World>("world");
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
 		}
 
 		void DrawRollover(Actor unit)

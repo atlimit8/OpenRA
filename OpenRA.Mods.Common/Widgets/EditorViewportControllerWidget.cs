@@ -15,12 +15,21 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class EditorViewportControllerWidget : Widget
+	public class EditorViewportControllerWidgetInfo : WidgetInfo
 	{
-		public IEditorBrush CurrentBrush { get; private set; }
-
 		public readonly string TooltipContainer;
 		public readonly string TooltipTemplate;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new EditorViewportControllerWidget(this, args, parent);
+		}
+	}
+
+	public class EditorViewportControllerWidget : Widget
+	{
+		public new EditorViewportControllerWidgetInfo Info { get { return (EditorViewportControllerWidgetInfo)WidgetInfo; } }
+		public IEditorBrush CurrentBrush { get; private set; }
 
 		readonly Lazy<TooltipContainerWidget> tooltipContainer;
 		readonly EditorDefaultBrush defaultBrush;
@@ -28,11 +37,11 @@ namespace OpenRA.Mods.Common.Widgets
 
 		bool enableTooltips;
 
-		[ObjectCreator.UseCtor]
-		public EditorViewportControllerWidget(World world, WorldRenderer worldRenderer)
+		public EditorViewportControllerWidget(EditorViewportControllerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.worldRenderer = worldRenderer;
-			tooltipContainer = Exts.Lazy(() => Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
+			tooltipContainer = Exts.Lazy(() => Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 			CurrentBrush = defaultBrush = new EditorDefaultBrush(this, worldRenderer);
 		}
 
@@ -64,7 +73,7 @@ namespace OpenRA.Mods.Common.Widgets
 			if (tooltip != null)
 			{
 				Func<string> getTooltip = () => tooltip;
-				tooltipContainer.Value.SetTooltip(TooltipTemplate, new WidgetArgs() { { "getText", getTooltip } });
+				tooltipContainer.Value.SetTooltip(Info.TooltipTemplate, new WidgetArgs() { { "getText", getTooltip } });
 			}
 			else
 				tooltipContainer.Value.RemoveTooltip();

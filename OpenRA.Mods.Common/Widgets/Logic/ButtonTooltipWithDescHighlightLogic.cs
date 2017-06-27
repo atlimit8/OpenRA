@@ -22,7 +22,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 		public ButtonTooltipWithDescHighlightLogic(Widget widget, ButtonWidget button, Dictionary<string, MiniYaml> logicArgs)
 		{
 			var label = widget.Get<LabelWidget>("LABEL");
-			var font = Game.Renderer.Fonts[label.Font];
+			var font = Game.Renderer.Fonts[label.Info.Font];
 			var text = button.GetTooltipText();
 			var labelWidth = font.Measure(text).X;
 
@@ -49,7 +49,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 				var highlightColor = FieldLoader.GetValue<Color>("Highlight", logicArgs["Highlight"].Value);
 				widget.RemoveChild(descTemplate);
 
-				var descFont = Game.Renderer.Fonts[descTemplate.Font];
+				var descFont = Game.Renderer.Fonts[descTemplate.Info.Font];
 				var descWidth = 0;
 				var descOffset = descTemplate.Bounds.Y;
 

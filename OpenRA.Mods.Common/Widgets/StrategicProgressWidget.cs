@@ -9,6 +9,7 @@
  */
 #endregion
 
+using System;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Graphics;
@@ -17,16 +18,24 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class StrategicProgressWidgetInfo : WidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new StrategicProgressWidget(this, args, parent);
+		}
+	}
+
 	public class StrategicProgressWidget : Widget
 	{
 		readonly World world;
 		bool initialised = false;
 
-		[ObjectCreator.UseCtor]
-		public StrategicProgressWidget(World world)
+		public StrategicProgressWidget(StrategicProgressWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
 			IsVisible = () => true;
-			this.world = world;
+			world = args.Get<World>("world");
 		}
 
 		public override void Draw()

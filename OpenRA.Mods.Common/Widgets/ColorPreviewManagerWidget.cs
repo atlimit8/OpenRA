@@ -10,32 +10,40 @@
 
 #endregion
 
+using System;
 using OpenRA.Graphics;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class ColorPreviewManagerWidget : Widget
+	public class ColorPreviewManagerWidgetInfo : WidgetInfo
 	{
 		public readonly string PaletteName = "colorpicker";
 		public readonly int[] RemapIndices = ChromeMetrics.Get<int[]>("ColorPickerRemapIndices");
 		public readonly float Ramp = 0.05f;
+		public readonly HSLColor Color;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ColorPreviewManagerWidget(this, args, parent);
+		}
+	}
+
+	public class ColorPreviewManagerWidget : Widget
+	{
 		public HSLColor Color;
+		public new ColorPreviewManagerWidgetInfo Info { get { return (ColorPreviewManagerWidgetInfo)WidgetInfo; } }
 
 		HSLColor cachedColor;
-		WorldRenderer worldRenderer;
-		IPalette preview;
+		readonly WorldRenderer worldRenderer;
+		readonly IPalette preview;
 
-		[ObjectCreator.UseCtor]
-		public ColorPreviewManagerWidget(WorldRenderer worldRenderer)
+		public ColorPreviewManagerWidget(ColorPreviewManagerWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.worldRenderer = worldRenderer;
-		}
-
-		public override void Initialize(WidgetArgs args)
-		{
-			base.Initialize(args);
-			preview = worldRenderer.Palette(PaletteName).Palette;
+			Color = info.Color;
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
+			preview = worldRenderer.Palette(info.PaletteName).Palette;
 		}
 
 		public override void Tick()
@@ -45,8 +53,8 @@ namespace OpenRA.Mods.Common.Widgets
 			cachedColor = Color;
 
 			var newPalette = new MutablePalette(preview);
-			newPalette.ApplyRemap(new PlayerColorRemap(RemapIndices, Color, Ramp));
-			worldRenderer.ReplacePalette(PaletteName, newPalette);
+			newPalette.ApplyRemap(new PlayerColorRemap(Info.RemapIndices, Color, Info.Ramp));
+			worldRenderer.ReplacePalette(Info.PaletteName, newPalette);
 		}
 	}
 }

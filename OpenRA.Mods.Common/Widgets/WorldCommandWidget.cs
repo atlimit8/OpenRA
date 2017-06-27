@@ -19,6 +19,14 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class WorldCommandWidgetInfo : WidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new WorldCommandWidget(this, args, parent);
+		}
+	}
+
 	/// <summary> Contains all functions that are valid for players and observers/spectators. </summary>
 	public class WorldCommandWidget : Widget
 	{
@@ -26,11 +34,11 @@ namespace OpenRA.Mods.Common.Widgets
 		readonly WorldRenderer worldRenderer;
 		readonly RadarPings radarPings;
 
-		[ObjectCreator.UseCtor]
-		public WorldCommandWidget(World world, WorldRenderer worldRenderer)
+		public WorldCommandWidget(WorldCommandWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.world = world;
-			this.worldRenderer = worldRenderer;
+			world = args.Get<World>("world");
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
 			radarPings = world.WorldActor.TraitOrDefault<RadarPings>();
 		}
 

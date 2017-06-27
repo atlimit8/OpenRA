@@ -13,9 +13,19 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class PasswordFieldWidgetInfo : TextFieldWidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new PasswordFieldWidget(this, args, parent);
+		}
+	}
+
 	public class PasswordFieldWidget : TextFieldWidget
 	{
-		public PasswordFieldWidget() { }
+		public PasswordFieldWidget(PasswordFieldWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent) { }
+
 		protected PasswordFieldWidget(PasswordFieldWidget widget) : base(widget) { }
 
 		protected override string GetApparentText() { return new string('*', Text.Length); }

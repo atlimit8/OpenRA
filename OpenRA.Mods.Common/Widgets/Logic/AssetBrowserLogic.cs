@@ -83,7 +83,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			if (spriteWidget != null)
 			{
 				spriteWidget.GetSprite = () => currentSprites != null ? currentSprites[currentFrame] : null;
-				currentPalette = spriteWidget.Palette;
+				currentPalette = spriteWidget.Info.Palette;
 				spriteWidget.GetPalette = () => currentPalette;
 				spriteWidget.IsVisible = () => !isVideoLoaded && !isLoadError;
 			}
@@ -110,7 +110,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			var colorDropdown = panel.GetOrNull<DropDownButtonWidget>("COLOR");
 			if (colorDropdown != null)
 			{
-				colorDropdown.IsDisabled = () => currentPalette != colorPreview.PaletteName;
+				colorDropdown.IsDisabled = () => currentPalette != colorPreview.Info.PaletteName;
 				colorDropdown.OnMouseDown = _ => ColorPickerLogic.ShowColorDropDown(colorDropdown, colorPreview, world);
 				panel.Get<ColorBlockWidget>("COLORBLOCK").GetColor = () => Game.Settings.Player.Color.RGB;
 			}

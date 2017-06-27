@@ -12,24 +12,30 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using OpenRA.Graphics;
 using OpenRA.Mods.Common.Orders;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Orders;
-using OpenRA.Primitives;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class UnitCommandWidgetInfo : WidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new UnitCommandWidget(this, args, parent);
+		}
+	}
+
 	/// <summary> Contains all functions that are unit-specific. </summary>
 	public class UnitCommandWidget : Widget
 	{
 		readonly World world;
 
-		[ObjectCreator.UseCtor]
-		public UnitCommandWidget(World world, WorldRenderer worldRenderer)
+		public UnitCommandWidget(UnitCommandWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.world = world;
+			world = args.Get<World>("world");
 		}
 
 		public override string GetCursor(int2 pos) { return null; }

@@ -29,7 +29,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 			// Classic production queues are initialized at game start, and then never change.
 			var queues = world.LocalPlayer.PlayerActor.TraitsImplementing<ProductionQueue>()
-				.Where(q => q.Info.Type == button.ProductionGroup)
+				.Where(q => q.Info.Type == button.Info.ProductionGroup)
 				.ToArray();
 
 			Action<bool> selectTab = reverse =>
@@ -44,10 +44,10 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			};
 
 			Func<ButtonWidget, Hotkey> getKey = _ => Hotkey.Invalid;
-			if (!string.IsNullOrEmpty(button.HotkeyName))
+			if (!string.IsNullOrEmpty(button.Info.HotkeyName))
 			{
 				var ks = Game.Settings.Keys;
-				var field = ks.GetType().GetField(button.HotkeyName);
+				var field = ks.GetType().GetField(button.Info.HotkeyName);
 				if (field != null)
 					getKey = _ => (Hotkey)field.GetValue(ks);
 			}
@@ -59,7 +59,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			button.IsHighlighted = () => queues.Contains(palette.CurrentQueue);
 			button.GetKey = getKey;
 
-			var chromeName = button.ProductionGroup.ToLowerInvariant();
+			var chromeName = button.Info.ProductionGroup.ToLowerInvariant();
 			var icon = button.Get<ImageWidget>("ICON");
 			icon.GetImageName = () => button.IsDisabled() ? chromeName + "-disabled" :
 				queues.Any(q => q.CurrentDone) ? chromeName + "-alert" : chromeName;
@@ -90,8 +90,8 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 				Action<int, int> updateBackground = (_, icons) =>
 				{
-					var rows = Math.Max(palette.MinimumRows, (icons + palette.Columns - 1) / palette.Columns);
-					rows = Math.Min(rows, palette.MaximumRows);
+					var rows = Math.Max(palette.Info.MinimumRows, (icons + palette.Info.Columns - 1) / palette.Info.Columns);
+					rows = Math.Min(rows, palette.Info.MaximumRows);
 
 					if (background != null)
 					{
@@ -160,7 +160,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			if (scrollDown != null)
 			{
 				scrollDown.OnClick = palette.ScrollDown;
-				scrollDown.IsVisible = () => palette.TotalIconCount > (palette.MaxIconRowOffset * palette.Columns);
+				scrollDown.IsVisible = () => palette.TotalIconCount > (palette.MaxIconRowOffset * palette.Info.Columns);
 				scrollDown.IsDisabled = () => !palette.CanScrollDown;
 			}
 
@@ -169,7 +169,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			if (scrollUp != null)
 			{
 				scrollUp.OnClick = palette.ScrollUp;
-				scrollUp.IsVisible = () => palette.TotalIconCount > (palette.MaxIconRowOffset * palette.Columns);
+				scrollUp.IsVisible = () => palette.TotalIconCount > (palette.MaxIconRowOffset * palette.Info.Columns);
 				scrollUp.IsDisabled = () => !palette.CanScrollUp;
 			}
 
@@ -191,8 +191,8 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			// Check if icon heights exceed y resolution
 			var maxItemsHeight = screenHeight - sidebarProductionHeight;
 
-			var maxIconRowOffest = (maxItemsHeight / productionPalette.IconSize.Y) - 1;
-			productionPalette.MaxIconRowOffset = Math.Min(maxIconRowOffest, productionPalette.MaximumRows);
+			var maxIconRowOffest = (maxItemsHeight / productionPalette.Info.IconSize.Y) - 1;
+			productionPalette.MaxIconRowOffset = Math.Min(maxIconRowOffest, productionPalette.Info.MaximumRows);
 		}
 	}
 }

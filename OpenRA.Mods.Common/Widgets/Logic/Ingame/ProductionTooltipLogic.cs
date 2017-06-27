@@ -43,9 +43,9 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 			var iconMargin = timeIcon.Bounds.X;
 
-			var font = Game.Renderer.Fonts[nameLabel.Font];
-			var descFont = Game.Renderer.Fonts[descLabel.Font];
-			var requiresFont = Game.Renderer.Fonts[requiresLabel.Font];
+			var font = Game.Renderer.Fonts[nameLabel.Info.Font];
+			var descFont = Game.Renderer.Fonts[descLabel.Info.Font];
+			var requiresFont = Game.Renderer.Fonts[requiresLabel.Info.Font];
 			ActorInfo lastActor = null;
 
 			tooltipContainer.BeforeRender = () =>

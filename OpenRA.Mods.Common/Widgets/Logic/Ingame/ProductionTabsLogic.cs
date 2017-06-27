@@ -26,33 +26,33 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 			Action<bool> selectTab = reverse =>
 			{
-				if (tabs.QueueGroup == button.ProductionGroup)
+				if (tabs.QueueGroup == button.Info.ProductionGroup)
 					tabs.SelectNextTab(reverse);
 				else
-					tabs.QueueGroup = button.ProductionGroup;
+					tabs.QueueGroup = button.Info.ProductionGroup;
 
 				tabs.PickUpCompletedBuilding();
 			};
 
 			Func<ButtonWidget, Hotkey> getKey = _ => Hotkey.Invalid;
-			if (!string.IsNullOrEmpty(button.HotkeyName))
+			if (!string.IsNullOrEmpty(button.Info.HotkeyName))
 			{
 				var ks = Game.Settings.Keys;
-				var field = ks.GetType().GetField(button.HotkeyName);
+				var field = ks.GetType().GetField(button.Info.HotkeyName);
 				if (field != null)
 					getKey = _ => (Hotkey)field.GetValue(ks);
 			}
 
-			button.IsDisabled = () => tabs.Groups[button.ProductionGroup].Tabs.Count == 0;
+			button.IsDisabled = () => tabs.Groups[button.Info.ProductionGroup].Tabs.Count == 0;
 			button.OnMouseUp = mi => selectTab(mi.Modifiers.HasModifier(Modifiers.Shift));
 			button.OnKeyPress = e => selectTab(e.Modifiers.HasModifier(Modifiers.Shift));
-			button.IsHighlighted = () => tabs.QueueGroup == button.ProductionGroup;
+			button.IsHighlighted = () => tabs.QueueGroup == button.Info.ProductionGroup;
 			button.GetKey = getKey;
 
-			var chromeName = button.ProductionGroup.ToLowerInvariant();
+			var chromeName = button.Info.ProductionGroup.ToLowerInvariant();
 			var icon = button.Get<ImageWidget>("ICON");
 			icon.GetImageName = () => button.IsDisabled() ? chromeName + "-disabled" :
-				tabs.Groups[button.ProductionGroup].Alert ? chromeName + "-alert" : chromeName;
+				tabs.Groups[button.Info.ProductionGroup].Alert ? chromeName + "-alert" : chromeName;
 		}
 
 		[ObjectCreator.UseCtor]
@@ -64,14 +64,14 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			world.ActorRemoved += tabs.ActorChanged;
 			Game.BeforeGameStart += UnregisterEvents;
 
-			var typesContainer = Ui.Root.Get(tabs.TypesContainer);
+			var typesContainer = Ui.Root.Get(tabs.Info.TypesContainer);
 			foreach (var i in typesContainer.Children)
 				SetupProductionGroupButton(i as ProductionTypeButtonWidget);
 
-			var background = Ui.Root.GetOrNull(tabs.BackgroundContainer);
+			var background = Ui.Root.GetOrNull(tabs.Info.BackgroundContainer);
 			if (background != null)
 			{
-				var palette = tabs.Parent.Get<ProductionPaletteWidget>(tabs.PaletteWidget);
+				var palette = tabs.Parent.Get<ProductionPaletteWidget>(tabs.Info.PaletteWidget);
 				var icontemplate = background.Get("ICON_TEMPLATE");
 
 				Action<int, int> updateBackground = (oldCount, newCount) =>
@@ -80,12 +80,12 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 					for (var i = 0; i < newCount; i++)
 					{
-						var x = i % palette.Columns;
-						var y = i / palette.Columns;
+						var x = i % palette.Info.Columns;
+						var y = i / palette.Info.Columns;
 
 						var bg = icontemplate.Clone();
-						bg.Bounds.X = palette.IconSize.X * x;
-						bg.Bounds.Y = palette.IconSize.Y * y;
+						bg.Bounds.X = palette.Info.IconSize.X * x;
+						bg.Bounds.Y = palette.Info.IconSize.Y * y;
 						background.AddChild(bg);
 					}
 				};

@@ -36,9 +36,10 @@ namespace OpenRA.Mods.Common.Widgets
 		public ProductionQueue ProductionQueue;
 	}
 
-	public class ProductionPaletteWidget : Widget
+	public enum ReadyTextStyleOptions { Solid, AlternatingColor, Blinking }
+
+	public class ProductionPaletteWidgetInfo : WidgetInfo
 	{
-		public enum ReadyTextStyleOptions { Solid, AlternatingColor, Blinking }
 		public readonly ReadyTextStyleOptions ReadyTextStyle = ReadyTextStyleOptions.AlternatingColor;
 		public readonly Color ReadyTextAltColor = Color.Gold;
 		public readonly int Columns = 3;
@@ -62,6 +63,21 @@ namespace OpenRA.Mods.Common.Widgets
 		[Translate] public readonly string ReadyText = "";
 		[Translate] public readonly string HoldText = "";
 
+		public readonly int MinimumRows = 4;
+		public readonly int MaximumRows = int.MaxValue;
+
+		public readonly int IconRowOffset = 0;
+		public readonly int MaxIconRowOffset = int.MaxValue;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new ProductionPaletteWidget(this, args, parent);
+		}
+	}
+
+	public class ProductionPaletteWidget : Widget
+	{
+		public new ProductionPaletteWidgetInfo Info { get { return (ProductionPaletteWidgetInfo)WidgetInfo; } }
 		public int DisplayedIconCount { get; private set; }
 		public int TotalIconCount { get; private set; }
 		public event Action<int, int> OnIconCountChanged = (a, b) => { };
@@ -70,9 +86,6 @@ namespace OpenRA.Mods.Common.Widgets
 		public Func<ProductionIcon> GetTooltipIcon;
 		public readonly World World;
 		readonly OrderManager orderManager;
-
-		public int MinimumRows = 4;
-		public int MaximumRows = int.MaxValue;
 
 		public int IconRowOffset = 0;
 		public int MaxIconRowOffset = int.MaxValue;
@@ -94,19 +107,20 @@ namespace OpenRA.Mods.Common.Widgets
 		SpriteFont overlayFont;
 		float2 holdOffset, readyOffset, timeOffset, queuedOffset;
 
-		[ObjectCreator.UseCtor]
-		public ProductionPaletteWidget(OrderManager orderManager, World world, WorldRenderer worldRenderer)
+		public ProductionPaletteWidget(ProductionPaletteWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.orderManager = orderManager;
-			World = world;
-			this.worldRenderer = worldRenderer;
+			orderManager = args.Get<OrderManager>("orderManager");
+			World = args.Get<World>("world");
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
 			GetTooltipIcon = () => TooltipIcon;
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 
-			cantBuild = new Animation(world, NotBuildableAnimation);
-			cantBuild.PlayFetchIndex(NotBuildableSequence, () => 0);
-			clock = new Animation(world, ClockAnimation);
+			cantBuild = new Animation(World, info.NotBuildableAnimation);
+			cantBuild.PlayFetchIndex(info.NotBuildableSequence, () => 0);
+			clock = new Animation(World, Info.ClockAnimation);
+			MaxIconRowOffset = info.MaxIconRowOffset;
 		}
 
 		public void ScrollDown()
@@ -119,7 +133,7 @@ namespace OpenRA.Mods.Common.Widgets
 		{
 			get
 			{
-				var totalRows = (TotalIconCount + Columns - 1) / Columns;
+				var totalRows = (TotalIconCount + Info.Columns - 1) / Info.Columns;
 
 				return IconRowOffset < totalRows - MaxIconRowOffset;
 			}
@@ -165,14 +179,14 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void MouseEntered()
 		{
-			if (TooltipContainer != null)
-				tooltipContainer.Value.SetTooltip(TooltipTemplate,
+			if (Info.TooltipContainer != null)
+				tooltipContainer.Value.SetTooltip(Info.TooltipTemplate,
 					new WidgetArgs() { { "player", World.LocalPlayer }, { "getTooltipIcon", GetTooltipIcon } });
 		}
 
 		public override void MouseExited()
 		{
-			if (TooltipContainer != null)
+			if (Info.TooltipContainer != null)
 				tooltipContainer.Value.RemoveTooltip();
 		}
 
@@ -221,14 +235,14 @@ namespace OpenRA.Mods.Common.Widgets
 		{
 			if (PickUpCompletedBuildingIcon(icon, item))
 			{
-				Game.Sound.Play(SoundType.UI, TabClick);
+				Game.Sound.Play(SoundType.UI, Info.TabClick);
 				return true;
 			}
 
 			if (item != null && item.Paused)
 			{
 				// Resume a paused item
-				Game.Sound.Play(SoundType.UI, TabClick);
+				Game.Sound.Play(SoundType.UI, Info.TabClick);
 				World.IssueOrder(Order.PauseProduction(CurrentQueue.Actor, icon.Name, false));
 				return true;
 			}
@@ -236,7 +250,7 @@ namespace OpenRA.Mods.Common.Widgets
 			if (CurrentQueue.BuildableItems().Any(a => a.Name == icon.Name))
 			{
 				// Queue a new item
-				Game.Sound.Play(SoundType.UI, TabClick);
+				Game.Sound.Play(SoundType.UI, Info.TabClick);
 				Game.Sound.PlayNotification(World.Map.Rules, World.LocalPlayer, "Speech", CurrentQueue.Info.QueuedAudio, World.LocalPlayer.Faction.InternalName);
 				World.IssueOrder(Order.StartProduction(CurrentQueue.Actor, icon.Name, handleCount));
 				return true;
@@ -250,7 +264,7 @@ namespace OpenRA.Mods.Common.Widgets
 			if (item == null)
 				return false;
 
-			Game.Sound.Play(SoundType.UI, TabClick);
+			Game.Sound.Play(SoundType.UI, Info.TabClick);
 
 			if (item.Paused || item.Done || item.TotalCost == item.RemainingCost)
 			{
@@ -274,7 +288,7 @@ namespace OpenRA.Mods.Common.Widgets
 				return false;
 
 			// Directly cancel, skipping "on-hold"
-			Game.Sound.Play(SoundType.UI, TabClick);
+			Game.Sound.Play(SoundType.UI, Info.TabClick);
 			Game.Sound.PlayNotification(World.Map.Rules, World.LocalPlayer, "Speech", CurrentQueue.Info.CancelledAudio, World.LocalPlayer.Faction.InternalName);
 			World.IssueOrder(Order.CancelProduction(CurrentQueue.Actor, icon.Name, handleCount));
 
@@ -292,7 +306,7 @@ namespace OpenRA.Mods.Common.Widgets
 				: false;
 
 			if (!handled)
-				Game.Sound.Play(SoundType.UI, DisabledTabClick);
+				Game.Sound.Play(SoundType.UI, Info.DisabledTabClick);
 
 			return true;
 		}
@@ -333,11 +347,11 @@ namespace OpenRA.Mods.Common.Widgets
 			var rb = RenderBounds;
 			var faction = producer.Trait.Faction;
 
-			foreach (var item in AllBuildables.Skip(IconRowOffset * Columns).Take(MaxIconRowOffset * Columns))
+			foreach (var item in AllBuildables.Skip(IconRowOffset * Info.Columns).Take(MaxIconRowOffset * Info.Columns))
 			{
-				var x = DisplayedIconCount % Columns;
-				var y = DisplayedIconCount / Columns;
-				var rect = new Rectangle(rb.X + x * (IconSize.X + IconMargin.X), rb.Y + y * (IconSize.Y + IconMargin.Y), IconSize.X, IconSize.Y);
+				var x = DisplayedIconCount % Info.Columns;
+				var y = DisplayedIconCount / Info.Columns;
+				var rect = new Rectangle(rb.X + x * (Info.IconSize.X + Info.IconMargin.X), rb.Y + y * (Info.IconSize.Y + Info.IconMargin.Y), Info.IconSize.X, Info.IconSize.Y);
 
 				var rsi = item.TraitInfo<RenderSpritesInfo>();
 				var icon = new Animation(World, rsi.GetImage(item, World.Map.Rules.Sequences, faction));
@@ -351,8 +365,8 @@ namespace OpenRA.Mods.Common.Widgets
 					Hotkey = ks.GetProductionHotkey(DisplayedIconCount),
 					Sprite = icon.Image,
 					Palette = worldRenderer.Palette(bi.IconPalette),
-					IconClockPalette = worldRenderer.Palette(ClockPalette),
-					IconDarkenPalette = worldRenderer.Palette(NotBuildablePalette),
+					IconClockPalette = worldRenderer.Palette(Info.ClockPalette),
+					IconDarkenPalette = worldRenderer.Palette(Info.NotBuildablePalette),
 					Pos = new float2(rect.Location),
 					Queued = currentQueue.AllQueued().Where(a => a.Item == item.Name).ToList(),
 					ProductionQueue = currentQueue
@@ -370,13 +384,13 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void Draw()
 		{
-			var iconOffset = 0.5f * IconSize.ToFloat2() + IconSpriteOffset;
+			var iconOffset = 0.5f * Info.IconSize.ToFloat2() + Info.IconSpriteOffset;
 
 			overlayFont = Game.Renderer.Fonts["TinyBold"];
 			timeOffset = iconOffset - overlayFont.Measure(WidgetUtils.FormatTime(0, World.Timestep)) / 2;
 			queuedOffset = new float2(4, 2);
-			holdOffset = iconOffset - overlayFont.Measure(HoldText) / 2;
-			readyOffset = iconOffset - overlayFont.Measure(ReadyText) / 2;
+			holdOffset = iconOffset - overlayFont.Measure(Info.HoldText) / 2;
+			readyOffset = iconOffset - overlayFont.Measure(Info.ReadyText) / 2;
 
 			if (CurrentQueue == null)
 				return;
@@ -393,13 +407,13 @@ namespace OpenRA.Mods.Common.Widgets
 				// Draw the ProductionIconOverlay's sprite
 				var pio = pios.FirstOrDefault(p => p.IsOverlayActive(icon.Actor));
 				if (pio != null)
-					WidgetUtils.DrawSHPCentered(pio.Sprite, icon.Pos + iconOffset + pio.Offset(IconSize), worldRenderer.Palette(pio.Palette), 1f);
+					WidgetUtils.DrawSHPCentered(pio.Sprite, icon.Pos + iconOffset + pio.Offset(Info.IconSize), worldRenderer.Palette(pio.Palette), 1f);
 
 				// Build progress
 				if (icon.Queued.Count > 0)
 				{
 					var first = icon.Queued[0];
-					clock.PlayFetchIndex(ClockSequence,
+					clock.PlayFetchIndex(Info.ClockSequence,
 						() => (first.TotalTime - first.RemainingTime)
 							* (clock.CurrentSequence.Length - 1) / first.TotalTime);
 					clock.Tick();
@@ -420,13 +434,13 @@ namespace OpenRA.Mods.Common.Widgets
 					var waiting = first != CurrentQueue.CurrentItem() && !first.Done;
 					if (first.Done)
 					{
-						if (ReadyTextStyle == ReadyTextStyleOptions.Solid || orderManager.LocalFrameNumber * worldRenderer.World.Timestep / 360 % 2 == 0)
-							overlayFont.DrawTextWithContrast(ReadyText, icon.Pos + readyOffset, Color.White, Color.Black, 1);
-						else if (ReadyTextStyle == ReadyTextStyleOptions.AlternatingColor)
-							overlayFont.DrawTextWithContrast(ReadyText, icon.Pos + readyOffset, ReadyTextAltColor, Color.Black, 1);
+						if (Info.ReadyTextStyle == ReadyTextStyleOptions.Solid || orderManager.LocalFrameNumber * worldRenderer.World.Timestep / 360 % 2 == 0)
+							overlayFont.DrawTextWithContrast(Info.ReadyText, icon.Pos + readyOffset, Color.White, Color.Black, 1);
+						else if (Info.ReadyTextStyle == ReadyTextStyleOptions.AlternatingColor)
+							overlayFont.DrawTextWithContrast(Info.ReadyText, icon.Pos + readyOffset, Info.ReadyTextAltColor, Color.Black, 1);
 					}
 					else if (first.Paused)
-						overlayFont.DrawTextWithContrast(HoldText,
+						overlayFont.DrawTextWithContrast(Info.HoldText,
 							icon.Pos + holdOffset,
 							Color.White, Color.Black, 1);
 					else if (!waiting)

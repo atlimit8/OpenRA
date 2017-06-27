@@ -225,7 +225,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			{
 				newsBG.IsVisible = () => Game.Settings.Game.FetchNews && menuType != MenuType.None && menuType != MenuType.SystemInfoPrompt;
 
-				newsPanel = Ui.LoadWidget<ScrollPanelWidget>("NEWS_PANEL", null, new WidgetArgs());
+				newsPanel = Ui.CreateWidget<ScrollPanelWidget>("NEWS_PANEL", null, new WidgetArgs());
 				newsTemplate = newsPanel.Get("NEWS_ITEM_TEMPLATE");
 				newsPanel.RemoveChild(newsTemplate);
 
@@ -332,7 +332,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 		void SetNewsStatus(string message)
 		{
-			message = WidgetUtils.WrapText(message, newsStatus.Bounds.Width, Game.Renderer.Fonts[newsStatus.Font]);
+			message = WidgetUtils.WrapText(message, newsStatus.Bounds.Width, Game.Renderer.Fonts[newsStatus.Info.Font]);
 			newsStatus.GetText = () => message;
 		}
 
@@ -413,9 +413,9 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 				var contentLabel = newsItem.Get<LabelWidget>("CONTENT");
 				var content = item.Content.Replace("\\n", "\n");
-				content = WidgetUtils.WrapText(content, contentLabel.Bounds.Width, Game.Renderer.Fonts[contentLabel.Font]);
+				content = WidgetUtils.WrapText(content, contentLabel.Bounds.Width, Game.Renderer.Fonts[contentLabel.Info.Font]);
 				contentLabel.GetText = () => content;
-				contentLabel.Bounds.Height = Game.Renderer.Fonts[contentLabel.Font].Measure(content).Y;
+				contentLabel.Bounds.Height = Game.Renderer.Fonts[contentLabel.Info.Font].Measure(content).Y;
 				newsItem.Bounds.Height += contentLabel.Bounds.Height;
 
 				newsPanel.AddChild(newsItem);

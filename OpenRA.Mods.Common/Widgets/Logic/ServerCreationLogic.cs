@@ -57,7 +57,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 				var mapTitle = panel.Get<LabelWidget>("MAP_NAME");
 				if (mapTitle != null)
 				{
-					var font = Game.Renderer.Fonts[mapTitle.Font];
+					var font = Game.Renderer.Fonts[mapTitle.Info.Font];
 					var title = new CachedTransform<MapPreview, string>(m => WidgetUtils.TruncateText(m.Title, mapTitle.Bounds.Width, font));
 					mapTitle.GetText = () => title.Update(preview);
 				}

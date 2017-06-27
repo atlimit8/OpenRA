@@ -74,7 +74,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 			panel.Get("REPLAY_INFO").IsVisible = () => selectedReplay != null;
 
-			Ui.LoadWidget("MAP_PREVIEW", panel.Get("MAP_PREVIEW_ROOT"), new WidgetArgs
+			Ui.CreateWidget("MAP_PREVIEW", panel.Get("MAP_PREVIEW_ROOT"), new WidgetArgs
 			{
 				{ "orderManager", null },
 				{ "getMap", (Func<MapPreview>)(() => map) },
@@ -651,7 +651,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 						var item = ScrollItemWidget.Setup(playerTemplate, () => false, () => { });
 
 						var label = item.Get<LabelWidget>("LABEL");
-						var font = Game.Renderer.Fonts[label.Font];
+						var font = Game.Renderer.Fonts[label.Info.Font];
 						var name = WidgetUtils.TruncateText(o.Name, label.Bounds.Width, font);
 						label.GetText = () => name;
 						label.GetColor = () => color;

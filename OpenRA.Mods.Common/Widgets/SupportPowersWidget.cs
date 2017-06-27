@@ -19,7 +19,7 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
-	public class SupportPowersWidget : Widget
+	public class SupportPowersWidgetInfo : WidgetInfo
 	{
 		[Translate] public readonly string ReadyText = "";
 		[Translate] public readonly string HoldText = "";
@@ -34,6 +34,16 @@ namespace OpenRA.Mods.Common.Widgets
 		public readonly string ClockAnimation = "clock";
 		public readonly string ClockSequence = "idle";
 		public readonly string ClockPalette = "chrome";
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new SupportPowersWidget(this, args, parent);
+		}
+	}
+
+	public class SupportPowersWidget : Widget
+	{
+		public new SupportPowersWidgetInfo Info { get { return (SupportPowersWidgetInfo)WidgetInfo; } }
 
 		public int IconCount { get; private set; }
 		public event Action<int, int> OnIconCountChanged = (a, b) => { };
@@ -53,16 +63,17 @@ namespace OpenRA.Mods.Common.Widgets
 		SpriteFont overlayFont;
 		float2 holdOffset, readyOffset, timeOffset;
 
-		[ObjectCreator.UseCtor]
-		public SupportPowersWidget(World world, WorldRenderer worldRenderer)
+		public SupportPowersWidget(SupportPowersWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.worldRenderer = worldRenderer;
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
+			var world = args.Get<World>("world");
 			spm = world.LocalPlayer.PlayerActor.Trait<SupportPowerManager>();
 			tooltipContainer = Exts.Lazy(() =>
-				Ui.Root.Get<TooltipContainerWidget>(TooltipContainer));
+				Ui.Root.Get<TooltipContainerWidget>(info.TooltipContainer));
 
 			icon = new Animation(world, "icon");
-			clock = new Animation(world, ClockAnimation);
+			clock = new Animation(world, info.ClockAnimation);
 		}
 
 		public class SupportPowerIcon
@@ -88,7 +99,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 			foreach (var p in powers)
 			{
-				var rect = new Rectangle(rb.X, rb.Y + IconCount * (IconSize.Y + IconMargin), IconSize.X, IconSize.Y);
+				var rect = new Rectangle(rb.X, rb.Y + IconCount * (Info.IconSize.Y + Info.IconMargin), Info.IconSize.X, Info.IconSize.Y);
 				icon.Play(p.Info.Icon);
 
 				var power = new SupportPowerIcon()
@@ -97,7 +108,7 @@ namespace OpenRA.Mods.Common.Widgets
 					Pos = new float2(rect.Location),
 					Sprite = icon.Image,
 					Palette = worldRenderer.Palette(p.Info.IconPalette),
-					IconClockPalette = worldRenderer.Palette(ClockPalette),
+					IconClockPalette = worldRenderer.Palette(Info.ClockPalette),
 					Hotkey = ks.GetSupportPowerHotkey(IconCount)
 				};
 
@@ -142,11 +153,11 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void Draw()
 		{
-			var iconOffset = 0.5f * IconSize.ToFloat2() + IconSpriteOffset;
+			var iconOffset = 0.5f * Info.IconSize.ToFloat2() + Info.IconSpriteOffset;
 			overlayFont = Game.Renderer.Fonts["TinyBold"];
 
-			holdOffset = iconOffset - overlayFont.Measure(HoldText) / 2;
-			readyOffset = iconOffset - overlayFont.Measure(ReadyText) / 2;
+			holdOffset = iconOffset - overlayFont.Measure(Info.HoldText) / 2;
+			readyOffset = iconOffset - overlayFont.Measure(Info.ReadyText) / 2;
 			timeOffset = iconOffset - overlayFont.Measure(WidgetUtils.FormatTime(0, worldRenderer.World.Timestep)) / 2;
 
 			// Icons
@@ -156,7 +167,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 				// Charge progress
 				var sp = p.Power;
-				clock.PlayFetchIndex(ClockSequence,
+				clock.PlayFetchIndex(Info.ClockSequence,
 					() => sp.TotalTime == 0 ? clock.CurrentSequence.Length - 1 : (sp.TotalTime - sp.RemainingTime)
 					* (clock.CurrentSequence.Length - 1) / sp.TotalTime);
 
@@ -168,11 +179,11 @@ namespace OpenRA.Mods.Common.Widgets
 			foreach (var p in icons.Values)
 			{
 				if (p.Power.Ready)
-					overlayFont.DrawTextWithContrast(ReadyText,
+					overlayFont.DrawTextWithContrast(Info.ReadyText,
 						p.Pos + readyOffset,
 						Color.White, Color.Black, 1);
 				else if (!p.Power.Active)
-					overlayFont.DrawTextWithContrast(HoldText,
+					overlayFont.DrawTextWithContrast(Info.HoldText,
 						p.Pos + holdOffset,
 						Color.White, Color.Black, 1);
 				else
@@ -190,16 +201,16 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public override void MouseEntered()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 
-			tooltipContainer.Value.SetTooltip(TooltipTemplate,
+			tooltipContainer.Value.SetTooltip(Info.TooltipTemplate,
 				new WidgetArgs() { { "world", worldRenderer.World }, { "palette", this } });
 		}
 
 		public override void MouseExited()
 		{
-			if (TooltipContainer == null)
+			if (Info.TooltipContainer == null)
 				return;
 
 			tooltipContainer.Value.RemoveTooltip();

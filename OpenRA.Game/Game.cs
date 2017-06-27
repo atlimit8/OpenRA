@@ -135,7 +135,7 @@ namespace OpenRA
 		// Load a widget with world, orderManager, worldRenderer args, without adding it to the widget tree
 		public static Widget LoadWidget(World world, string id, Widget parent, WidgetArgs args)
 		{
-			return ModData.WidgetLoader.LoadWidget(new WidgetArgs(args)
+			return ModData.WidgetLoader.CreateWidget(new WidgetArgs(args)
 			{
 				{ "world", world },
 				{ "orderManager", OrderManager },

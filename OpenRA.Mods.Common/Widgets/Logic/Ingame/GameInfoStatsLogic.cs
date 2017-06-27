@@ -89,7 +89,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 					var item = playerTemplate.Clone();
 					LobbyUtils.SetupClientWidget(item, client, orderManager, client != null && client.Bot == null);
 					var nameLabel = item.Get<LabelWidget>("NAME");
-					var nameFont = Game.Renderer.Fonts[nameLabel.Font];
+					var nameFont = Game.Renderer.Fonts[nameLabel.Info.Font];
 
 					var suffixLength = new CachedTransform<string, int>(s => nameFont.Measure(s).X);
 					var name = new CachedTransform<Pair<string, int>, string>(c =>
@@ -139,7 +139,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 					var item = playerTemplate.Clone();
 					LobbyUtils.SetupClientWidget(item, client, orderManager, client != null && client.Bot == null);
 					var nameLabel = item.Get<LabelWidget>("NAME");
-					var nameFont = Game.Renderer.Fonts[nameLabel.Font];
+					var nameFont = Game.Renderer.Fonts[nameLabel.Info.Font];
 
 					var suffixLength = new CachedTransform<string, int>(s => nameFont.Measure(s).X);
 					var name = new CachedTransform<Pair<string, int>, string>(c =>

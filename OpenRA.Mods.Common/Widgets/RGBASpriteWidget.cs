@@ -15,11 +15,20 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class RGBASpriteWidgetInfo : WidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new RGBASpriteWidget(this, args, parent);
+		}
+	}
+
 	public class RGBASpriteWidget : Widget
 	{
 		public Func<Sprite> GetSprite = () => null;
 
-		public RGBASpriteWidget() { }
+		public RGBASpriteWidget(RGBASpriteWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent) { }
 
 		protected RGBASpriteWidget(RGBASpriteWidget other)
 			: base(other)

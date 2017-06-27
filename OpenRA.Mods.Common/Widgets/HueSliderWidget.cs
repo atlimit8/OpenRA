@@ -16,17 +16,21 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public class HueSliderWidgetInfo : SliderWidgetInfo
+	{
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new HueSliderWidget(this, args, parent);
+		}
+	}
+
 	public class HueSliderWidget : SliderWidget
 	{
 		Sprite hueSprite;
 
-		public HueSliderWidget() { }
-		public HueSliderWidget(HueSliderWidget other) : base(other) { }
-
-		public override void Initialize(WidgetArgs args)
+		public HueSliderWidget(HueSliderWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			base.Initialize(args);
-
 			using (var hueBitmap = new Bitmap(256, 256))
 			{
 				var hueSheet = new Sheet(SheetType.BGRA, new Size(256, 256));
@@ -45,6 +49,8 @@ namespace OpenRA.Mods.Common.Widgets
 				hueSheet.GetTexture().SetData(hueBitmap);
 			}
 		}
+
+		public HueSliderWidget(HueSliderWidget other) : base(other) { }
 
 		public override void Draw()
 		{

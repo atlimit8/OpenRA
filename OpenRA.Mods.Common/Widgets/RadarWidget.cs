@@ -20,12 +20,22 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets
 {
+	public sealed class RadarWidgetInfo : WidgetInfo
+	{
+		public readonly string WorldInteractionController = null;
+		public readonly int AnimationLength = 5;
+		public readonly string RadarOnlineSound = null;
+		public readonly string RadarOfflineSound = null;
+
+		protected override Widget Construct(WidgetArgs args, Widget parent = null)
+		{
+			return new RadarWidget(this, args, parent);
+		}
+	}
+
 	public sealed class RadarWidget : Widget, IDisposable
 	{
-		public string WorldInteractionController = null;
-		public int AnimationLength = 5;
-		public string RadarOnlineSound = null;
-		public string RadarOfflineSound = null;
+		public new RadarWidgetInfo Info { get { return (RadarWidgetInfo)WidgetInfo; } }
 		public Func<bool> IsEnabled = () => true;
 		public Action AfterOpen = () => { };
 		public Action AfterClose = () => { };
@@ -59,10 +69,11 @@ namespace OpenRA.Mods.Common.Widgets
 		Shroud renderShroud;
 
 		[ObjectCreator.UseCtor]
-		public RadarWidget(World world, WorldRenderer worldRenderer)
+		public RadarWidget(RadarWidgetInfo info, WidgetArgs args, Widget parent)
+			: base(info, args, parent)
 		{
-			this.world = world;
-			this.worldRenderer = worldRenderer;
+			world = args.Get<World>("world");
+			worldRenderer = args.Get<WorldRenderer>("worldRenderer");
 			radarPings = world.WorldActor.TraitOrDefault<RadarPings>();
 
 			isRectangularIsometric = world.Map.Grid.Type == MapGridType.RectangularIsometric;
@@ -71,11 +82,6 @@ namespace OpenRA.Mods.Common.Widgets
 			previewHeight = world.Map.MapSize.Y;
 			if (isRectangularIsometric)
 				previewWidth = 2 * previewWidth - 1;
-		}
-
-		public override void Initialize(WidgetArgs args)
-		{
-			base.Initialize(args);
 
 			// The four layers are stored in a 2x2 grid within a single texture
 			radarSheet = new Sheet(SheetType.BGRA, new Size(2 * previewWidth, 2 * previewHeight).NextPowerOf2());
@@ -265,9 +271,9 @@ namespace OpenRA.Mods.Common.Widgets
 					Location = location
 				};
 
-				if (WorldInteractionController != null)
+				if (Info.WorldInteractionController != null)
 				{
-					var controller = Ui.Root.Get<WorldInteractionControllerWidget>(WorldInteractionController);
+					var controller = Ui.Root.Get<WorldInteractionControllerWidget>(Info.WorldInteractionController);
 					controller.HandleMouseInput(fakemi);
 					fakemi.Event = MouseInputEvent.Up;
 					controller.HandleMouseInput(fakemi);
@@ -333,7 +339,7 @@ namespace OpenRA.Mods.Common.Widgets
 			// Enable/Disable the radar
 			var enabled = IsEnabled();
 			if (enabled != cachedEnabled)
-				Game.Sound.Play(SoundType.UI, enabled ? RadarOnlineSound : RadarOfflineSound);
+				Game.Sound.Play(SoundType.UI, enabled ? Info.RadarOnlineSound : Info.RadarOfflineSound);
 			cachedEnabled = enabled;
 
 			if (enabled)
@@ -397,15 +403,15 @@ namespace OpenRA.Mods.Common.Widgets
 				}
 			}
 
-			var targetFrame = enabled ? AnimationLength : 0;
-			hasRadar = enabled && frame == AnimationLength;
+			var targetFrame = enabled ? Info.AnimationLength : 0;
+			hasRadar = enabled && frame == Info.AnimationLength;
 			if (frame == targetFrame)
 				return;
 
 			frame += enabled ? 1 : -1;
-			radarMinimapHeight = float2.Lerp(0, 1, (float)frame / AnimationLength);
+			radarMinimapHeight = float2.Lerp(0, 1, (float)frame / Info.AnimationLength);
 
-			Animating(frame * 1f / AnimationLength);
+			Animating(frame * 1f / Info.AnimationLength);
 
 			// Update map rectangle for event handling
 			var ro = RenderOrigin;
