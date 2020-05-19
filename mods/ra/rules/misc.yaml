@@ -52,42 +52,42 @@ CRATE:
 		SelectionShares: 6
 		Units: jeep
 		ValidFactions: allies, england, france, germany
-		Prerequisites: techlevel.low
+		RequiresPlayerCondition: techlevel >= .low
 	GiveUnitCrateAction@1tnk:
 		SelectionShares: 6
 		Units: 1tnk
 		ValidFactions: allies, england, france, germany
-		Prerequisites: techlevel.low
+		RequiresPlayerCondition: techlevel >= .low
 	GiveUnitCrateAction@apc:
 		SelectionShares: 6
 		Units: apc
 		ValidFactions: soviet, russia, ukraine
-		Prerequisites: techlevel.low
+		RequiresPlayerCondition: techlevel >= .low
 	GiveUnitCrateAction@ftrk:
 		SelectionShares: 6
 		Units: ftrk
 		ValidFactions: soviet, russia, ukraine
-		Prerequisites: techlevel.low
+		RequiresPlayerCondition: techlevel >= .low
 	GiveUnitCrateAction@arty:
 		SelectionShares: 5
 		Units: arty
 		ValidFactions: allies, england, france, germany
-		Prerequisites: techlevel.medium, dome
+		RequiresPlayerCondition: techlevel >= .medium && dome
 	GiveUnitCrateAction@v2rl:
 		SelectionShares: 5
 		Units: v2rl
 		ValidFactions: soviet, russia, ukraine
-		Prerequisites: techlevel.medium, dome
+		RequiresPlayerCondition: techlevel >= .medium && dome
 	GiveUnitCrateAction@2tnk:
 		SelectionShares: 4
 		Units: 2tnk
 		ValidFactions: allies, england, france, germany
-		Prerequisites: techlevel.medium, fix
+		RequiresPlayerCondition: techlevel >= .medium && fix
 	GiveUnitCrateAction@3tnk:
 		SelectionShares: 4
 		Units: 3tnk
 		ValidFactions: soviet, russia, ukraine
-		Prerequisites: techlevel.medium, fix
+		RequiresPlayerCondition: techlevel >= .medium && fix
 	GiveUnitCrateAction@squadlight:
 		SelectionShares: 10
 		Units: e1,e1,e1,e3,e3
@@ -360,15 +360,15 @@ powerproxy.paratroopers:
 
 barracks.upgraded:
 	AlwaysVisible:
-	ProvidesPrerequisite:
+	GrantConditonToPlayer:
 
 vehicles.upgraded:
 	AlwaysVisible:
-	ProvidesPrerequisite:
+	GrantConditonToPlayer:
 
 aircraft.upgraded:
 	AlwaysVisible:
-	ProvidesPrerequisite:
+	GrantConditonToPlayer:
 
 mpspawn:
 	Interactable:

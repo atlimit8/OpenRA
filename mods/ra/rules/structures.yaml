@@ -11,8 +11,9 @@ MSLO:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 140
-		Prerequisites: techcenter, ~techlevel.unrestricted
-		BuildLimit: 1
+		ShowCondition: techlevel >= .unrestricted
+		Reuirements: techcenter
+		RemainingBuildLimit: 1 - mslo
 		Description: Provides an atomic bomb.\nRequires power to operate.\nMaximum 1 can be built.\n  Special Ability: Atom Bomb
 	Building:
 		Footprint: xx
@@ -79,7 +80,8 @@ GAP:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 110
-		Prerequisites: atek, ~structures.allies, ~techlevel.high
+		ShowCondition: structures.allies && techlevel >= .high
+		Requirements: atek
 		Description: Obscures the enemy's view with shroud.\nRequires power to operate.
 	Selectable:
 		Bounds: 24,24
@@ -118,6 +120,9 @@ GAP:
 SPEN:
 	Inherits: ^Building
 	Inherits@PRIMARY: ^PrimaryBuilding
+	WithFactionVariable:
+	#WithPlayerFactionVariable:
+	#	Variable: player-faction
 	Selectable:
 		Bounds: 72,48
 	InfiltrateForSupportPower:
@@ -130,7 +135,8 @@ SPEN:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 50
-		Prerequisites: anypower, ~structures.soviet, ~techlevel.low
+		ShowCondition: structures.soviet && techlevel >= .low
+		Requirements: anypower
 		Description: Produces and repairs\nsubmarines and transports.
 	Targetable:
 		TargetTypes: Ground, Water, Structure, C4, DetonateAttack, SpyInfiltrate
@@ -217,31 +223,23 @@ SPEN:
 		CloakTypes: Underwater
 		Range: 10c0
 	RenderDetectionCircle:
-	ProvidesPrerequisite@soviet:
-		Factions: soviet, russia, ukraine
-		Prerequisite: ships.soviet
-	ProvidesPrerequisite@sovietvanilla:
-		Factions: soviet
-		Prerequisite: ships.sovietvanilla
-	ProvidesPrerequisite@russia:
-		Factions: russia
-		Prerequisite: ships.russia
-	ProvidesPrerequisite@ukraine:
-		Factions: ukraine
-		Prerequisite: ships.ukraine
-	ProvidesPrerequisite@sovietstructure:
-		RequiresPrerequisites: structures.soviet
-		Prerequisite: ships.soviet
-	ProvidesPrerequisite@sovietvanillastructure:
-		RequiresPrerequisites: structures.sovietvanilla
-		Prerequisite: ships.sovietvanilla
-	ProvidesPrerequisite@russianstructure:
-		RequiresPrerequisites: structures.russia
-		Prerequisite: ships.russia
-	ProvidesPrerequisite@ukrainianstructure:
-		RequiresPrerequisites: structures.ukraine
-		Prerequisite: ships.ukraine
-	ProvidesPrerequisite@buildingname:
+	GrantConditionsFromPlayer:
+		Conditions: structures.soviet, structures.sovietvanilla, structures.russia, structures.ukraine
+	GrantCondititionToPlayer@soviet:
+		# Not likely
+		RequiresCondition: faction in (.soviet, .russia, .ukraine) || structures.soviet #faction.soviet || faction.russia || faction.ukraine || structures.soviet
+		RequiresCondition: faction in (Faction.soviet, Faction.russia, Faction.ukraine) || structures.soviet #faction.soviet || faction.russia || faction.ukraine || structures.soviet
+		Condition: ships.soviet
+	GrantCondititionToPlayer@sovietvanilla:
+		RequiresCondition: faction == .soviet || structures.sovietvanilla
+		Condition: ships.sovietvanilla
+	GrantCondititionToPlayer@russia:
+		RequiresCondition: faction == .russia || structures.russia
+		Condition: ships.russia
+	GrantCondititionToPlayer@ukraine:
+		RequiresCondition: faction == .ukraine || structures.ukraine
+		Condition: ships.ukraine
+	GrantCondititionToPlayer@buildingname:
 	MapEditorData:
 		ExcludeTilesets: INTERIOR
 	HitShape:
@@ -257,6 +255,7 @@ SPEN:
 SYRD:
 	Inherits: ^Building
 	Inherits@PRIMARY: ^PrimaryBuilding
+	WithFactionVariable:
 	Selectable:
 		Bounds: 72,48
 	InfiltrateForSupportPower:
@@ -265,7 +264,8 @@ SYRD:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 40
-		Prerequisites: anypower, ~structures.allies, ~techlevel.low
+		ShowCondition: structures.allies && techlevel >= .low
+		Requirements: anypower
 		Description: Produces and repairs\nships and transports.
 	Valued:
 		Cost: 1000
@@ -331,37 +331,24 @@ SYRD:
 		CloakTypes: Underwater
 		Range: 10c0
 	RenderDetectionCircle:
-	ProvidesPrerequisite@allies:
-		Factions: allies, england, france, germany
-		Prerequisite: ships.allies
-	ProvidesPrerequisite@alliesvanilla:
-		Factions: allies
-		Prerequisite: ships.alliesvanilla
-	ProvidesPrerequisite@england:
-		Factions: england
-		Prerequisite: ships.england
-	ProvidesPrerequisite@france:
-		Factions: france
-		Prerequisite: ships.france
-	ProvidesPrerequisite@germany:
-		Factions: germany
-		Prerequisite: ships.germany
-	ProvidesPrerequisite@alliedstructure:
-		RequiresPrerequisites: structures.allies
-		Prerequisite: ships.allies
-	ProvidesPrerequisite@alliedvanillastructure:
-		RequiresPrerequisites: structures.alliesvanilla
-		Prerequisite: ships.alliesvanilla
-	ProvidesPrerequisite@englishstructure:
-		RequiresPrerequisites: structures.england
-		Prerequisite: ships.england
-	ProvidesPrerequisite@frenchstructure:
-		RequiresPrerequisites: structures.france
-		Prerequisite: ships.france
-	ProvidesPrerequisite@germanstructure:
-		RequiresPrerequisites: structures.germany
-		Prerequisite: ships.germany
-	ProvidesPrerequisite@buildingname:
+	GrantConditionsFromPlayer:
+		Conditions: structures.allies, structures.alliesvanilla, structures.england, structures.france, structures.germany
+	GrantConditionToPlayer@allies:
+		RequiresCondition: faction in (.allies, .england, .france, .germany) || structures.allies
+		Condition: ships.allies
+	GrantConditionToPlayer@alliesvanilla:
+		RequiresCondition: faction == .allies || structures.alliesvanilla
+		Condition: ships.alliesvanilla
+	GrantConditionToPlayer@england:
+		RequiresCondition: faction == .england || structures.england
+		Condition: ships.england
+	GrantConditionToPlayer@france:
+		RequiresCondition: faction == .france || structures.france
+		Condition: ships.france
+	GrantConditionToPlayer@germany:
+		RequiresCondition: faction == .germany || structures.germany
+		Condition: ships.germany
+	GrantConditionToPlayer@buildingname:
 	MapEditorData:
 		ExcludeTilesets: INTERIOR
 	HitShape:
@@ -382,8 +369,9 @@ IRON:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 130
-		Prerequisites: stek, ~structures.soviet, ~techlevel.unrestricted
-		BuildLimit: 1
+		ShowConditon: structures.soviet && techlevel >= .unrestricted
+		Requirements: stek
+		RemainingBuildLimit: 1 - iron
 		Description: Makes a group of units invulnerable\nfor a short time.\nRequires power to operate.\nMaximum 1 can be built.\n  Special Ability: Invulnerability
 	Valued:
 		Cost: 1500
@@ -448,8 +436,9 @@ PDOX:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 120
-		Prerequisites: atek, ~structures.allies, ~techlevel.unrestricted
-		BuildLimit: 1
+		ShowCondition: structures.allies && techlevel >= .unrestricted
+		Requirements: atek
+		RemainingBuildLimit: 1 - pdox
 		Description: Teleports a group of units across the\nmap for a short time.\nRequires power to operate.\nMaximum 1 can be built.\n  Special Ability: Chronoshift
 	Valued:
 		Cost: 1500
@@ -475,16 +464,13 @@ PDOX:
 		RequiresCondition: !disabled
 	WithBuildingBib:
 		HasMinibib: true
-	ProvidesPrerequisite@germany:
-		Factions: germany
-		Prerequisite: pdox.germany
-	ProvidesPrerequisite@germanstructure:
-		RequiresPrerequisites: structures.germany
-		Prerequisite: pdox.germany
+	GrantConditionFromPlayer@germanstructure:
+		Conditions:
+			pdox.germany: faction == .germany || structures.germany
 	ChronoshiftPower@chronoshift:
 		OrderName: Chronoshift
 		PauseOnCondition: disabled
-		Prerequisites: !pdox.germany
+		RequiresCondition: !pdox.germany
 		Icon: chrono
 		ChargeInterval: 3000
 		Description: Chronoshift
@@ -502,7 +488,7 @@ PDOX:
 	ChronoshiftPower@advancedchronoshift:
 		OrderName: AdvancedChronoshift
 		PauseOnCondition: disabled
-		Prerequisites: pdox.germany
+		RequiresCondition: pdox.germany
 		Icon: chrono
 		ChargeInterval: 3000
 		Description: Advanced Chronoshift
@@ -526,7 +512,7 @@ PDOX:
 		Amount: -200
 	MustBeDestroyed:
 		RequiredForShortGame: false
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 
 TSLA:
 	Inherits: ^Defense
@@ -535,7 +521,8 @@ TSLA:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 80
-		Prerequisites: weap, ~structures.soviet, ~techlevel.medium
+		ShowCondition: structures.soviet && techlevel >= .medium
+		Requirements: weap
 		Description: Advanced base defense.\nRequires power to operate.\nCan detect cloaked units.\n  Strong vs Vehicles, Infantry\n  Weak vs Aircraft
 	Valued:
 		Cost: 1200
@@ -571,7 +558,7 @@ TSLA:
 	DetectCloaked:
 		Range: 6c0
 		RequiresCondition: !disabled
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 
 AGUN:
 	Inherits: ^Defense
@@ -580,7 +567,8 @@ AGUN:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 90
-		Prerequisites: dome, ~structures.allies, ~techlevel.medium
+		ShowCondition: structures.allies && techlevel >= .medium
+		Requirements: dome
 		Description: Anti-Air base defense.\nRequires power to operate.\n  Strong vs Aircraft\n  Weak vs Ground units
 	Valued:
 		Cost: 800
@@ -633,7 +621,8 @@ DOME:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 90
-		Prerequisites: proc, ~techlevel.medium
+		ShowCondition: techlevel >= .medium
+		Requirements: proc
 		Description: Provides an overview\nof the battlefield.\nRequires power to operate.
 	Valued:
 		Cost: 1800
@@ -667,7 +656,7 @@ DOME:
 		Types: SpyInfiltrate
 	Power:
 		Amount: -40
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	ExternalCondition@JAMMED:
 		Condition: jammed
 
@@ -681,7 +670,8 @@ PBOX:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 40
-		Prerequisites: tent, ~structures.allies, ~techlevel.low
+		ShowCondition: structures.allies && techlevel >= .low
+		Requirements: tent
 		Description: Static defense with a fireport for\na garrisoned soldier.\nCan detect cloaked units.\n  Strong vs Infantry, Light armor\n  Weak vs Tanks, Aircraft
 	Valued:
 		Cost: 600
@@ -737,7 +727,8 @@ HBOX:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 50
-		Prerequisites: tent, ~structures.allies, ~techlevel.medium
+		ShowConditon: structures.allies && techlevel >= .medium
+		Requirements: tent
 		Description: Camouflaged static defense with a fireport\nfor a garrisoned soldier.\nCan detect cloaked units.\n  Strong vs Infantry, Light armor\n  Weak vs Tanks, Aircraft
 	Valued:
 		Cost: 750
@@ -796,7 +787,8 @@ GUN:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 70
-		Prerequisites: tent, ~structures.allies, ~techlevel.medium
+		ShowCondition: structures.allies && techlevel >= .medium
+		Requirements: tent
 		Description: Anti-Armor base defense.\nCan detect cloaked units.\n  Strong vs Vehicles\n  Weak vs Infantry, Aircraft
 	Valued:
 		Cost: 800
@@ -840,7 +832,8 @@ FTUR:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 60
-		Prerequisites: barr, ~structures.soviet, ~techlevel.low
+		ShowCondition: structures.soviet && techlevel >= .low
+		Requiremente: barr
 		Description: Anti-Infantry base defense.\nCan detect cloaked units.\n  Strong vs Infantry, Light armor\n  Weak vs Tanks, Aircraft
 	Valued:
 		Cost: 600
@@ -874,7 +867,7 @@ FTUR:
 		Amount: -20
 	DetectCloaked:
 		Range: 6c0
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	Explodes:
 		Weapon: BuildingExplode
 		EmptyWeapon: BuildingExplode
@@ -893,7 +886,8 @@ SAM:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 100
-		Prerequisites: dome, ~structures.soviet, ~techlevel.medium
+		ShowCondition: structures.soviet && techlevel >= .medium
+		Requirements: dome
 		Description: Anti-Air base defense.\nRequires power to operate.\n  Strong vs Aircraft\n  Weak vs Ground units
 	Valued:
 		Cost: 700
@@ -943,14 +937,15 @@ ATEK:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 140
-		Prerequisites: weap, dome, ~structures.allies, ~techlevel.high
+		ShowConditon: structures.allies && techlevel >= .high
+		Requirements: weap, dome
 		Description: Provides Allied advanced technologies.\n  Special Ability: GPS Satellite
 	Valued:
 		Cost: 1500
 	Tooltip:
 		Name: Allied Tech Center
-	ProvidesPrerequisite:
-		Prerequisite: techcenter
+	GrantConditionToPlayer:
+		Condition: techcenter
 	Building:
 		Footprint: xx xx ==
 		Dimensions: 2,3
@@ -984,18 +979,20 @@ ATEK:
 		TargetTypes: Ground, C4, DetonateAttack, Structure, SpyInfiltrate
 	Power:
 		Amount: -200
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 
 WEAP:
 	Inherits: ^Building
 	Inherits@shape: ^3x2Shape
 	Inherits@PRIMARY: ^PrimaryBuilding
+	WithFactionVariable:
 	Selectable:
 		Bounds: 72,48
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 80
-		Prerequisites: proc, ~techlevel.low
+		ShowCondition: techlevel >= .low
+		Requirements: proc
 		Description: Produces vehicles.
 	Valued:
 		Cost: 2000
@@ -1026,65 +1023,46 @@ WEAP:
 		ExitCell: 1,2
 	Production:
 		Produces: Vehicle
-	ProvidesPrerequisite@allies:
-		Factions: allies, england, france, germany
-		Prerequisite: vehicles.allies
-	ProvidesPrerequisite@alliesvanilla:
-		Factions: allies
-		Prerequisite: vehicles.alliesvanilla
-	ProvidesPrerequisite@england:
-		Factions: england
-		Prerequisite: vehicles.england
-	ProvidesPrerequisite@france:
-		Factions: france
-		Prerequisite: vehicles.france
-	ProvidesPrerequisite@germany:
-		Factions: germany
-		Prerequisite: vehicles.germany
-	ProvidesPrerequisite@soviet:
-		Factions: soviet, russia, ukraine
-		Prerequisite: vehicles.soviet
-	ProvidesPrerequisite@sovietvanilla:
-		Factions: soviet
-		Prerequisite: vehicles.sovietvanilla
-	ProvidesPrerequisite@russia:
-		Factions: russia
-		Prerequisite: vehicles.russia
-	ProvidesPrerequisite@ukraine:
-		Factions: ukraine
-		Prerequisite: vehicles.ukraine
-	ProvidesPrerequisite@alliedstructure:
-		RequiresPrerequisites: structures.allies
-		Prerequisite: vehicles.allies
-	ProvidesPrerequisite@alliedvanillastructure:
-		RequiresPrerequisites: structures.alliesvanilla
-		Prerequisite: vehicles.alliesvanilla
-	ProvidesPrerequisite@englishstructure:
-		RequiresPrerequisites: structures.england
-		Prerequisite: vehicles.england
-	ProvidesPrerequisite@frenchstructure:
-		RequiresPrerequisites: structures.france
-		Prerequisite: vehicles.france
-	ProvidesPrerequisite@germanstructure:
-		RequiresPrerequisites: structures.germany
-		Prerequisite: vehicles.germany
-	ProvidesPrerequisite@sovietstructure:
-		RequiresPrerequisites: structures.soviet
-		Prerequisite: vehicles.soviet
-	ProvidesPrerequisite@sovietvanillastructure:
-		RequiresPrerequisites: structures.sovietvanilla
-		Prerequisite: vehicles.sovietvanilla
-	ProvidesPrerequisite@russianstructure:
-		RequiresPrerequisites: structures.russia
-		Prerequisite: vehicles.russia
-	ProvidesPrerequisite@ukrainianstructure:
-		RequiresPrerequisites: structures.ukraine
-		Prerequisite: vehicles.ukraine
+	GrantConditionsFromPlayer:
+		Conditions:
+			structures.allies
+			structures.alliesvanilla
+			structures.england
+			structures.france
+			structures.germany
+			structures.soviet
+	GrantConditionToPlayer@allies:
+		RequiresCondition: faction in (.allies, .england, .france, .germany) || structures.allies
+		Condition: vehicles.allies
+	GrantConditionToPlayer@alliesvanilla:
+		RequiresCondition: faction == .allies || structures.alliesvanilla
+		Condition: vehicles.alliesvanilla
+	GrantConditionToPlayer@england:
+		RequiresCondition: faction == .england || structures.alliesvanilla
+		Condition: vehicles.england
+	GrantConditionToPlayer@france:
+		RequiresCondition: faction == .france || structures.
+		Condition: vehicles.france
+	GrantConditionToPlayer@germany:
+		RequiresCondition: faction == .germany || structures.
+		Condition: vehicles.germany
+	GrantConditionToPlayer@soviet:
+		RequiresCondition: faction in (.soviet, .russia, .ukraine) || 
+		Condition: vehicles.soviet
+	GrantConditionToPlayer@sovietvanilla:
+		RequiresCondition: faction == .soviet || structures.sovietvanilla
+		Condition: vehicles.sovietvanilla
+	GrantConditionToPlayer@russia:
+		RequiresCondition: faction == .russia || structures.russia
+		Condition: vehicles.russia
+	GrantConditionToPlayer@ukraine:
+		RequiresCondition: faction == .ukraine || structures.ukraine
+		Condition: vehicles.ukraine
 	ProductionBar:
 		ProductionType: Vehicle
 	Power:
 		Amount: -30
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	Targetable:
 		TargetTypes: Ground, C4, DetonateAttack, Structure, SpyInfiltrate
 	InfiltrateForSupportPower:
@@ -1097,6 +1075,7 @@ WEAP:
 
 FACT:
 	Inherits: ^Building
+	WithFactionVariable:
 	Selectable:
 		Bounds: 72,72
 	Building:
@@ -1106,35 +1085,35 @@ FACT:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 1000
-		Prerequisites: ~disabled
+		ShowCondition: false
 		Description: Produces structures.
-	ProvidesPrerequisite@allies:
-		Factions: allies, england, france, germany
-		Prerequisite: structures.allies
-	ProvidesPrerequisite@alliesvanilla:
-		Factions: allies
-		Prerequisite: structures.alliesvanilla
-	ProvidesPrerequisite@england:
-		Factions: england
-		Prerequisite: structures.england
-	ProvidesPrerequisite@france:
-		Factions: france
-		Prerequisite: structures.france
-	ProvidesPrerequisite@germany:
-		Factions: germany
-		Prerequisite: structures.germany
-	ProvidesPrerequisite@soviet:
-		Factions: soviet, russia, ukraine
-		Prerequisite: structures.soviet
-	ProvidesPrerequisite@sovietvanilla:
-		Factions: soviet
-		Prerequisite: structures.sovietvanilla
-	ProvidesPrerequisite@russia:
-		Factions: russia
-		Prerequisite: structures.russia
-	ProvidesPrerequisite@ukraine:
-		Factions: ukraine
-		Prerequisite: structures.ukraine
+	GrantConditionToPlayer@allies:
+		RequiresCondition: faction in (.allies, .england, .france, .germany)
+		Condition: structures.allies
+	GrantConditionToPlayer@alliesvanilla:
+		RequiresCondition: faction == .allies
+		Condition: structures.alliesvanilla
+	GrantConditionToPlayer@england:
+		RequiresCondition: faction == .england
+		Condition: structures.england
+	GrantConditionToPlayer@france:
+		RequiresCondition: faction == .france
+		Condition: structures.france
+	GrantConditionToPlayer@germany:
+		RequiresCondition: faction == .germany
+		Condition: structures.germany
+	GrantConditionToPlayer@soviet:
+		RequiresCondition: faction in (.soviet, .russia, .ukraine)
+		Condition: structures.soviet
+	GrantConditionToPlayer@sovietvanilla:
+		RequiresCondition: faction == .soviet
+		Condition: structures.sovietvanilla
+	GrantConditionToPlayer@russia:
+		RequiresCondition: faction == .russia
+		Condition: structures.russia
+	GrantConditionToPlayer@ukraine:
+		RequiresCondition: faction == .ukraine
+		Condition: structures.ukraine
 	Health:
 		HP: 150000
 	Armor:
@@ -1176,9 +1155,9 @@ FACT:
 		RequiresCondition: factundeploy && build-incomplete
 	Sellable:
 		RequiresCondition: !build-incomplete && !chrono-vortex && !being-captured && !being-demolished
-	GrantConditionOnPrerequisite@GLOBALFACTUNDEPLOY:
-		Condition: factundeploy
-		Prerequisites: global-factundeploy
+	GrantConditionsFromPlayer@GLOBALFACTUNDEPLOY:
+		Conditions:
+			factundeploy: global-factundeploy
 	ProductionBar@Building:
 		ProductionType: Building
 	ProductionBar@Defense:
@@ -1195,7 +1174,7 @@ FACT:
 	WithDeathAnimation:
 		DeathSequence: dead
 		UseDeathTypeSuffix: false
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	HitShape:
 		TargetableOffsets: 1273,939,0, -980,-640,0, -980,640,0
 		Type: Rectangle
@@ -1213,7 +1192,8 @@ PROC:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 60
-		Prerequisites: anypower, ~techlevel.infonly
+		ShowConditon: techlevel >= .infonly
+		Requirements: anypower
 		Description: Refines Ore and Gems\ninto credits.
 	Valued:
 		Cost: 1400
@@ -1262,7 +1242,7 @@ PROC:
 	WithDeathAnimation:
 		DeathSequence: dead
 		UseDeathTypeSuffix: false
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	HitShape:
 		Type: Rectangle
 			TopLeft: -1536, -512
@@ -1295,7 +1275,8 @@ SILO:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 35
-		Prerequisites: proc, ~techlevel.infonly
+		ShowCondition: techlevel >= .infonly
+		Requirements: proc
 		Description: Stores excess refined\nOre and Gems.
 	Valued:
 		Cost: 150
@@ -1339,6 +1320,7 @@ HPAD:
 	Inherits: ^Building
 	Inherits@shape: ^2x2Shape
 	Inherits@PRIMARY: ^PrimaryBuilding
+	WithFactionVariable:
 	Selectable:
 		Bounds: 48,48
 	HitShape:
@@ -1347,7 +1329,8 @@ HPAD:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 120
-		Prerequisites: dome, ~structures.allies, ~techlevel.medium
+		ShowCondition: structures.allies && techlevel >= .medium
+		Requirements: dome
 		Description: Produces and reloads\nhelicopters.
 	Valued:
 		Cost: 500
@@ -1383,37 +1366,24 @@ HPAD:
 		ProductionType: Aircraft
 	Power:
 		Amount: -10
-	ProvidesPrerequisite@allies:
-		Factions: allies, england, france, germany
-		Prerequisite: aircraft.allies
-	ProvidesPrerequisite@alliesvanilla:
-		Factions: allies
-		Prerequisite: aircraft.alliesvanilla
-	ProvidesPrerequisite@england:
-		Factions: england
-		Prerequisite: aircraft.england
-	ProvidesPrerequisite@france:
-		Factions: france
-		Prerequisite: aircraft.france
-	ProvidesPrerequisite@germany:
-		Factions: germany
-		Prerequisite: aircraft.germany
-	ProvidesPrerequisite@alliedstructure:
-		RequiresPrerequisites: structures.allies
-		Prerequisite: aircraft.allies
-	ProvidesPrerequisite@alliedvanillastructure:
-		RequiresPrerequisites: structures.alliesvanilla
-		Prerequisite: aircraft.alliesvanilla
-	ProvidesPrerequisite@englishstructure:
-		RequiresPrerequisites: structures.england
-		Prerequisite: aircraft.england
-	ProvidesPrerequisite@frenchstructure:
-		RequiresPrerequisites: structures.france
-		Prerequisite: aircraft.france
-	ProvidesPrerequisite@germanstructure:
-		RequiresPrerequisites: structures.germany
-		Prerequisite: aircraft.germany
-	ProvidesPrerequisite@buildingname:
+	GrantConditionsFromPlayer:
+		Conditions: structures.allies, structures.alliesvanilla, structures.england, structures.france, structures.germany
+	GrantConditionsToPlayer@allies:
+		RequiresCondition: faction in (.allies, .england, .france, .germany) || structures.allies
+		Condition: aircraft.allies
+	GrantConditionsToPlayer@alliesvanilla:
+		RequiresCondition: faction == .allies || structures.alliesvanilla
+		Condition: aircraft.alliesvanilla
+	GrantConditionsToPlayer@england:
+		RequiresCondition: faction == .england || structures.england
+		Condition: aircraft.england
+	GrantConditionsToPlayer@france:
+		RequiresCondition: faction == .france || structures.france
+		Condition: aircraft.france
+	GrantConditionsToPlayer@germany:
+		RequiresCondition: faction == .germany || structures.germany
+		Condition: aircraft.germany
+	GrantConditionsToPlayer@buildingname:
 	Targetable:
 		TargetTypes: Ground, C4, DetonateAttack, Structure, SpyInfiltrate
 	InfiltrateForSupportPower:
@@ -1430,8 +1400,25 @@ AFLD:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 130
-		Prerequisites: dome, ~structures.soviet, ~techlevel.medium, ~!structures.ukraine
+		ShowCondition: structures.soviet && techlevel >= .medium && !structures.ukraine
+		Requirements: dome
 		Description: Produces and reloads aircraft.\n  Special Ability: Spy Plane\n  Special Ability: Paratroopers
+		# Dictionary<GrantVariable<ConditionType>, PlayerVariableReference> / Dictionary<string, PlayerVariableReference> in `BuildsInfo`
+		Conditions:
+			aircraft.russia: structures.russia
+			structures.russia: structures.russia #?
+			structures.soviet: structures.soviet #?
+	Buildable@Ukraine:
+		Name: AFLD.Ukraine
+		Queue: Building
+		BuildPaletteOrder: 130
+		ShowCondition: techlevel >= .medium && structures.ukraine
+		Requirements: dome
+		Description: Produces and reloads aircraft.\n  Special Ability: Spy Plane\n  Special Ability: Paratroopers\n  Special Ability: Parabombs
+		Conditions:
+			aircraft.ukraine: structures.ukraine
+			structures.ukraine: structures.ukraine #?
+			structures.soviet: structures.soviet #?
 	Valued:
 		Cost: 500
 	Tooltip:
@@ -1460,33 +1447,24 @@ AFLD:
 	Production:
 		Produces: Aircraft, Plane
 	Reservable:
-	ProvidesPrerequisite@soviet:
-		Factions: soviet, russia, ukraine
-		Prerequisite: aircraft.soviet
-	ProvidesPrerequisite@sovietvanilla:
-		Factions: soviet
-		Prerequisite: aircraft.sovietvanilla
-	ProvidesPrerequisite@russia:
-		Factions: russia
-		Prerequisite: aircraft.russia
-	ProvidesPrerequisite@ukraine:
-		Factions: ukraine
-		Prerequisite: aircraft.ukraine
-	ProvidesPrerequisite@sovietstructure:
-		RequiresPrerequisites: structures.soviet
-		Prerequisite: aircraft.soviet
-	ProvidesPrerequisite@sovietvanillastructure:
-		RequiresPrerequisites: structures.sovietvanilla
-		Prerequisite: aircraft.sovietvanilla
-	ProvidesPrerequisite@russianstructure:
-		RequiresPrerequisites: structures.russia
-		Prerequisite: aircraft.russia
-	ProvidesPrerequisite@ukrainianstructure:
-		RequiresPrerequisites: structures.ukraine
-		Prerequisite: aircraft.ukraine
+	GrantConditionToPlayer@open-slots:
+		Condition: open-hpad-slots
+		Weight: 3
+	GrantConditionToPlayer@soviet:
+		RequiresCondition: faction in (.soviet, .russia, .ukraine) || structures.soviet
+		Condition: aircraft.soviet
+	GrantConditionToPlayer@sovietvanilla:
+		RequiresCondition: faction == .soviet || structures.sovietvanilla
+		Condition: aircraft.sovietvanilla
+	GrantConditionToPlayer@russia:
+		RequiresCondition: faction == .russia || structures.russia
+		Condition: aircraft.russia
+	GrantConditionToPlayer@ukraine:
+		RequiresCondition: faction == .ukraine || structures.ukraine
+		Condition: aircraft.ukraine
 	AirstrikePower@spyplane:
 		OrderName: SovietSpyPlane
-		Prerequisites: aircraft.soviet
+		RequiresCondition: aircraft.soviet
 		Icon: spyplane
 		ChargeInterval: 3750
 		Description: Spy Plane
@@ -1507,7 +1485,7 @@ AFLD:
 		SupportPowerPaletteOrder: 60
 	ParatroopersPower@paratroopers:
 		OrderName: SovietParatroopers
-		Prerequisites: aircraft.soviet
+		RequiresCondition: aircraft.soviet
 		Icon: paratroopers
 		ChargeInterval: 7500
 		Description: Paratroopers
@@ -1528,7 +1506,7 @@ AFLD:
 		SupportPowerPaletteOrder: 50
 	AirstrikePower@parabombs:
 		OrderName: UkraineParabombs
-		Prerequisites: aircraft.ukraine
+		RequiresCondition: aircraft.ukraine
 		Icon: parabombs
 		ChargeInterval: 7500
 		Description: Parabombs
@@ -1553,8 +1531,7 @@ AFLD:
 	SupportPowerChargeBar:
 	Power:
 		Amount: -20
-	ProvidesPrerequisite@buildingname:
-		Prerequisite: afld
+	GrantConditionToPlayer@buildingname:
 	Targetable:
 		TargetTypes: Ground, C4, DetonateAttack, Structure, SpyInfiltrate
 	InfiltrateForSupportPower:
@@ -1563,13 +1540,11 @@ AFLD:
 	WithResupplyAnimation:
 		RequiresCondition: !build-incomplete
 
+# Likely map shim
 AFLD.Ukraine:
-	Inherits: AFLD
-	Buildable:
-		Prerequisites: dome, ~techlevel.medium, ~structures.ukraine
-		Description: Produces and reloads aircraft.\n  Special Ability: Spy Plane\n  Special Ability: Paratroopers\n  Special Ability: Parabombs
-	RenderSprites:
-		Image: afld
+	AsActor:
+		Name: AFLD
+		Buildable: AFLD.Ukraine
 
 POWR:
 	Inherits: ^Building
@@ -1583,27 +1558,29 @@ POWR:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 10
-		Prerequisites: ~techlevel.infonly
+		ShowCondition: ~techlevel >= .infonly
 		Description: Provides power for other structures.
 	Valued:
 		Cost: 300
 	Tooltip:
 		Name: Power Plant
-	ProvidesPrerequisite:
-		Prerequisite: anypower
+	GrantConditionToPlayer:
+		Condition: anypower
 	Building:
 		Footprint: xx xx ==
 		Dimensions: 2,3
 		LocalCenterOffset: 0,-512,0
 	Health:
 		HP: 40000
+		HealthVariable: health
+		MaxHealthVariable: max-health
 	Armor:
 		Type: Wood
 	RevealsShroud:
 		Range: 4c0
 	WithBuildingBib:
 	Power:
-		Amount: 100
+		Amount: 100 * health / max-health
 	Targetable:
 		TargetTypes: Ground, Structure, C4, DetonateAttack, SpyInfiltrate
 	ScalePowerWithHealth:
@@ -1620,14 +1597,15 @@ APWR:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 110
-		Prerequisites: dome, ~techlevel.medium
+		ShowCondition: techlevel >= .medium
+		Requirements: dome
 		Description: Provides double the power of\na standard Power Plant.
 	Valued:
 		Cost: 500
 	Tooltip:
 		Name: Advanced Power Plant
-	ProvidesPrerequisite:
-		Prerequisite: anypower
+	GrantConditionToPlayer:
+		Condition: anypower
 	Building:
 		Footprint: xxx Xxx ===
 		Dimensions: 3,3
@@ -1637,16 +1615,17 @@ APWR:
 		DecorationBounds: 72,68,0,-10
 	Health:
 		HP: 70000
+		HealthVariable: health
+		MaxHealthVariable: max-health
 	Armor:
 		Type: Wood
 	RevealsShroud:
 		Range: 5c0
 	WithBuildingBib:
 	Power:
-		Amount: 200
+		Amount: 200 * health / max-health
 	Targetable:
 		TargetTypes: Ground, Structure, C4, DetonateAttack, SpyInfiltrate
-	ScalePowerWithHealth:
 	WithDeathAnimation:
 		DeathSequence: dead
 		UseDeathTypeSuffix: false
@@ -1661,14 +1640,15 @@ STEK:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 150
-		Prerequisites: weap, dome, ~structures.soviet, ~techlevel.high
+		ShowCondition: structures.soviet && techlevel >= .high
+		Requirements: weap, dome
 		Description: Provides Soviet advanced technologies.
 	Valued:
 		Cost: 1500
 	Tooltip:
 		Name: Soviet Tech Center
-	ProvidesPrerequisite:
-		Prerequisite: techcenter
+	GrantConditonToPlayer:
+		Condition: techcenter
 	Building:
 		Footprint: XxX XxX ===
 		Dimensions: 3,3
@@ -1686,12 +1666,13 @@ STEK:
 	WithBuildingBib:
 	Power:
 		Amount: -100
-	ProvidesPrerequisite@buildingname:
+	GrantConditonToPlayer@buildingname:
 
 BARR:
 	Inherits: ^Building
 	Inherits@shape: ^2x2Shape
 	Inherits@PRIMARY: ^PrimaryBuilding
+	WithFactionVariable:
 	Selectable:
 		Bounds: 48,48
 	HitShape:
@@ -1700,7 +1681,8 @@ BARR:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 30
-		Prerequisites: anypower, ~structures.soviet, ~techlevel.infonly
+		ShowCondition: structures.soviet && techlevel >= .infonly
+		Requirements: anypower
 		Description: Trains infantry.
 	Valued:
 		Cost: 500
@@ -1738,35 +1720,23 @@ BARR:
 		Condition: produced
 	ProductionBar:
 		ProductionType: Infantry
-	ProvidesPrerequisite:
-		Prerequisite: barracks
-	ProvidesPrerequisite@soviet:
-		Factions: soviet, russia, ukraine
-		Prerequisite: infantry.soviet
-	ProvidesPrerequisite@sovietvanilla:
-		Factions: soviet
-		Prerequisite: infantry.sovietvanilla
-	ProvidesPrerequisite@russia:
-		Factions: russia
-		Prerequisite: infantry.russia
-	ProvidesPrerequisite@ukraine:
-		Factions: ukraine
-		Prerequisite: infantry.ukraine
-	ProvidesPrerequisite@sovietstructure:
-		RequiresPrerequisites: structures.soviet
-		Prerequisite: infantry.soviet
-	ProvidesPrerequisite@sovietvanillastructure:
-		RequiresPrerequisites: structures.sovietvanilla
-		Prerequisite: infantry.sovietvanilla
-	ProvidesPrerequisite@russianstructure:
-		RequiresPrerequisites: structures.russia
-		Prerequisite: infantry.russia
-	ProvidesPrerequisite@ukrainianstructure:
-		RequiresPrerequisites: structures.ukraine
-		Prerequisite: infantry.ukraine
+	GrantConditonToPlayer:
+		Condition: barracks
+	GrantConditonToPlayer@soviet:
+		RequiresCondition: faction in (.soviet, .russia, .ukraine) || structures.soviet
+		Condition: infantry.soviet
+	GrantConditonToPlayer@sovietvanilla:
+		RequiresCondition: faction == .soviet || structures.sovietvanilla
+		Condition: infantry.sovietvanilla
+	GrantConditonToPlayer@russia:
+		RequiresCondition: faction == .russia || structures.russia
+		Condition: infantry.russia
+	GrantConditonToPlayer@ukraine:
+		RequiresCondition: faction == .ukraine || structures.ukraine
+		Condition: infantry.ukraine
 	Power:
 		Amount: -20
-	ProvidesPrerequisite@buildingname:
+	GrantConditonToPlayer@buildingname:
 	InfiltrateForSupportPower:
 		Proxy: barracks.upgraded
 		Types: SpyInfiltrate
@@ -1781,7 +1751,8 @@ KENN:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 175
-		Prerequisites: anypower, ~structures.soviet, ~techlevel.infonly
+		ShowCondition: structures.soviet && techlevel >= .infonly
+		Requirements: anypower
 		Description: Trains Attack Dogs.
 	Valued:
 		Cost: 200
@@ -1847,12 +1818,13 @@ KENN:
 	-SpawnActorsOnSell:
 	Power:
 		Amount: -10
-	ProvidesPrerequisite@buildingname:
+	GrantConditonToPlayer@buildingname:
 
 TENT:
 	Inherits: ^Building
 	Inherits@shape: ^2x2Shape
 	Inherits@PRIMARY: ^PrimaryBuilding
+	WithFactionVariable:
 	Selectable:
 		Bounds: 48,48
 	HitShape:
@@ -1861,7 +1833,8 @@ TENT:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 20
-		Prerequisites: anypower, ~structures.allies, ~techlevel.infonly
+		ShowCondition: structures.allies && techlevel >= .infonly
+		Requirements: anypower
 		Description: Trains infantry.
 	Valued:
 		Cost: 500
@@ -1899,41 +1872,28 @@ TENT:
 		Condition: produced
 	ProductionBar:
 		ProductionType: Infantry
-	ProvidesPrerequisite@barracks:
-		Prerequisite: barracks
-	ProvidesPrerequisite@allies:
-		Factions: allies, england, france, germany
-		Prerequisite: infantry.allies
-	ProvidesPrerequisite@alliesvanilla:
-		Factions: allies
-		Prerequisite: infantry.alliesvanilla
-	ProvidesPrerequisite@england:
-		Factions: england
-		Prerequisite: infantry.england
-	ProvidesPrerequisite@france:
-		Factions: france
-		Prerequisite: infantry.france
-	ProvidesPrerequisite@germany:
-		Factions: germany
-		Prerequisite: infantry.germany
-	ProvidesPrerequisite@alliedstructure:
-		RequiresPrerequisites: structures.allies
-		Prerequisite: infantry.allies
-	ProvidesPrerequisite@alliedvanillastructure:
-		RequiresPrerequisites: structures.alliesvanilla
-		Prerequisite: infantry.alliesvanilla
-	ProvidesPrerequisite@englishstructure:
-		RequiresPrerequisites: structures.england
-		Prerequisite: infantry.england
-	ProvidesPrerequisite@frenchstructure:
-		RequiresPrerequisites: structures.france
-		Prerequisite: infantry.france
-	ProvidesPrerequisite@germanstructure:
-		RequiresPrerequisites: structures.germany
-		Prerequisite: infantry.germany
+	GrantConditionToPlayer@barracks:
+		Condition: barracks
+	GrantConditionFromPlayer:
+		Condition: structures.allies, structures.alliesvanilla, structures.england, structures.france, structures.germany
+	GrantConditionToPlayer@allies:
+		RequiresCondition: faction in (.allies, .england, .france, .germany) || structures.allies
+		Condition: infantry.allies
+	GrantConditionToPlayer@alliesvanilla:
+		RequiresCondition: faction == .allies || structures.alliesvanilla
+		Condition: infantry.alliesvanilla
+	GrantConditionToPlayer@england:
+		RequiresCondition: faction == .england || structures.england
+		Condition: infantry.england
+	GrantConditionToPlayer@france:
+		RequiresCondition: faction == .france || structures.france
+		Condition: infantry.france
+	GrantConditionToPlayer@germany:
+		RequiresCondition: faction == .germany || structures.germany
+		Condition: infantry.germany
 	Power:
 		Amount: -20
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	InfiltrateForSupportPower:
 		Proxy: barracks.upgraded
 		Types: SpyInfiltrate
@@ -1945,7 +1905,8 @@ FIX:
 	Buildable:
 		Queue: Building
 		BuildPaletteOrder: 100
-		Prerequisites: weap, ~techlevel.medium
+		ShowCondition: techlevel >= .medium
+		Requirements: weap
 		Description: Repairs vehicles for credits.
 	Valued:
 		Cost: 1200
@@ -1981,7 +1942,7 @@ FIX:
 		RequiresCondition: !build-incomplete
 	Power:
 		Amount: -30
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	HitShape:
 		TargetableOffsets: 840,0,0, 598,-640,0, 598,640,0, -1060,0,0, -768,-640,0, -768,640,0
 		Type: Polygon
@@ -1992,7 +1953,8 @@ SBAG:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 10
-		Prerequisites: fact, ~structures.allies, ~techlevel.low
+		ShowConditon: structures.allies && techlevel >= .low
+		Requirements: fact
 		Description: Stops infantry and light vehicles.\nCan be crushed by tanks.
 	Valued:
 		Cost: 30
@@ -2016,7 +1978,8 @@ FENC:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 20
-		Prerequisites: fact, ~structures.soviet, ~techlevel.low
+		ShowCondition: structures.soviet && techlevel >= .low
+		Requirements: fact
 		Description: Stops infantry and light vehicles.\nCan be crushed by tanks.
 	Valued:
 		Cost: 30
@@ -2040,7 +2003,8 @@ BRIK:
 	Buildable:
 		Queue: Defense
 		BuildPaletteOrder: 30
-		Prerequisites: fact, ~techlevel.medium
+		ShowCondition: techlevel >= .medium
+		Requierments: fact
 		Description: Stop units and blocks enemy fire.
 	Valued:
 		Cost: 200

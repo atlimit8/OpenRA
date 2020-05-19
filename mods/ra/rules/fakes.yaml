@@ -10,7 +10,7 @@ FPWR:
 	Buildable:
 		BuildPaletteOrder: 870
 		Queue: Defense
-		Prerequisites: ~structures.france, ~techlevel.infonly
+		ShowCondition: structures.france && techlevel >= .infonly
 		Description: Looks like a Power Plant.
 		Icon: fake-icon
 	Tooltip:
@@ -41,7 +41,7 @@ TENF:
 	Buildable:
 		BuildPaletteOrder: 880
 		Queue: Defense
-		Prerequisites: ~structures.france, ~techlevel.infonly
+		ShowCondition: structures.france && techlevel >= .infonly
 		Description: Looks like an Allied Barracks.
 		Icon: fake-icon
 	Tooltip:
@@ -74,7 +74,7 @@ SYRF:
 	Buildable:
 		BuildPaletteOrder: 890
 		Queue: Defense
-		Prerequisites: ~structures.france, ~techlevel.medium
+		ShowCondition: structures.france && techlevel >= .medium
 		Description: Looks like a Naval Yard.
 		Icon: fake-icon
 	Tooltip:
@@ -121,7 +121,7 @@ SPEF:
 	Buildable:
 		BuildPaletteOrder: 890
 		Queue: Defense
-		Prerequisites: ~disabled
+		ShowCondition: false
 		Description: Looks like a Sub Pen.
 		Icon: fake-icon
 	Tooltip:
@@ -163,7 +163,7 @@ WEAF:
 		Bounds: 72,48
 	Buildable:
 		BuildPaletteOrder: 920
-		Prerequisites: ~structures.france, ~techlevel.medium
+		ShowCondition: structures.france && techlevel >= .medium
 		Queue: Defense
 		Description: Looks like a War Factory.
 		Icon: fake-icon
@@ -211,7 +211,7 @@ DOMF:
 	Buildable:
 		BuildPaletteOrder: 930
 		Queue: Defense
-		Prerequisites: ~structures.france, ~techlevel.medium
+		ShowCondition: structures.france && techlevel >= .medium
 		Description: Looks like a Radar Dome.
 		Icon: fake-icon
 	Building:
@@ -236,7 +236,7 @@ FIXF:
 	Buildable:
 		BuildPaletteOrder: 940
 		Queue: Defense
-		Prerequisites: ~structures.france, ~techlevel.medium
+		ShowCondition: structures.france && techlevel >= .medium
 		Description: Looks like a Service Depot.
 		Icon: fake-icon
 	Tooltip:
@@ -271,7 +271,7 @@ FAPW:
 	Buildable:
 		BuildPaletteOrder: 950
 		Queue: Defense
-		Prerequisites: ~structures.france, ~techlevel.medium
+		ShowCondition: structures.france && techlevel >= .medium
 		Description: Looks like an Advanced Power Plant.
 		Icon: fake-icon
 	Tooltip:
@@ -310,7 +310,7 @@ ATEF:
 	Buildable:
 		BuildPaletteOrder: 970
 		Queue: Defense
-		Prerequisites: ~structures.france, ~techlevel.high
+		ShowCondition: structures.france && techlevel >= .high
 		Description: Looks like an Allied Tech Center.
 		Icon: fake-icon
 	Building:
@@ -341,8 +341,8 @@ PDOF:
 	Buildable:
 		BuildPaletteOrder: 980
 		Queue: Defense
-		Prerequisites: ~structures.france, ~techlevel.unrestricted
-		BuildLimit: 1
+		ShowCondition: structures.france && techlevel >= .unrestricted
+		RemainingBuildLimit: 1 - pdof
 		Description: Looks like a Chronosphere.\nMaximum 1 can be built.
 		Icon: fake-icon
 	Building:
@@ -375,8 +375,8 @@ MSLF:
 	Buildable:
 		BuildPaletteOrder: 990
 		Queue: Defense
-		Prerequisites: ~structures.france, ~techlevel.unrestricted
-		BuildLimit: 1
+		ShowCondition: structures.france && techlevel >= .unrestricted
+		RemainingBuildLimit: 1 - mslf
 		Description: Looks like a Missile Silo.\nMaximum 1 can be built.
 		Icon: fake-icon
 	Building:
@@ -400,7 +400,7 @@ FACF:
 	Buildable:
 		BuildPaletteOrder: 1000
 		Queue: Defense
-		Prerequisites: ~structures.france, ~techlevel.medium
+		ShowCondition: structures.france && techlevel >= .medium
 		Description: Looks like a Construction Yard.
 		Icon: fake-icon
 	Tooltip:

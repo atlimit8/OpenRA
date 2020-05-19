@@ -24,66 +24,17 @@
 	GrantCondition@RANK-ELITE:
 		RequiresCondition: rank-veteran >= 4
 		Condition: rank-elite
-	DamageMultiplier@RANK-1:
-		RequiresCondition: rank-veteran == 1
-		Modifier: 96
-	DamageMultiplier@RANK-2:
-		RequiresCondition: rank-veteran == 2
-		Modifier: 92
-	DamageMultiplier@RANK-3:
-		RequiresCondition: rank-veteran == 3
-		Modifier: 88
-	DamageMultiplier@RANK-ELITE:
-		RequiresCondition: rank-elite
-		Modifier: 80
-	FirepowerMultiplier@RANK-1:
-		RequiresCondition: rank-veteran == 1
-		Modifier: 105
-	FirepowerMultiplier@RANK-2:
-		RequiresCondition: rank-veteran == 2
-		Modifier: 110
-	FirepowerMultiplier@RANK-3:
-		RequiresCondition: rank-veteran == 3
-		Modifier: 115
-	FirepowerMultiplier@RANK-ELITE:
-		RequiresCondition: rank-elite
-		Modifier: 125
-	SpeedMultiplier@RANK-1:
-		RequiresCondition: rank-veteran == 1
-		Modifier: 105
-	SpeedMultiplier@RANK-2:
-		RequiresCondition: rank-veteran == 2
-		Modifier: 110
-	SpeedMultiplier@RANK-3:
-		RequiresCondition: rank-veteran == 3
-		Modifier: 115
-	SpeedMultiplier@RANK-ELITE:
-		RequiresCondition: rank-elite
-		Modifier: 125
-	ReloadDelayMultiplier@RANK-1:
-		RequiresCondition: rank-veteran == 1
-		Modifier: 96
-	ReloadDelayMultiplier@RANK-2:
-		RequiresCondition: rank-veteran == 2
-		Modifier: 92
-	ReloadDelayMultiplier@RANK-3:
-		RequiresCondition: rank-veteran == 3
-		Modifier: 88
-	ReloadDelayMultiplier@RANK-ELITE:
-		RequiresCondition: rank-elite
-		Modifier: 80
-	InaccuracyMultiplier@RANK-1:
-		RequiresCondition: rank-veteran == 1
-		Modifier: 90
-	InaccuracyMultiplier@RANK-2:
-		RequiresCondition: rank-veteran == 2
-		Modifier: 80
-	InaccuracyMultiplier@RANK-3:
-		RequiresCondition: rank-veteran == 3
-		Modifier: 70
-	InaccuracyMultiplier@RANK-ELITE:
-		RequiresCondition: rank-elite
-		Modifier: 50
+	Health:
+		DamageMultiplier: damage-multiplier
+	# A decimal variable is created; precentage integers are granted, recomputing decimal.
+	GrantPercentMultiplier@DAMAGE-BY-RANK:
+		Variable: damage-multiplier
+		#RequiresCondition: rank-veteran
+		# (tuple/list)[0-based index] - index clamped between 0 and tuple/list length - 1
+		Percentage: (100, 96, 92, 88, 80)[rank-veteran]
+	GrantPercentMultiplier@SPEED-BY-RANK:
+		Variable: speed-multiplier
+		Percentage: (100, 105, 110, 115, 125)[rank-veteran]
 	SelfHealing@ELITE:
 		Step: 0
 		PercentageStep: 4
@@ -119,6 +70,18 @@
 		Position: BottomRight
 		Margin: 5, 6
 		RequiresCondition: rank-elite
+
+^GainsAttackExperience:
+	Inherits@GAINSEXPERIENCE: ^GainsExperience
+	GrantPercentMultiplier@FIREPOWER-BY-RANK:
+		Variable: firepower-multiplier
+		Percentage: (100, 105, 110, 115, 125)[rank-veteran]
+	GrantPercentMultiplier@RELOAD-DELAY-BY-RANK:
+		Variable: reload-delay-multiplier
+		Percentage: (100, 96, 92, 88, 80)[rank-veteran]
+	GrantPercentMultiplier@INACCURACY-BY-RANK:
+		Variable: inaccuracy-multiplier
+		Percentage: (100, 90, 80, 70, 50)[rank-veteran]
 
 ^AutoTargetGround:
 	AutoTarget:
@@ -175,6 +138,7 @@
 		TurnSpeed: 5
 		Locomotor: vehicle
 		PauseOnCondition: notmobile
+		SpeedMultiplier: speed-multiplier
 	Selectable:
 		Bounds: 32,32
 	Targetable:
@@ -266,6 +230,7 @@
 	Inherits@1: ^ExistsInWorld
 	Inherits@2: ^GainsExperience
 	Inherits@3: ^SpriteActor
+	Inherits@4: ^GainsAttackExperience
 	Inherits@selection: ^SelectableCombatUnit
 	Tooltip:
 		GenericName: Unit
@@ -280,6 +245,7 @@
 		Range: 3c768
 	Mobile:
 		Locomotor: foot
+		SpeedMultiplier: speed-multiplier
 	Selectable:
 		Bounds: 24,24,0,-4
 		DecorationBounds: 12,20,0,-4
@@ -302,6 +268,9 @@
 			BulletDeath: 4
 		CrushedSequence: die-crushed
 	AttackMove:
+		FirepowerMultiplier: firepower-multiplier
+		ReloadDelayMultiplier: reload-delay-multiplier
+		InaccuracyMultiplier: inaccuracy-multiplier
 	Passenger:
 		CargoType: Infantry
 	HiddenUnderFog:

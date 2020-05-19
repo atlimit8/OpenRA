@@ -4,7 +4,7 @@ DOG:
 		Queue: Infantry
 		BuildAtProductionType: Dog
 		BuildPaletteOrder: 50
-		Prerequisites: ~kenn, ~techlevel.infonly
+		ShowCondition: kenn && techlevel >= .infonly
 		Description: Anti-infantry unit.\nCan detect spies.\n  Strong vs Infantry\n  Weak vs Vehicles, Aircraft
 	Valued:
 		Cost: 200
@@ -71,7 +71,8 @@ E1:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 10
-		Prerequisites: ~barracks, ~techlevel.infonly
+		ShowCondition: barracks && techlevel >= .infonly
+		WithLevelIfCondition: barracks.upgraded
 		Description: General-purpose infantry.\n  Strong vs Infantry\n  Weak vs Vehicles, Aircraft
 	Selectable:
 		Class: E1
@@ -95,15 +96,14 @@ E1:
 	WithInfantryBody@PARACHUTE:
 		StandSequences: parachute
 		RequiresCondition: parachute
-	ProducibleWithLevel:
-		Prerequisites: barracks.upgraded
 
 E1R1:
 	Inherits: E1
 	RenderSprites:
 		Image: E1
+	# TODO: what does this do when -Buildable?
 	ProducibleWithLevel:
-		Prerequisites: techlevel.infonly
+		RequiresCondition: techlevel >= .infonly
 		InitialLevels: 1
 	UpdatesPlayerStatistics:
 		OverrideActor: e1
@@ -116,7 +116,8 @@ E2:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 40
-		Prerequisites: ~barr, ~techlevel.infonly
+		ShowCondition: barr && techlevel >= .infonly
+		WithLevelIfCondition: barracks.upgraded
 		Description: Infantry armed with grenades.\n  Strong vs Buildings, Infantry\n  Weak vs Vehicles, Aircraft
 	Valued:
 		Cost: 160
@@ -148,8 +149,6 @@ E2:
 		Weapon: UnitExplodeSmall
 		EmptyWeapon: UnitExplodeSmall
 		DamageSource: Killer
-	ProducibleWithLevel:
-		Prerequisites: barracks.upgraded
 
 E3:
 	Inherits: ^Soldier
@@ -158,7 +157,8 @@ E3:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 30
-		Prerequisites: ~barracks, ~techlevel.infonly
+		ShowCondition: barracks && techlevel >= .infonly
+		WithLevelIfCondition: barracks.upgraded
 		Description: Anti-tank/Anti-aircraft infantry.\n  Strong vs Vehicles, Aircraft\n  Weak vs Infantry
 	Selectable:
 		Class: E3
@@ -188,8 +188,6 @@ E3:
 	WithInfantryBody@PARACHUTE:
 		StandSequences: parachute
 		RequiresCondition: parachute
-	ProducibleWithLevel:
-		Prerequisites: barracks.upgraded
 	AutoTarget:
 		ScanRadius: 5
 
@@ -198,7 +196,7 @@ E3R1:
 	RenderSprites:
 		Image: E3
 	ProducibleWithLevel:
-		Prerequisites: techlevel.infonly
+		RequiresCondition: techlevel >= .infonly
 		InitialLevels: 1
 	UpdatesPlayerStatistics:
 		OverrideActor: e3
@@ -211,7 +209,10 @@ E4:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 70
-		Prerequisites: ~barr, ftur, ~techlevel.low
+		ShowCondition: barracks && techlevel >= .infonly
+		Requirements:
+			ftur
+		WithLevelIfCondition: barracks.upgraded
 		Description: Advanced anti-structure unit.\n  Strong vs Infantry, Buildings\n  Weak vs Vehicles, Aircraft
 	Valued:
 		Cost: 300
@@ -240,8 +241,6 @@ E4:
 	WithInfantryBody@PARACHUTE:
 		StandSequences: parachute
 		RequiresCondition: parachute
-	ProducibleWithLevel:
-		Prerequisites: barracks.upgraded
 
 E6:
 	Inherits: ^Soldier
@@ -250,7 +249,8 @@ E6:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 60
-		Prerequisites: ~barracks, ~techlevel.infonly
+		ShowCondition: barracks && techlevel >= .infonly
+		WithLevelIfCondition: barracks.upgraded
 		Description: Infiltrates and captures\nenemy structures.\n  Unarmed
 	Valued:
 		Cost: 400
@@ -268,9 +268,10 @@ E6:
 	EngineerRepair:
 	RepairsBridges:
 	CaptureManager:
-	GrantConditionOnPrerequisite@GLOBALREUSABLEENGINEER:
-		Condition: global-reusable-engineers
-		Prerequisites: global-reusable-engineers
+	GrantConditionsFromPlayer@GLOBALREUSABLEENGINEER:
+		# Dictionary<>
+		# Shadow property: IEmunerable<GrantPlayerVariable<ConditionType>>
+		Conditions: global-reusable-engineers
 	Captures:
 		RequiresCondition: !global-reusable-engineers
 		CaptureTypes: building
@@ -295,8 +296,17 @@ SPY:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 90
-		Prerequisites: ~!infantry.england, dome, ~tent, ~techlevel.medium
-		Description: Infiltrates enemy structures for intel or\nsabotage. Exact effect depends on the\nbuilding infiltrated.\nLoses disguise when attacking.\nCan detect spies.\n  Strong vs Infantry\n  Weak vs Vehicles, Aircraft\n  Special Ability: Disguised
+		ShowCondition: tent && !infantry.england && techlevel >= .medium
+		Requirements: dome
+		Description::
+			Infiltrates enemy structures for intel or
+			sabotage. Exact effect depends on the
+			building infiltrated.
+			Loses disguise when attacking.
+			Can detect spies.
+			\  Strong vs Infantry
+			\  Weak vs Vehicles, Aircraft
+			\  Special Ability: Disguised
 	Valued:
 		Cost: 500
 	-Tooltip:
@@ -346,7 +356,7 @@ SPY:
 SPY.England:
 	Inherits: SPY
 	Buildable:
-		Prerequisites: ~infantry.england, dome, ~tent, ~techlevel.medium
+		ShowCondition: tent && infantry.england && techlevel >= .medium
 	Valued:
 		Cost: 250
 	GivesExperience:
@@ -363,9 +373,17 @@ E7:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 120
-		Prerequisites: ~tent, atek, ~techlevel.high
-		BuildLimit: 1
-		Description: Elite commando infantry. Armed with\ndual pistols and C4.\nMaximum 1 can be trained.\n  Strong vs Infantry, Buildings\n  Weak vs Vehicles, Aircraft\n  Special Ability: Destroy Building with C4
+		ShowCondition: tent && techlevel >= .high
+		Requirements: atek
+		ReaminingBuildLimit: 1 - e7
+		WithLevelIfCondition: barracks.upgraded
+		Description::
+			Elite commando infantry. Armed with
+			dual pistols and C4.
+			Maximum 1 can be trained.
+			\  Strong vs Infantry, Buildings
+			\  Weak vs Vehicles, Aircraft
+			\  Special Ability: Destroy Building with C4
 	Valued:
 		Cost: 1200
 	Tooltip:
@@ -406,8 +424,6 @@ E7:
 	AnnounceOnKill:
 	Voiced:
 		VoiceSet: TanyaVoice
-	ProducibleWithLevel:
-		Prerequisites: barracks.upgraded
 
 MEDI:
 	Inherits: ^Soldier
@@ -415,7 +431,7 @@ MEDI:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 40
-		Prerequisites: ~tent, ~techlevel.infonly
+		Showcondition: tent && techlevel >= .infonly
 		Description: Heals nearby infantry.\n  Unarmed
 	Valued:
 		Cost: 200
@@ -453,7 +469,8 @@ MECH:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 100
-		Prerequisites: ~tent, fix, ~techlevel.medium
+		ShowConditon: tent && techlevel >= .medium
+		Requirements: fix
 		Description: Repairs nearby vehicles and restores\nhusks to working condition by capturing them.\n  Unarmed
 	Valued:
 		Cost: 500
@@ -559,7 +576,8 @@ THF:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 110
-		Prerequisites: ~barr, dome, ~techlevel.medium
+		ShowCondition: barr && techlevel >= .medium
+		Requirements: dome
 		Description: Steals enemy credits.\nHijacks enemy vehicles.\n  Unarmed
 	Valued:
 		Cost: 500
@@ -610,7 +628,9 @@ SHOK:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 130
-		Prerequisites: ~barr, stek, tsla, ~infantry.russia, ~techlevel.high
+		ShowCondition: barr && infantry.russia && techlevel >= .high
+		Requirements: stek, tsla
+		WithLevelIfCondition: barracks.upgraded
 		Description: Elite infantry with portable Tesla coils.\n  Strong vs Infantry, Vehicles\n  Weak vs Aircraft
 	Valued:
 		Cost: 350
@@ -648,8 +668,6 @@ SHOK:
 		RequiresCondition: parachute
 	Voiced:
 		VoiceSet: ShokVoice
-	ProducibleWithLevel:
-		Prerequisites: barracks.upgraded
 
 SNIPER:
 	Inherits: ^Soldier
@@ -663,7 +681,8 @@ SNIPER:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 80
-		Prerequisites: ~disabled
+		ShowCondition: false
+		WithLevelIfCondition: barracks.upgraded
 		Description: Elite sniper infantry unit.\nCan detect cloaked units.\n  Strong vs Infantry\n  Weak vs Vehicles, Aircraft
 	Health:
 		HP: 8000
@@ -696,8 +715,6 @@ SNIPER:
 		Condition: cloak-force-disabled
 		ValidDamageStates: Critical
 	-MustBeDestroyed:
-	ProducibleWithLevel:
-		Prerequisites: barracks.upgraded
 
 Zombie:
 	Inherits: ^Soldier
@@ -712,7 +729,7 @@ Zombie:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 200
-		Prerequisites: ~barracks, ~bio
+		ShowCondition: barracks && bio
 		Description: Slow undead. Attacks in close combat.
 	Health:
 		HP: 25000
@@ -743,7 +760,7 @@ Ant:
 		Queue: Infantry
 		BuildAtProductionType: Soldier
 		BuildPaletteOrder: 1954
-		Prerequisites: ~barracks, ~bio
+		ShowCondition: barracks && bio
 		Description: Irradiated insect that grew oversize.
 	Selectable:
 		Bounds: 24,24,0,-5
@@ -786,7 +803,7 @@ FireAnt:
 	Armor:
 		Type: Heavy
 	Buildable:
-		Prerequisites: ~disabled
+		ShowCondition: false
 
 ScoutAnt:
 	Inherits: Ant
@@ -800,7 +817,7 @@ ScoutAnt:
 	AutoTarget:
 		ScanRadius: 7
 	Buildable:
-		Prerequisites: ~disabled
+		ShowCondition: false
 
 WarriorAnt:
 	Inherits: Ant
@@ -816,6 +833,6 @@ WarriorAnt:
 	Armament:
 		Weapon: MandibleHeavy
 	Buildable:
-		Prerequisites: ~disabled
+		ShowCondition: false
 	RenderSprites:
 		Image: Ant

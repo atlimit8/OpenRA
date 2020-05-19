@@ -106,7 +106,7 @@ FCOM:
 	EngineerRepairable:
 	Power:
 		Amount: 0
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	AppearsOnMapPreview:
 	GpsDot:
 		String: Forward
@@ -145,7 +145,7 @@ HOSP:
 	WithDeathAnimation:
 		DeathSequence: dead
 		UseDeathTypeSuffix: false
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	AppearsOnMapPreview:
 	GpsDot:
 		String: Hospital
@@ -421,7 +421,7 @@ MISS:
 	WithDeathAnimation:
 		DeathSequence: dead
 		UseDeathTypeSuffix: false
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	AppearsOnMapPreview:
 	GpsDot:
 		String: Communications
@@ -455,7 +455,7 @@ BIO:
 	WithDeathAnimation:
 		DeathSequence: dead
 		UseDeathTypeSuffix: false
-	ProvidesPrerequisite@buildingname:
+	GrantConditionToPlayer@buildingname:
 	AppearsOnMapPreview:
 	GpsDot:
 		String: Biohazard

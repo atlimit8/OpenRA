@@ -5,8 +5,14 @@ SS:
 		Queue: Ship
 		BuildAtProductionType: Submarine
 		BuildPaletteOrder: 30
-		Prerequisites: ~spen, ~techlevel.low
-		Description: Submerged anti-ship unit\narmed with torpedoes.\nCan detect other submarines.\n  Strong vs Naval units\n  Weak vs Ground units, Aircraft\n  Special Ability: Submerge
+		ShowCondition: spen && techlevel >= .low
+		Description::
+			Submerged anti-ship unit
+			armed with torpedoes.
+			Can detect other submarines.
+			\  Strong vs Naval units
+			\  Weak vs Ground units, Aircraft
+			\  Special Ability: Submerge
 	Valued:
 		Cost: 950
 	Tooltip:
@@ -74,8 +80,15 @@ MSUB:
 		Queue: Ship
 		BuildAtProductionType: Submarine
 		BuildPaletteOrder: 60
-		Prerequisites: ~spen, stek, ~techlevel.high
-		Description: Submerged anti-ground siege unit\nwith anti-air capabilities.\nCan detect other submarines.\n  Strong vs Buildings, Ground units, Aircraft\n  Weak vs Naval units\n  Special Ability: Submerge
+		ShowCondition: spen && techlevel >= .high
+		Requirements: stek
+		Description::
+			Submerged anti-ground siege unit
+			with anti-air capabilities.
+			Can detect other submarines.
+			\  Strong vs Buildings, Ground units, Aircraft
+			\  Weak vs Naval units
+			\  Special Ability: Submerge
 	Valued:
 		Cost: 2000
 	Tooltip:
@@ -145,7 +158,8 @@ DD:
 		Queue: Ship
 		BuildAtProductionType: Boat
 		BuildPaletteOrder: 40
-		Prerequisites: ~syrd, dome, ~techlevel.medium
+		ShowCondition: syrd && techlevel >= .medium
+		Requirements: dome
 		Description: Fast multi-role ship.\nCan detect submarines.\n  Strong vs Naval units, Vehicles, Aircraft\n  Weak vs Infantry
 	Valued:
 		Cost: 1000
@@ -197,7 +211,8 @@ CA:
 		Queue: Ship
 		BuildAtProductionType: Boat
 		BuildPaletteOrder: 50
-		Prerequisites: ~syrd, atek, ~techlevel.high
+		ShowCondition: syrd && techlevel >= .high
+		Requirements: atek
 		Description: Very slow long-range ship.\n  Strong vs Buildings, Ground units\n  Weak vs Naval units, Aircraft
 	Valued:
 		Cost: 2400
@@ -259,7 +274,7 @@ LST:
 	Buildable:
 		Queue: Ship
 		BuildPaletteOrder: 10
-		Prerequisites: ~techlevel.low
+		ShowCondition: techlevel >= .low
 		Description: General-purpose naval transport.\nCan carry infantry and tanks.\n  Unarmed
 	Valued:
 		Cost: 700
@@ -299,7 +314,7 @@ PT:
 		Queue: Ship
 		BuildAtProductionType: Boat
 		BuildPaletteOrder: 20
-		Prerequisites: ~syrd, ~techlevel.low
+		ShowCondition: syrd && techlevel >= .low
 		Description: Light scout & support ship.\nCan detect submarines.\n  Strong vs Naval units\n  Weak vs Ground units, Aircraft
 	Valued:
 		Cost: 500

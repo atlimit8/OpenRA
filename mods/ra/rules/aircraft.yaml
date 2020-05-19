@@ -51,11 +51,34 @@ BADR.Bomber:
 MIG:
 	Inherits: ^Plane
 	Inherits@AUTOTARGET: ^AutoTargetGroundAssaultMove
+
+	# `BuildableInfo` creates a shadow trait info, `BuildsInfo`, that production trait infos attach to their actors.
+	# That allows for full integration with actor variables including linting.
 	Buildable:
 		Queue: Aircraft
 		BuildAtProductionType: Plane
 		BuildPaletteOrder: 50
-		Prerequisites: ~afld, stek, ~techlevel.high
+
+		# This is a `string` in `BuildableInfo` but a `BooleanExpression` in the `BuildsInfo` shadow. Defaults to true.
+		# This expression enables showing in the build palette. This expression is also a build requirement.
+		ShowCondition: techlevel >= .high # same as techlevel >= TechLevel.high
+
+		# In `BuildableInfo`, `Dictionary<string, string>
+		#-- In `BuildsInfo` shadow, `Dictionary<BooleanExpression, string>`
+		# In `BuildsInfo` shadow, `Dictionary<IntegerExpression, string>`
+		# All expressions must be true/above zero to enable. The palette entry tooltip uses the value string else extacted as follows:
+		# If string is missing, first remove leading '!' from expression and trim. Try to match `ActorInfo.Name` in lowercase and use `TooltipInfo.Name`.
+		# If string is missing and expression starts with '!', prefix text with 'No '
+		Requirements:
+			open-afld-slots: Open Airfield Space # Show the number of slots available in tooltip if > 1
+			stek
+
+		# Displays in tooltip and as "/ <count>" in corner of build palette entry.
+		# The problem with using it for aircraft is that the limit is shared.
+		#RemainingBuildLimit: open-afld-slots
+
+		# Unlike `ShowCondition`, `WithLevelIfCondition` defaults to false if empty.
+		WithLevelIfCondition: aircraft.upgraded
 		Description: Fast Ground-Attack Plane.\n  Strong vs Buildings, Vehicles\n  Weak vs Infantry, Aircraft
 	Valued:
 		Cost: 2000
@@ -107,10 +130,8 @@ MIG:
 	SmokeTrailWhenDamaged:
 		Offset: -853,0,171
 		Interval: 2
-	ProducibleWithLevel:
-		Prerequisites: aircraft.upgraded
 	Rearmable:
-		RearmActors: afld, afld.ukraine
+		RearmActors: afld
 	WithAmmoPipsDecoration:
 		Position: BottomLeft
 		Margin: 4, 3
@@ -123,7 +144,10 @@ YAK:
 		Queue: Aircraft
 		BuildAtProductionType: Plane
 		BuildPaletteOrder: 30
-		Prerequisites: ~afld, ~techlevel.medium
+		ShowCondition: techlevel >= .medium
+		Requirements:
+			open-afld-slots: Open Airfield Space
+		WithLevelIfCondition: aircraft.upgraded
 		Description: Attack Plane armed with\ndual machine guns.\n  Strong vs Infantry, Light armor\n  Weak vs Tanks, Aircraft
 	Valued:
 		Cost: 1350
@@ -178,12 +202,10 @@ YAK:
 	SmokeTrailWhenDamaged:
 		Offset: -853,0,0
 		Interval: 2
-	ProducibleWithLevel:
-		Prerequisites: aircraft.upgraded
 	Selectable:
 		DecorationBounds: 30,28,0,2
 	Rearmable:
-		RearmActors: afld, afld.ukraine
+		RearmActors: afld
 	WithAmmoPipsDecoration:
 		Position: BottomLeft
 		Margin: 4, 3
@@ -197,7 +219,10 @@ TRAN:
 		Queue: Aircraft
 		BuildAtProductionType: Helicopter
 		BuildPaletteOrder: 10
-		Prerequisites: ~hpad, ~techlevel.medium
+		ShowCondition: techlevel >= .medium
+		Requirements:
+			open-hpad-slots: Open Helipad Space
+		WithLevelIfCondition: aircraft.upgraded
 		Description: Fast Infantry Transport Helicopter.\n  Unarmed
 	Valued:
 		Cost: 900
@@ -251,7 +276,11 @@ HELI:
 		Queue: Aircraft
 		BuildAtProductionType: Helicopter
 		BuildPaletteOrder: 40
-		Prerequisites: ~hpad, atek, ~techlevel.high
+		ShowCondition: techlevel >= .high
+		Requirements:
+			open-hpad-slots: Open Helipad Space
+			atek
+		WithLevelIfCondition: aircraft.upgraded
 		Description: Helicopter gunship armed\nwith multi-purpose missiles.\n  Strong vs Buildings, Vehicles, Aircraft\n  Weak vs Infantry
 	Valued:
 		Cost: 2000
@@ -303,8 +332,6 @@ HELI:
 		Actor: HELI.Husk
 	SmokeTrailWhenDamaged:
 		Offset: -427,0,0
-	ProducibleWithLevel:
-		Prerequisites: aircraft.upgraded
 	Selectable:
 		DecorationBounds: 36,28
 	Rearmable:
@@ -321,7 +348,10 @@ HIND:
 		Queue: Aircraft
 		BuildAtProductionType: Helicopter
 		BuildPaletteOrder: 20
-		Prerequisites: ~disabled, ~hpad, ~techlevel.medium
+		ShowCondition: false && techlevel >= .medium
+		Requirements:
+			open-hpad-slots: Open Helipad Space
+		WithLevelIfCondition: aircraft.upgraded
 		Description: Helicopter gunship armed\nwith dual chainguns.\n  Strong vs Infantry, Light armor\n  Weak vs Tanks, Aircraft
 	Valued:
 		Cost: 1500
@@ -376,8 +406,6 @@ HIND:
 		Actor: HIND.Husk
 	SmokeTrailWhenDamaged:
 		Offset: -427,0,0
-	ProducibleWithLevel:
-		Prerequisites: aircraft.upgraded
 	Selectable:
 		DecorationBounds: 38,32
 	Rearmable:
@@ -424,7 +452,10 @@ MH60:
 		Queue: Aircraft
 		BuildAtProductionType: Helicopter
 		BuildPaletteOrder: 20
-		Prerequisites: ~hpad, ~techlevel.medium
+		ShowCondition: techlevel >= .medium
+		Requirements:
+			open-hpad-slots: Open Helipad Space
+		WithLevelIfCondition: aircraft.upgraded
 		Description: Helicopter gunship armed\nwith dual chainguns.\n  Strong vs Infantry, Light armor\n  Weak vs Tanks, Aircraft
 	Valued:
 		Cost: 1500
@@ -478,8 +509,6 @@ MH60:
 		Actor: MH60.Husk
 	SmokeTrailWhenDamaged:
 		Offset: -427,0,0
-	ProducibleWithLevel:
-		Prerequisites: aircraft.upgraded
 	Selectable:
 		DecorationBounds: 38,32
 	Rearmable:

@@ -70,8 +70,8 @@ MISS:
 
 Ant:
 	Buildable:
-		Prerequisites: ~disabled
+		RequiresCondition: false
 
 Zombie:
 	Buildable:
-		Prerequisites: ~disabled
+		RequiresCondition: false

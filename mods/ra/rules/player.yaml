@@ -1,80 +1,105 @@
 ^BasePlayer:
 	AlwaysVisible:
 	Shroud:
+	WithFactionVariable:
+		#Variable: faction
+	WithTechLevelVariable:
+		#Variable: techlevel
+	# Marks as player actor type, collects player variables from traits on all actor types.
+	Player:
 
 EditorPlayer:
 	Inherits: ^BasePlayer
 
 Player:
 	Inherits: ^BasePlayer
-	TechTree:
+	GrantPercentMultiplier@BUILD-LOWPOWER:
+		Variables:
+			building-build-duration-multiplier
+			defense-build-duration-multiplier
+			vehicle-build-duration-multiplier
+			infantry-build-duration-multiplier
+			ship-build-duration-multiplier
+			aircraft-build-duration-multiplier
+		RequiresCondition: power-state != PowerState.Normal
+		Percentage: 300
+	GrantPercentMultiplier@BUILD-SPEEDUP:
+		Variables:
+			building-build-duration-multiplier
+			defense-build-duration-multiplier
+			infantry-build-duration-multiplier
+			ship-build-duration-multiplier
+			aircraft-build-duration-multiplier
+		Percentage: (100, 85, 75, 65, 60, 55, 50)[fact - 1]
 	ClassicProductionQueue@Building:
 		Type: Building
 		DisplayOrder: 0
-		LowPowerModifier: 300
+		BuildDurationMultiplier: building-build-duration-multiplier
 		ReadyAudio: ConstructionComplete
 		BlockedAudio: NoBuild
 		LimitedAudio: BuildingInProgress
 		QueuedAudio: Building
 		OnHoldAudio: OnHold
 		CancelledAudio: Cancelled
-		SpeedUp: True
 	ClassicProductionQueue@Defense:
 		Type: Defense
 		DisplayOrder: 1
-		LowPowerModifier: 300
 		ReadyAudio: ConstructionComplete
 		BlockedAudio: NoBuild
 		LimitedAudio: BuildingInProgress
 		QueuedAudio: Building
 		OnHoldAudio: OnHold
 		CancelledAudio: Cancelled
-		SpeedUp: True
 	ClassicProductionQueue@Vehicle:
 		Type: Vehicle
 		DisplayOrder: 3
-		LowPowerModifier: 300
+		BuildDurationMultiplier: vehicle-build-duration-multiplier
 		ReadyAudio: UnitReady
 		BlockedAudio: NoBuild
 		LimitedAudio: BuildingInProgress
 		QueuedAudio: Building
 		OnHoldAudio: OnHold
 		CancelledAudio: Cancelled
-		SpeedUp: True
-		BuildTimeSpeedReduction: 100, 75, 60, 50
+	GrantPercentMultiplier@VEHILCE-BUILD-SPEEDUP:
+		Variables: vehicle-build-duration-multiplier
+		Percentage: (100, 75, 60, 50)[weap - 1]
 	ClassicProductionQueue@Infantry:
 		Type: Infantry
 		DisplayOrder: 2
-		LowPowerModifier: 300
+		BuildDurationMultiplier: infantry-build-duration-multiplier
 		ReadyAudio: UnitReady
 		BlockedAudio: NoBuild
 		LimitedAudio: BuildingInProgress
 		QueuedAudio: Training
 		OnHoldAudio: OnHold
 		CancelledAudio: Cancelled
-		SpeedUp: True
 	ClassicProductionQueue@Ship:
 		Type: Ship
 		DisplayOrder: 5
-		LowPowerModifier: 300
+		BuildDurationMultiplier: ship-build-duration-multiplier
 		ReadyAudio: UnitReady
 		BlockedAudio: NoBuild
 		LimitedAudio: BuildingInProgress
 		QueuedAudio: Building
 		OnHoldAudio: OnHold
 		CancelledAudio: Cancelled
-		SpeedUp: True
 	ClassicProductionQueue@Aircraft:
 		Type: Aircraft
 		DisplayOrder: 4
-		LowPowerModifier: 300
+		BuildDurationMultiplier: aircraft-build-duration-multiplier
 		ReadyAudio: UnitReady
 		BlockedAudio: NoBuild
 		LimitedAudio: BuildingInProgress
 		QueuedAudio: Building
 		OnHoldAudio: OnHold
 		CancelledAudio: Cancelled
-		SpeedUp: True
+	WithIntegerVariable@open-plane-slots:
+		Variable: open-plane-slots
+		Value: plane-slots - used-plane-slots
+	# OR
+	GrantCondition@open-plane-slots:
+		Conditon: open-plane-slots
+		Weight: plane-slots - used-plane-slots
 	PlaceBuilding:
 		NewOptionsNotification: NewOptions
 		CannotPlaceNotification: BuildingCannotPlaceAudio
@@ -87,6 +112,7 @@ Player:
 	ConquestVictoryConditions:
 	PowerManager:
 		SpeechNotification: LowPower
+		PowerStateVariable: power-state
 	AllyRepair:
 	PlayerResources:
 		InsufficientFundsNotification: InsufficientFunds
@@ -97,52 +123,45 @@ Player:
 	GpsWatcher:
 	Shroud:
 		FogCheckboxDisplayOrder: 3
-	LobbyPrerequisiteCheckbox@GLOBALBOUNTY:
+	LobbyConditionCheckbox@GLOBALBOUNTY:
 		ID: bounty
 		Label: Kill Bounties
 		Description: Players receive cash bonuses when killing enemy units
 		Enabled: False
 		DisplayOrder: 8
-		Prerequisites: global-bounty
-	LobbyPrerequisiteCheckbox@GLOBALFACTUNDEPLOY:
+		Condition: global-bounty
+	LobbyConditionCheckbox@GLOBALFACTUNDEPLOY:
 		ID: factundeploy
 		Label: Redeployable MCVs
 		Description: Allow undeploying Construction Yard
 		Enabled: True
 		DisplayOrder: 7
-		Prerequisites: global-factundeploy
-	LobbyPrerequisiteCheckbox@REUSABLEENGINEERS:
+		Condition: global-factundeploy
+	LobbyConditionCheckbox@REUSABLEENGINEERS:
 		ID: reusable-engineers
 		Label: Reusable Engineers
 		Description: Engineers remain on the battlefield after capturing a structure
 		Enabled: False
 		DisplayOrder: 9
-		Prerequisites: global-reusable-engineers
+		Condition: global-reusable-engineers
 	FrozenActorLayer:
 	BaseAttackNotifier:
 	PlayerStatistics:
 	PlaceBeacon:
-	ProvidesTechPrerequisite@infonly:
-		Name: Infantry Only
-		Prerequisites: techlevel.infonly
-		Id: infantryonly
-	ProvidesTechPrerequisite@low:
-		Name: Low
-		Prerequisites: techlevel.infonly, techlevel.low
-		Id: low
-	ProvidesTechPrerequisite@medium:
-		Name: Medium
-		Prerequisites: techlevel.infonly, techlevel.low, techlevel.medium
-		Id: medium
-	ProvidesTechPrerequisite@high:
-		Name: No Superweapons
-		Prerequisites: techlevel.infonly, techlevel.low, techlevel.medium, techlevel.high
-		Id: nosuperweapons
-	ProvidesTechPrerequisite@unrestricted:
-		Name: Unrestricted
-		Prerequisites: techlevel.infonly, techlevel.low, techlevel.medium, techlevel.high, techlevel.unrestricted
-		Id: unrestricted
-	GrantConditionOnPrerequisiteManager:
+	LobbyConditionDropdown:
+		ID: techlevel
+		Options:
+			infonly: Infantry Only
+			low: Low
+			medium: Medium
+			nosuperweapons: No Superweapons
+			unrestricted: Unrestricted
+		#Conditions:
+		#	infonly: techlevel.infonly
+		#	low: techlevel.infonly, techlevel.low
+		#	medium: techlevel.infonly, techlevel.low, techlevel.medium
+		#	nosuperweapons: techlevel.infonly, techlevel.low, techlevel.medium, techlevel.high
+		#	unrestricted: techlevel.infonly, techlevel.low, techlevel.medium, techlevel.high, techlevel.unrestricted
 	EnemyWatcher:
 	VeteranProductionIconOverlay:
 		Image: iconchevrons
