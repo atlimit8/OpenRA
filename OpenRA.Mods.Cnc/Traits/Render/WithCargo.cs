@@ -1,6 +1,6 @@
 #region Copyright & License Information
 /*
- * Copyright 2007-2021 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2022 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
@@ -23,10 +23,12 @@ namespace OpenRA.Mods.Cnc.Traits.Render
 	[Desc("Renders the cargo loaded into the unit.")]
 	public class WithCargoInfo : TraitInfo, Requires<CargoInfo>, Requires<BodyOrientationInfo>
 	{
-		[Desc("Cargo position relative to turret or body in (forward, right, up) triples. The default offset should be in the middle of the list.")]
+		[Desc("{0} position relative to turret or body in (forward, right, up) triples. The default offset should be in the middle of the list.")]
+		[DescArg(typeof(CargoInfo))]
 		public readonly WVec[] LocalOffset = { WVec.Zero };
 
-		[Desc("Passenger CargoType to display.")]
+		[Desc("{0} to display.")]
+		[DescArg(typeof(PassengerInfo), nameof(PassengerInfo.CargoType))]
 		public readonly HashSet<string> DisplayTypes = new HashSet<string>();
 
 		public override object Create(ActorInitializer init) { return new WithCargo(init.Self, this); }

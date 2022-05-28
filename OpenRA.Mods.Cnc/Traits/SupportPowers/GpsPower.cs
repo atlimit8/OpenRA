@@ -17,7 +17,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Cnc.Traits
 {
-	[Desc("Requires `GpsWatcher` on the player actor.")]
+	[Desc("Requires {0} on the player actor.")]
+	[DescArg(typeof(GpsWatcherInfo))]
 	class GpsPowerInfo : SupportPowerInfo
 	{
 		[Desc("Delay in ticks between launching and revealing the map.")]

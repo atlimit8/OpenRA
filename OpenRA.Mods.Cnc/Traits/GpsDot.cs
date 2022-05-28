@@ -14,7 +14,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Cnc.Traits
 {
-	[Desc("Show an indicator revealing the actor underneath the fog when a GPSWatcher is activated.")]
+	[Desc("Show an indicator revealing the actor underneath the fog when a {0} is activated.")]
+	[DescArg(typeof(GpsWatcherInfo))]
 	class GpsDotInfo : TraitInfo
 	{
 		[Desc("Sprite collection for symbols.")]

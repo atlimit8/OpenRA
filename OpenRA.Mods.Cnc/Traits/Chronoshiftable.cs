@@ -1,6 +1,6 @@
 #region Copyright & License Information
 /*
- * Copyright 2007-2021 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2022 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
@@ -18,14 +18,16 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Cnc.Traits
 {
-	[Desc("Can be teleported via Chronoshift power.")]
+	[Desc("Can be teleported via {0}.")]
+	[DescArg(typeof(ChronoshiftPowerInfo))]
 	public class ChronoshiftableInfo : ConditionalTraitInfo
 	{
 		[Desc("Should the actor die instead of being teleported?")]
 		public readonly bool ExplodeInstead = false;
 
-		[Desc("Types of damage that this trait causes to self when 'ExplodeInstead' is true",
+		[Desc("Types of damage that this trait causes to self when {0} is true",
 			"or the return-to-origin is blocked. Leave empty for no damage types.")]
+		[DescArg(nameof(ExplodeInstead))]
 		public readonly BitSet<DamageType> DamageTypes = default(BitSet<DamageType>);
 
 		public readonly string ChronoshiftSound = "chrono2.aud";

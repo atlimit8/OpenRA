@@ -1,6 +1,6 @@
 #region Copyright & License Information
 /*
- * Copyright 2007-2021 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2022 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
@@ -14,10 +14,12 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Cnc.Traits
 {
-	[Desc("Converts damage to a charge level of a GrantPrerequisiteChargeDrainPower.")]
+	[Desc("Converts damage to a charge level of a {0}.")]
+	[DescArg(typeof(GrantPrerequisiteChargeDrainPowerInfo))]
 	public class DrainPrerequisitePowerOnDamageInfo : ConditionalTraitInfo
 	{
-		[Desc("The OrderName of the GrantPrerequisiteChargeDrainPower to drain.")]
+		[Desc("The OrderName of the {0} to drain.")]
+		[DescArg(typeof(GrantPrerequisiteChargeDrainPowerInfo))]
 		public readonly string OrderName = "GrantPrerequisiteChargeDrainPowerInfoOrder";
 
 		[Desc("Damage is multiplied by this number when converting damage to drain ticks.")]

@@ -1,6 +1,6 @@
 #region Copyright & License Information
 /*
- * Copyright 2007-2021 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2022 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
@@ -20,9 +20,12 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Cnc.Traits
 {
-	[Desc("Implements the special case handling for the Chronoshiftable return on a construction yard.",
-		"If ReturnOriginalActorOnCondition evaluates true and the actor is not being sold then OriginalActor will be returned to the origin.",
+	[Desc("Implements the special case handling for the {0} return on a construction yard.",
+		"If {1} evaluates true and the actor is not being sold then {2} will be returned to the origin.",
 		"Otherwise, a vortex animation is played and damage is dealt each tick, ignoring modifiers.")]
+	[DescArg(typeof(ChronoshiftableInfo))]
+	[DescArg(nameof(ReturnOriginalActorOnCondition))]
+	[DescArg(nameof(OriginalActor))]
 	public class ConyardChronoReturnInfo : TraitInfo, Requires<HealthInfo>, Requires<WithSpriteBodyInfo>, IObservesVariablesInfo
 	{
 		[SequenceReference]

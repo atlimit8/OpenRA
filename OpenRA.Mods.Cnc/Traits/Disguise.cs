@@ -1,6 +1,6 @@
 #region Copyright & License Information
 /*
- * Copyright 2007-2021 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2022 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
@@ -19,7 +19,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Cnc.Traits
 {
-	[Desc("Overrides the default Tooltip when this actor is disguised (aids in deceiving enemy players).")]
+	[Desc("Overrides the default {0} when this actor is disguised (aids in deceiving enemy players).")]
+	[DescArg(typeof(TooltipInfo))]
 	class DisguiseTooltipInfo : TooltipInfo, Requires<DisguiseInfo>
 	{
 		public override object Create(ActorInitializer init) { return new DisguiseTooltip(init.Self, this); }
@@ -79,8 +80,8 @@ namespace OpenRA.Mods.Cnc.Traits
 		[Desc("Target types of actors that this actor disguise as.")]
 		public readonly BitSet<TargetableType> TargetTypes = new BitSet<TargetableType>("Disguise");
 
-		[Desc("Triggers which cause the actor to drop it's disguise. Possible values: None, Attack, Damaged,",
-			"Unload, Infiltrate, Demolish, Move.")]
+		[Desc("Triggers which cause the actor to drop it's disguise. Possible values: {0}.")]
+		[DescArg(DescArgType.EnumNames)]
 		public readonly RevealDisguiseType RevealDisguiseOn = RevealDisguiseType.Attack;
 
 		[ActorReference(dictionaryReference: LintDictionaryReference.Keys)]
