@@ -17,11 +17,13 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("This actor can capture other actors which have the Capturable: trait.")]
+	[Desc("This actor can capture other actors which have the {0} trait.")]
+	[DescArg(typeof(CapturableInfo))]
 	public class CapturesInfo : ConditionalTraitInfo, Requires<CaptureManagerInfo>
 	{
 		[FieldLoader.Require]
-		[Desc("Types of actors that it can capture, as long as the type also exists in the Capturable Type: trait.")]
+		[Desc("Types of actors that it can capture, as long as the type also exists in the {0}: trait.")]
+		[DescArg(typeof(CapturableInfo), nameof(CapturableInfo.Types))]
 		public readonly BitSet<CaptureType> CaptureTypes = default(BitSet<CaptureType>);
 
 		[Desc("Targets with health above this percentage will be sabotaged instead of captured.",

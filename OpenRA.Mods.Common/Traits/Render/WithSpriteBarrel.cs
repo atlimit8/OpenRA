@@ -18,7 +18,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits.Render
 {
-	[Desc("Renders barrels for units with the Turreted trait.")]
+	[Desc("Renders barrels for units with the {0} trait.")]
+	[DescArg(typeof(TurretedInfo))]
 	public class WithSpriteBarrelInfo : ConditionalTraitInfo, IRenderActorPreviewSpritesInfo, Requires<TurretedInfo>,
 		Requires<ArmamentInfo>, Requires<RenderSpritesInfo>, Requires<BodyOrientationInfo>
 	{

@@ -22,7 +22,8 @@ namespace OpenRA.Mods.Common.Traits
 	public class GrantExternalConditionPowerInfo : SupportPowerInfo
 	{
 		[FieldLoader.Require]
-		[Desc("The condition to apply. Must be included in the target actor's ExternalConditions list.")]
+		[Desc("The condition to apply. Must be included in the target actor's {0}s list.")]
+		[DescArg(typeof(ExternalConditionInfo))]
 		public readonly string Condition = null;
 
 		[Desc("Duration of the condition (in ticks). Set to 0 for a permanent condition.")]

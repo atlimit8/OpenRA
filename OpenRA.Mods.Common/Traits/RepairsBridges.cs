@@ -17,7 +17,9 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Can enter a BridgeHut or LegacyBridgeHut to trigger a repair.")]
+	[Desc("Can enter a {0} or {1} to trigger a repair.")]
+	[DescArg(typeof(BridgeHutInfo))]
+	[DescArg(typeof(LegacyBridgeHutInfo))]
 	class RepairsBridgesInfo : TraitInfo
 	{
 		[VoiceReference]
@@ -27,7 +29,8 @@ namespace OpenRA.Mods.Common.Traits
 		public readonly Color TargetLineColor = Color.Yellow;
 
 		[Desc("Behaviour when entering the structure.",
-			"Possible values are Exit, Suicide, Dispose.")]
+			"Possible values are {0}.")]
+		[DescArg(DescArgType.EnumNamesWithOr)]
 		public readonly EnterBehaviour EnterBehaviour = EnterBehaviour.Dispose;
 
 		[CursorReference]

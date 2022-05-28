@@ -20,7 +20,9 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("The prerequisite names that must be available before this can be built.",
 			"This can be prefixed with ! to invert the prerequisite (disabling production if the prerequisite is available)",
 			"and/or ~ to hide the actor from the production palette if the prerequisite is not available.",
-			"Prerequisites are granted by actors with the ProvidesPrerequisite trait.")]
+			"{0}s are granted by actors with the {1} trait.")]
+		[DescArg(nameof(ProvidesPrerequisiteInfo.Prerequisite))]
+		[DescArg(typeof(ProvidesPrerequisiteInfo))]
 		public readonly string[] Prerequisites = Array.Empty<string>();
 
 		[Desc("Production queue(s) that can produce this.")]
@@ -43,10 +45,12 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Palette used for the production icon.")]
 		public readonly string IconPalette = "chrome";
 
-		[Desc("Custom palette is a player palette BaseName")]
+		[Desc("Custom palette is a player palette {0}")]
+		[DescArg(nameof(IndexedPaletteInfo.BasePalette))]
 		public readonly bool IconPaletteIsPlayerPalette = false;
 
-		[Desc("Base build time in frames (-1 indicates to use the unit's Value).")]
+		[Desc("Base build time in frames (-1 indicates to use the unit's {0}).")]
+		[DescArg(typeof(ValuedInfo), nameof(ValuedInfo.Cost))]
 		public readonly int BuildDuration = -1;
 
 		[Desc("Percentage modifier to apply to the build duration.")]

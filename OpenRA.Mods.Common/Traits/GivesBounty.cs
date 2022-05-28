@@ -20,7 +20,9 @@ namespace OpenRA.Mods.Common.Traits
 	[Desc("When killed, this actor causes the attacking player to receive money.")]
 	class GivesBountyInfo : ConditionalTraitInfo
 	{
-		[Desc("Percentage of the killed actor's Cost or CustomSellValue to be given.")]
+		[Desc("Percentage of the killed actor's {0} or {1} to be given.")]
+		[DescArg(nameof(ValuedInfo.Cost))]
+		[DescArg(nameof(CustomSellValueInfo.Value))]
 		public readonly int Percentage = 10;
 
 		[Desc("Player relationships the attacking player needs to receive the bounty.")]
@@ -31,6 +33,7 @@ namespace OpenRA.Mods.Common.Traits
 
 		[Desc("DeathTypes for which a bounty should be granted.",
 			"Use an empty list (the default) to allow all DeathTypes.")]
+		[DescArg(nameof(DeathTypes))]
 		public readonly BitSet<DamageType> DeathTypes = default(BitSet<DamageType>);
 
 		public override object Create(ActorInitializer init) { return new GivesBounty(this); }

@@ -30,7 +30,9 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("The levels of wind intensity (particles x-axis movement in px/tick).")]
 		public readonly int[] WindLevels = { -12, -7, -5, 0, 5, 7, 12 };
 
-		[Desc("Works only if ChangingWindLevel is enabled. Min. and max. ticks needed to change the WindLevel.")]
+		[Desc("Works only if {0} is enabled. Min. and max. ticks needed to change the {1}.")]
+		[DescArg(nameof(ChangingWindLevel))]
+		[DescArg(nameof(WindLevels))]
 		public readonly int[] WindTick = { 150, 550 };
 
 		[Desc("Hard or soft fading between the WindLevels.")]

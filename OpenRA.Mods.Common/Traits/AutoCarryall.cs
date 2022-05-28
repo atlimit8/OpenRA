@@ -16,7 +16,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Automatically transports harvesters with the Carryable trait between resource fields and refineries.")]
+	[Desc("Automatically transports harvesters with the {0} trait between resource fields and refineries.")]
+	[DescArg(typeof(CarryableInfo))]
 	public class AutoCarryallInfo : CarryallInfo
 	{
 		public override object Create(ActorInitializer init) { return new AutoCarryall(init.Self, this); }

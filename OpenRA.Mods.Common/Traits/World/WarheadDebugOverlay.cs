@@ -18,7 +18,8 @@ using OpenRA.Traits;
 namespace OpenRA.Mods.Common.Traits
 {
 	[TraitLocation(SystemActors.World)]
-	[Desc("Part of the combat overlay from `" + nameof(DeveloperMode) + "`. Attach this to the world actor.")]
+	[Desc("Part of the combat overlay from {0}. Attach this to the world actor.")]
+	[DescArg(typeof(DeveloperModeInfo))]
 	public class WarheadDebugOverlayInfo : TraitInfo
 	{
 		public readonly int DisplayDuration = 25;

@@ -14,19 +14,22 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Specifies the target types and relative priority used by AutoTarget to decide what to target.")]
+	[Desc("Specifies the target types and relative priority used by {0} to decide what to target.")]
+	[DescArg(typeof(AutoTargetInfo))]
 	public class AutoTargetPriorityInfo : ConditionalTraitInfo, Requires<AutoTargetInfo>
 	{
 		[Desc("Target types that can be AutoTargeted.")]
 		public readonly BitSet<TargetableType> ValidTargets = new BitSet<TargetableType>("Ground", "Water", "Air");
 
-		[Desc("Target types that can't be AutoTargeted.", "Overrules ValidTargets.")]
+		[Desc("Target types that can't be AutoTargeted.", "Overrules {0}.")]
+		[DescArg(nameof(ValidTargets))]
 		public readonly BitSet<TargetableType> InvalidTargets;
 
 		[Desc("Relationships between actor's and target's owner needed for AutoTargeting.")]
 		public readonly PlayerRelationship ValidRelationships = PlayerRelationship.Ally | PlayerRelationship.Neutral | PlayerRelationship.Enemy;
 
-		[Desc("ValidTargets with larger priorities will be AutoTargeted before lower priorities.")]
+		[Desc("{0} with larger priorities will be AutoTargeted before lower priorities.")]
+		[DescArg(nameof(ValidTargets))]
 		public readonly int Priority = 1;
 
 		public override object Create(ActorInitializer init) { return new AutoTargetPriority(this); }

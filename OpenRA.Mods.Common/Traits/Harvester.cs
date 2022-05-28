@@ -25,10 +25,12 @@ namespace OpenRA.Mods.Common.Traits
 	{
 		public readonly HashSet<string> DeliveryBuildings = new HashSet<string>();
 
-		[Desc("How long (in ticks) to wait until (re-)checking for a nearby available DeliveryBuilding if not yet linked to one.")]
+		[Desc("How long (in ticks) to wait until (re-)checking for nearby available {0} if not yet linked to one.")]
+		[DescArg(nameof(DeliveryBuildings))]
 		public readonly int SearchForDeliveryBuildingDelay = 125;
 
-		[Desc("Cell to move to when automatically unblocking DeliveryBuilding.")]
+		[Desc("Cell to move to when automatically unblocking {0}.")]
+		[DescArg(nameof(DeliveryBuildings))]
 		public readonly CVec UnblockCell = new CVec(0, 4);
 
 		[Desc("How much resources it can carry.")]

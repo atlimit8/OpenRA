@@ -20,7 +20,8 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Condition to grant.")]
 		public readonly string Condition = null;
 
-		[Desc("Apply condition on listed movement types. Available options are: None, Horizontal, Vertical, Turn.")]
+		[Desc("Apply condition on listed movement types. Available options are: {0}.")]
+		[DescArg(DescArgType.EnumNames)]
 		public readonly MovementType ValidMovementTypes = MovementType.Horizontal;
 
 		public override object Create(ActorInitializer init) { return new GrantConditionOnMovement(init.Self, this); }

@@ -23,7 +23,8 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("The maximum number of duplicates to make.")]
 		public readonly int MaxAmount = 2;
 
-		[Desc("The minimum number of duplicates to make. Overrules MaxDuplicatesWorth.")]
+		[Desc("The minimum number of duplicates to make. Overrules {0}.")]
+		[DescArg(nameof(MaxDuplicateValue))]
 		public readonly int MinAmount = 1;
 
 		[Desc("The maximum total value allowed for the duplicates.", "Duplication stops if the total worth will exceed this number.", "-1 = no limit")]

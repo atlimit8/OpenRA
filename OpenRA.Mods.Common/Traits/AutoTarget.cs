@@ -33,10 +33,12 @@ namespace OpenRA.Mods.Common.Traits
 	[Desc("The actor will automatically engage the enemy when it is in range.")]
 	public class AutoTargetInfo : ConditionalTraitInfo, Requires<AttackBaseInfo>, IEditorActorOptions
 	{
-		[Desc("It will try to hunt down the enemy if it is set to AttackAnything.")]
+		[Desc("It will try to hunt down the enemy if it is set to {0}.")]
+		[DescArg(nameof(UnitStance.AttackAnything))]
 		public readonly bool AllowMovement = true;
 
-		[Desc("It will try to pivot to face the enemy if stance is not HoldFire.")]
+		[Desc("It will try to pivot to face the enemy if stance is not {0}.")]
+		[DescArg(nameof(UnitStance.HoldFire))]
 		public readonly bool AllowTurning = true;
 
 		[Desc("Scan for new targets when idle.")]
@@ -45,27 +47,33 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Set to a value >1 to override weapons maximum range for this.")]
 		public readonly int ScanRadius = -1;
 
-		[Desc("Possible values are HoldFire, ReturnFire, Defend and AttackAnything.",
+		[Desc("Possible values are {0}.",
 			"Used for computer-controlled players, both Lua-scripted and regular Skirmish AI alike.")]
+		[DescArg(DescArgType.EnumNamesWithAnd)]
 		public readonly UnitStance InitialStanceAI = UnitStance.AttackAnything;
 
-		[Desc("Possible values are HoldFire, ReturnFire, Defend and AttackAnything. Used for human players.")]
+		[Desc("Possible values are {0}. Used for human players.")]
+		[DescArg(DescArgType.EnumNamesWithAnd)]
 		public readonly UnitStance InitialStance = UnitStance.Defend;
 
 		[GrantedConditionReference]
-		[Desc("The condition to grant to self while in the HoldFire stance.")]
+		[Desc("The condition to grant to self while in the {0} stance.")]
+		[DescArg(nameof(UnitStance.HoldFire))]
 		public readonly string HoldFireCondition = null;
 
 		[GrantedConditionReference]
-		[Desc("The condition to grant to self while in the ReturnFire stance.")]
+		[Desc("The condition to grant to self while in the {0} stance.")]
+		[DescArg(nameof(UnitStance.ReturnFire))]
 		public readonly string ReturnFireCondition = null;
 
 		[GrantedConditionReference]
-		[Desc("The condition to grant to self while in the Defend stance.")]
+		[Desc("The condition to grant to self while in the {0} stance.")]
+		[DescArg(nameof(UnitStance.Defend))]
 		public readonly string DefendCondition = null;
 
 		[GrantedConditionReference]
-		[Desc("The condition to grant to self while in the AttackAnything stance.")]
+		[Desc("The condition to grant to self while in the {0} stance.")]
+		[DescArg(nameof(UnitStance.AttackAnything))]
 		public readonly string AttackAnythingCondition = null;
 
 		[FieldLoader.Ignore]

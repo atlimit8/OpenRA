@@ -23,7 +23,8 @@ namespace OpenRA.Mods.Common.Traits.Sound
 		[Desc("Text notification to display to the new owner.")]
 		public readonly string TextNotification = null;
 
-		[Desc("Specifies if Notification is played with the voice of the new owners faction.")]
+		[Desc("Specifies if {0} is played with the voice of the new owners faction.")]
+		[DescArg(nameof(Notification))]
 		public readonly bool NewOwnerVoice = true;
 
 		[NotificationReference("Speech")]
@@ -33,7 +34,8 @@ namespace OpenRA.Mods.Common.Traits.Sound
 		[Desc("Text notification to display to the old owner.")]
 		public readonly string LoseTextNotification = null;
 
-		[Desc("Specifies if LoseNotification is played with the voice of the new owners faction.")]
+		[Desc("Specifies if {0} is played with the voice of the new owners faction.")]
+		[DescArg(nameof(LoseNotification))]
 		public readonly bool LoseNewOwnerVoice = false;
 
 		public override object Create(ActorInitializer init) { return new CaptureNotification(this); }

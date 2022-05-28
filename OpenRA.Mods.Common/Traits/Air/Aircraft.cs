@@ -1,6 +1,6 @@
 #region Copyright & License Information
 /*
- * Copyright 2007-2021 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2022 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
@@ -33,8 +33,9 @@ namespace OpenRA.Mods.Common.Traits
 	public class AircraftInfo : PausableConditionalTraitInfo, IPositionableInfo, IFacingInfo, IMoveInfo, ICruiseAltitudeInfo,
 		IActorPreviewInitInfo, IEditorActorOptions
 	{
-		[Desc("Behavior when aircraft becomes idle. Options are Land, ReturnToBase, LeaveMap, and None.",
+		[Desc("Behavior when aircraft becomes idle. Options are {0}.",
 			"'Land' will behave like 'None' (hover or circle) if a suitable landing site is not available.")]
+		[DescArg(DescArgType.EnumNames)]
 		public readonly IdleBehaviorType IdleBehavior = IdleBehaviorType.None;
 
 		public readonly WDist CruiseAltitude = new WDist(1280);

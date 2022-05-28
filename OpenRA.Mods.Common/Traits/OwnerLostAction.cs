@@ -22,13 +22,18 @@ namespace OpenRA.Mods.Common.Traits
 	{
 		[FieldLoader.Require]
 		[Desc("What does this unit do when its owner loses.",
-		"Allowed values are 'ChangeOwner', 'Dispose', 'Kill'")]
+		"Allowed values are {0")]
+		[DescArg(DescArgType.EnumNamesWithOr)]
 		public readonly OwnerLostActionType Action = OwnerLostActionType.Kill;
 
-		[Desc("Map player to use when 'Action' is 'ChangeOwner'.")]
+		[Desc("Map player to use when {0} is {1}.")]
+		[DescArg(nameof(Action))]
+		[DescArg(nameof(OwnerLostActionType.ChangeOwner))]
 		public readonly string Owner = "Neutral";
 
-		[Desc("The deathtypes used when 'Action' is 'Kill'.")]
+		[Desc("The deathtypes used when {0} is {1}.")]
+		[DescArg(nameof(Action))]
+		[DescArg(nameof(OwnerLostActionType.Kill))]
 		public readonly BitSet<DamageType> DeathTypes = default(BitSet<DamageType>);
 
 		public override object Create(ActorInitializer init) { return new OwnerLostAction(this); }

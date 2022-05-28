@@ -13,7 +13,8 @@ using System.Collections.Generic;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("This actor allows placement of other actors with 'RequiresBuildableArea' trait around it.")]
+	[Desc("This actor allows placement of other actors with {0} trait around it.")]
+	[DescArg(typeof(RequiresBuildableAreaInfo))]
 	public class GivesBuildableAreaInfo : ConditionalTraitInfo
 	{
 		[FieldLoader.Require]

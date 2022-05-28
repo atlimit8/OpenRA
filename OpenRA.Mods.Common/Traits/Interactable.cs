@@ -16,7 +16,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Used to enable mouse interaction on actors that are not Selectable.")]
+	[Desc("Used to enable mouse interaction on actors that are not {0}.")]
+	[DescArg(typeof(SelectableInfo))]
 	public class InteractableInfo : TraitInfo, IMouseBoundsInfo
 	{
 		[Desc("Defines a custom rectangle for mouse interaction with the actor.",

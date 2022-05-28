@@ -28,13 +28,18 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Probability the actor spawns.")]
 		public readonly int Probability = 100;
 
-		[Desc("Owner of the spawned actor. Allowed keywords:" +
-			"'Victim', 'Killer' and 'InternalName'. " +
-			"Falls back to 'InternalName' if 'Victim' is used " +
-			"and the victim is defeated (see 'SpawnAfterDefeat').")]
+		[Desc("Owner of the spawned actor. Allowed keywords: {0}. " +
+			"Falls back to {1} if {2} is used " +
+			"and the victim is defeated (see {3}).")]
+		[DescArg(DescArgType.EnumNamesWithOr)]
+		[DescArg(nameof(OwnerType.InternalName))]
+		[DescArg(nameof(OwnerType.Victim))]
+		[DescArg(nameof(SpawnAfterDefeat))]
 		public readonly OwnerType OwnerType = OwnerType.Victim;
 
-		[Desc("Map player to use when 'InternalName' is defined on 'OwnerType'.")]
+		[Desc("Map player to use when {0} is defined on {1}.")]
+		[DescArg(nameof(OwnerType.InternalName))]
+		[DescArg(nameof(OwnerType))]
 		public readonly string InternalOwner = "Neutral";
 
 		[Desc("Changes the effective (displayed) owner of the spawned actor to the old owner (victim).")]

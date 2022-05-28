@@ -19,11 +19,13 @@ using OpenRA.Traits;
 namespace OpenRA.Mods.Common.Traits
 {
 	[Desc("This actor can enter Cargo actors.")]
+	[DescArg(typeof(CargoInfo))]
 	public class PassengerInfo : TraitInfo, IObservesVariablesInfo
 	{
 		public readonly string CargoType = null;
 
 		[Desc("If defined, use a custom pip type defined on the transport's WithCargoPipsDecoration.CustomPipSequences list.")]
+		[DescArg(typeof(Render.WithCargoPipsDecorationInfo), nameof(Render.WithCargoPipsDecorationInfo.CustomPipSequences))]
 		public readonly string CustomPipType = null;
 
 		public readonly int Weight = 1;

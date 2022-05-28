@@ -26,7 +26,8 @@ namespace OpenRA.Mods.Common.Traits
 		}
 	}
 
-	[Desc("Used together with ClassicProductionQueue.")]
+	[Desc("Used together with {0}.")]
+	[DescArg(typeof(ClassicProductionQueueInfo))]
 	public class PrimaryBuildingInfo : ConditionalTraitInfo
 	{
 		[GrantedConditionReference]

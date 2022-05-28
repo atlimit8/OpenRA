@@ -20,7 +20,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Transports actors with the `" + nameof(Carryable) + "` trait.")]
+	[Desc("Transports actors with the {0} trait.")]
+	[DescArg(typeof(CarryableInfo))]
 	public class CarryallInfo : TraitInfo, Requires<BodyOrientationInfo>, Requires<AircraftInfo>
 	{
 		[ActorReference(typeof(CarryableInfo))]
@@ -33,7 +34,8 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Delay (in ticks) on the ground while detaching an actor from the carryall.")]
 		public readonly int BeforeUnloadDelay = 0;
 
-		[Desc("Carryable attachment point relative to body.")]
+		[Desc("{0} attachment point relative to body.")]
+		[DescArg(typeof(CarryableInfo))]
 		public readonly WVec LocalOffset = WVec.Zero;
 
 		[Desc("Radius around the target drop location that are considered if the target tile is blocked.")]

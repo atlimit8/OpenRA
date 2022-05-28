@@ -14,7 +14,8 @@ using OpenRA.Primitives;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Actor can reveal Cloak actors in a specified range.")]
+	[Desc("Actor can reveal {0} actors in a specified range.")]
+	[DescArg(typeof(CloakInfo))]
 	public class DetectCloakedInfo : ConditionalTraitInfo
 	{
 		[Desc("Specific cloak classifications I can reveal.")]

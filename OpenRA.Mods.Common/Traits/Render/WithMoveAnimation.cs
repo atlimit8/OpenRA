@@ -23,7 +23,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Which sprite body to modify.")]
 		public readonly string Body = "body";
 
-		[Desc("Apply condition on listed movement types. Available options are: None, Horizontal, Vertical, Turn.")]
+		[Desc("Apply condition on listed movement types. Available options are: {0}.")]
+		[DescArg(DescArgType.EnumNames)]
 		public readonly MovementType ValidMovementTypes = MovementType.Horizontal;
 
 		public override object Create(ActorInitializer init) { return new WithMoveAnimation(init, this); }

@@ -23,7 +23,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Voxel sequence name to use")]
 		public readonly string Sequence = "turret";
 
-		[Desc("Turreted 'Turret' key to display")]
+		[Desc("{0} key to display")]
+		[DescArg(typeof(TurretedInfo), nameof(TurretedInfo.Turret))]
 		public readonly string Turret = "primary";
 
 		[Desc("Defines if the Voxel should have a shadow.")]

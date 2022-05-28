@@ -31,7 +31,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Palette to render the sprite in. Reference the world actor's PaletteFrom* traits.")]
 		public readonly string Palette = "chrome";
 
-		[Desc("Custom palette is a player palette BaseName")]
+		[Desc("Custom palette is a player palette {0}")]
+		[DescArg(nameof(IndexedPaletteInfo.BasePalette))]
 		public readonly bool IsPlayerPalette = false;
 
 		public override object Create(ActorInitializer init) { return new WithDecoration(init.Self, this); }

@@ -32,7 +32,8 @@ namespace OpenRA.Mods.Common.Traits
 		[ActorReference]
 		public readonly string BaseActor = null;
 
-		[Desc("Offset from the spawn point, BaseActor will spawn at.")]
+		[Desc("Offset from the spawn point, {0} will spawn at.")]
+		[DescArg(nameof(BaseActor))]
 		public readonly CVec BaseActorOffset = CVec.Zero;
 
 		[Desc("A group of units ready to defend or scout.")]
@@ -45,10 +46,12 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Outer radius for spawning support actors")]
 		public readonly int OuterSupportRadius = 4;
 
-		[Desc("Initial facing of BaseActor. Leave undefined for random facings.")]
+		[Desc("Initial facing of {0}. Leave undefined for random facings.")]
+		[DescArg(nameof(BaseActor))]
 		public readonly WAngle? BaseActorFacing = new WAngle(512);
 
-		[Desc("Initial facing of SupportActors. Leave undefined for random facings.")]
+		[Desc("Initial facing of {0}. Leave undefined for random facings.")]
+		[DescArg(nameof(SupportActors))]
 		public readonly WAngle? SupportActorsFacing = null;
 	}
 

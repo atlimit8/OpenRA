@@ -21,7 +21,8 @@ namespace OpenRA.Mods.Common.Traits.Sound
 		[Desc("Voice to play.")]
 		public readonly string Voice = null;
 
-		[Desc("Player relationships who can hear this voice.")]
+		[Desc("Player relationships who can hear this voice. Possible values: {0}")]
+		[DescArg(DescArgType.EnumNamesWithAndOr)]
 		public readonly PlayerRelationship ValidRelationships = PlayerRelationship.Ally | PlayerRelationship.Neutral | PlayerRelationship.Enemy;
 
 		[Desc("Play the voice to the owning player even if Stance.Ally is not included in ValidStances.")]

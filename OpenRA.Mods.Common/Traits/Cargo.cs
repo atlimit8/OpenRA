@@ -20,13 +20,16 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("This actor can transport Passenger actors.")]
+	[Desc("This actor can transport {0} actors.")]
+	[DescArg(typeof(PassengerInfo))]
 	public class CargoInfo : TraitInfo, Requires<IOccupySpaceInfo>
 	{
-		[Desc("The maximum sum of Passenger.Weight that this actor can support.")]
+		[Desc("The maximum sum of {0} that this actor can support.")]
+		[DescArg(typeof(PassengerInfo), nameof(PassengerInfo.Weight))]
 		public readonly int MaxWeight = 0;
 
-		[Desc("`Passenger.CargoType`s that can be loaded into this actor.")]
+		[Desc("{0s that can be loaded into this actor.")]
+		[DescArg(typeof(PassengerInfo), nameof(PassengerInfo.CargoType))]
 		public readonly HashSet<string> Types = new HashSet<string>();
 
 		[Desc("A list of actor types that are initially spawned into this actor.")]

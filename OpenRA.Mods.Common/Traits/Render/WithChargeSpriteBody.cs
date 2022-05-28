@@ -16,7 +16,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits.Render
 {
-	[Desc("Render trait that varies the sprite body frame based on the AttackCharges trait's charge level.")]
+	[Desc("Render trait that varies the sprite body frame based on the {0} trait's charge level.")]
+	[DescArg(typeof(AttackChargesInfo))]
 	public class WithChargeSpriteBodyInfo : WithSpriteBodyInfo, Requires<AttackChargesInfo>
 	{
 		public override object Create(ActorInitializer init) { return new WithChargeSpriteBody(init, this); }

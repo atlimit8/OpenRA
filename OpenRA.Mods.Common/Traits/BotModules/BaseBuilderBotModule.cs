@@ -111,9 +111,10 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Radius in cells around a factory scanned for rally points by the AI.")]
 		public readonly int RallyPointScanRadius = 8;
 
-		[Desc("Radius in cells around each building with ProvideBuildableArea",
+		[Desc("Radius in cells around each building with {0}",
 			"to check for a 3x3 area of water where naval structures can be built.",
 			"Should match maximum adjacency of naval structures.")]
+		[DescArg(typeof(GivesBuildableAreaInfo))]
 		public readonly int CheckForWaterRadius = 8;
 
 		[Desc("Terrain types which are considered water for base building purposes.")]

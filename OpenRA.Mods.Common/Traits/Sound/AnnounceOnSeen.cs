@@ -16,7 +16,8 @@ using OpenRA.Traits;
 namespace OpenRA.Mods.Common.Traits.Sound
 {
 	[Desc("Players will be notified when this actor becomes visible to them.",
-		"Requires the 'EnemyWatcher' trait on the player actor.")]
+		"Requires the {0} trait on the player actor.")]
+	[DescArg(typeof(EnemyWatcherInfo))]
 	public class AnnounceOnSeenInfo : TraitInfo
 	{
 		[Desc("Should there be a radar ping on enemies' radar at the actor's location when they see him")]

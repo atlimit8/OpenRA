@@ -17,7 +17,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Add to a building to expose a move cursor that triggers Transforms and issues an enter tunnel order to the transformed actor.")]
+	[Desc("Add to a building to expose a move cursor that triggers {0} and issues an enter tunnel order to the transformed actor.")]
+	[DescArg(typeof(TransformsInfo))]
 	public class TransformsIntoEntersTunnelsInfo : ConditionalTraitInfo, Requires<TransformsInfo>
 	{
 		[CursorReference]

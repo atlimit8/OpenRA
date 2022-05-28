@@ -17,7 +17,8 @@ namespace OpenRA.Mods.Common.Traits
 	public class GrantExternalConditionToProducedInfo : ConditionalTraitInfo
 	{
 		[FieldLoader.Require]
-		[Desc("The condition to apply. Must be included in the produced actor's ExternalConditions list.")]
+		[Desc("The condition to apply. Must be included in the produced actor's {0}s list.")]
+		[DescArg(typeof(ExternalConditionInfo), nameof(ExternalConditionInfo.Condition))]
 		public readonly string Condition = null;
 
 		[Desc("Duration of the condition (in ticks). Set to 0 for a permanent condition.")]

@@ -14,10 +14,12 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Tag trait for actors with `DeliversExperience`.")]
+	[Desc("Tag trait for actors with {0}.")]
+	[DescArg(typeof(DeliversExperienceInfo))]
 	public class AcceptsDeliveredExperienceInfo : TraitInfo, Requires<GainsExperienceInfo>
 	{
-		[Desc("Accepted `DeliversExperience` types. Leave empty to accept all types.")]
+		[Desc("Accepted {0} types. Leave empty to accept all types.")]
+		[DescArg(typeof(DeliversExperienceInfo))]
 		public readonly HashSet<string> ValidTypes = new HashSet<string>();
 
 		[Desc("Player relationships the owner of the delivering actor needs.")]

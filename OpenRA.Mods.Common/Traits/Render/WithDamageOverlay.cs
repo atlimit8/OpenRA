@@ -33,7 +33,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Custom palette name.")]
 		public readonly string Palette = null;
 
-		[Desc("Custom palette is a player palette BaseName.")]
+		[Desc("Custom palette is a player palette {0}.")]
+		[DescArg(nameof(IndexedPaletteInfo.BasePalette))]
 		public readonly bool IsPlayerPalette = false;
 
 		[Desc("Damage types that this should be used for (defined on the warheads).",

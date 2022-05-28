@@ -20,10 +20,12 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Reload ammo pool with this name.")]
 		public readonly string AmmoPool = "primary";
 
-		[Desc("Reload time in ticks per Count.")]
+		[Desc("Reload time in ticks per {0}.")]
+		[DescArg(nameof(Count))]
 		public readonly int Delay = 50;
 
-		[Desc("How much ammo is reloaded after Delay.")]
+		[Desc("How much ammo is reloaded after {0}.")]
+		[DescArg(nameof(Delay))]
 		public readonly int Count = 1;
 
 		[Desc("Whether or not reload timer should be reset when ammo has been fired.")]

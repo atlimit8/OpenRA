@@ -40,10 +40,12 @@ namespace OpenRA.Mods.Common.Traits
 		public readonly WDist Cordon = new WDist(5120);
 
 		[ActorReference(typeof(PassengerInfo))]
-		[Desc("Troops to be delivered.  They will be distributed between the planes if SquadSize > 1.")]
+		[Desc("Troops to be delivered.  They will be distributed between the planes if {0} > 1.")]
+		[DescArg(nameof(SquadSize))]
 		public readonly string[] DropItems = Array.Empty<string>();
 
-		[Desc("Risks stuck units when they don't have the Paratrooper trait.")]
+		[Desc("Risks stuck units when they don't have the {0} trait.")]
+		[DescArg(typeof(ParachutableInfo))]
 		public readonly bool AllowImpassableCells = false;
 
 		[ActorReference]

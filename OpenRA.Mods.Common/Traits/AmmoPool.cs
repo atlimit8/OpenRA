@@ -37,7 +37,8 @@ namespace OpenRA.Mods.Common.Traits
 		public readonly string RearmSound = null;
 
 		// HACK: Temporarily kept until Rearm activity is gone for good
-		[Desc("Time to reload per ReloadCount on airfield etc.")]
+		[Desc("Time to reload per {0} on airfield etc.")]
+		[DescArg(nameof(ReloadCount))]
 		public readonly int ReloadDelay = 50;
 
 		[GrantedConditionReference]

@@ -18,7 +18,9 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits.Render
 {
-	[Desc("Renders the MuzzleSequence from the Armament trait.")]
+	[Desc("Renders the {0} from the {1} trait.")]
+	[DescArg(typeof(ArmamentInfo), nameof(ArmamentInfo.MuzzleSequence))]
+	[DescArg(typeof(ArmamentInfo))]
 	class WithMuzzleOverlayInfo : ConditionalTraitInfo, Requires<RenderSpritesInfo>, Requires<AttackBaseInfo>, Requires<ArmamentInfo>
 	{
 		[Desc("Ignore the weapon position, and always draw relative to the center of the actor")]

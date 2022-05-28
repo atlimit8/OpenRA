@@ -17,7 +17,8 @@ namespace OpenRA.Mods.Common.Traits
 	public class GrantExternalConditionCrateActionInfo : CrateActionInfo
 	{
 		[FieldLoader.Require]
-		[Desc("The condition to apply. Must be included in the target actor's ExternalConditions list.")]
+		[Desc("The condition to apply. Must be included in the target actor's {0}s list.")]
+		[DescArg(typeof(ExternalConditionInfo), nameof(ExternalConditionInfo.Condition))]
 		public readonly string Condition = null;
 
 		[Desc("How many times to grant the condition.")]

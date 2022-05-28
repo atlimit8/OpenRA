@@ -16,7 +16,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits.Render
 {
-	[Desc("Display the time remaining until the next cash is given by actor's CashTrickler trait.")]
+	[Desc("Display the time remaining until the next cash is given by actor's {0} trait.")]
+	[DescArg(typeof(CashTricklerInfo))]
 	class CashTricklerBarInfo : TraitInfo, Requires<CashTricklerInfo>
 	{
 		[Desc("Defines to which players the bar is to be shown.")]

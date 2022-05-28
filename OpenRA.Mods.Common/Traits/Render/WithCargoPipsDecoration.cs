@@ -17,7 +17,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 {
 	public class WithCargoPipsDecorationInfo : WithDecorationBaseInfo, Requires<CargoInfo>
 	{
-		[Desc("Number of pips to display. Defaults to Cargo.MaxWeight.")]
+		[Desc("Number of pips to display. Defaults to {0}.")]
+		[DescArg(typeof(CargoInfo), nameof(CargoInfo.MaxWeight))]
 		public readonly int PipCount = -1;
 
 		[Desc("If non-zero, override the spacing between adjacent pips.")]

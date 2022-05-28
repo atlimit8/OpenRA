@@ -16,9 +16,11 @@ using OpenRA.Traits;
 namespace OpenRA.Mods.Common.Traits.Render
 {
 	[TraitLocation(SystemActors.Player)]
-	[Desc("Attach this to the player actor. When attached, enables all actors possessing the ProducibleWithLevel ",
+	[Desc("Attach this to the player actor. When attached, enables all actors possessing the {0} ",
 		"trait to have their production queue icons render with an overlay defined in this trait. ",
-		"The icon change occurs when ProducibleWithLevel.Prerequisites are met.")]
+		"The icon change occurs when {1} are met.")]
+	[DescArg(typeof(ProducibleWithLevelInfo))]
+	[DescArg(typeof(ProducibleWithLevelInfo), nameof(ProducibleWithLevelInfo.Prerequisites))]
 	public class VeteranProductionIconOverlayInfo : TraitInfo, Requires<TechTreeInfo>
 	{
 		[FieldLoader.Require]

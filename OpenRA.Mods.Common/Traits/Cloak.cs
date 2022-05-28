@@ -46,8 +46,10 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Measured in game ticks.")]
 		public readonly int CloakDelay = 30;
 
-		[Desc("Events leading to the actor getting uncloaked. Possible values are: Attack, Move, Unload, Infiltrate, Demolish, Dock, Damage, Heal and SelfHeal.",
-			"'Dock' is triggered when docking to a refinery or resupplying.")]
+		[Desc("Events leading to the actor getting uncloaked. Possible values are: {0}.",
+			"{1} is triggered when docking to a refinery or resupplying.")]
+		[DescArg(DescArgType.EnumNamesWithAnd)]
+		[DescArg(nameof(UncloakType.Dock))]
 		public readonly UncloakType UncloakOn = UncloakType.Attack
 			| UncloakType.Unload | UncloakType.Infiltrate | UncloakType.Demolish | UncloakType.Dock;
 

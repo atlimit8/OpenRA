@@ -18,7 +18,9 @@ namespace OpenRA.Mods.Common.Traits
 	[Desc("Eligible for instant repair.")]
 	class EngineerRepairableInfo : ConditionalTraitInfo
 	{
-		[Desc("Actors with these Types under EngineerRepair trait can repair me.")]
+		[Desc("Actors with these {0} under {1} trait can repair me.")]
+		[DescArg(nameof(EngineerRepairInfo.Types))]
+		[DescArg(typeof(EngineerRepairInfo))]
 		public readonly BitSet<EngineerRepairType> Types = default(BitSet<EngineerRepairType>);
 
 		public override object Create(ActorInitializer init) { return new EngineerRepairable(this); }

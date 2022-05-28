@@ -21,7 +21,8 @@ namespace OpenRA.Mods.Common.Traits
 	{
 		[ActorReference]
 		[FieldLoader.Require]
-		[Desc("Name of the delivering actor. This actor must have the `" + nameof(Carryall) + "` trait")]
+		[Desc("Name of the delivering actor. This actor must have the {0} trait")]
+		[DescArg(typeof(CarryallInfo))]
 		public readonly string DeliveringActor = null;
 
 		[Desc("Cell coordinates for spawning the delivering actor. If left blank, the closest edge cell will be chosen.")]

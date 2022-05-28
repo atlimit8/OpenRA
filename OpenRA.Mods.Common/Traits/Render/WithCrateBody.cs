@@ -24,7 +24,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Easteregg sequences to use in December.")]
 		public readonly string[] XmasImages = Array.Empty<string>();
 
-		[Desc("Terrain types on which to display WaterSequence.")]
+		[Desc("Terrain types on which to display {0}.")]
+		[DescArg(nameof(WaterSequence))]
 		public readonly HashSet<string> WaterTerrainTypes = new HashSet<string> { "Water" };
 
 		[SequenceReference]

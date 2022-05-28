@@ -15,7 +15,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("The player can give this unit the order to follow and protect friendly units with the Guardable trait.")]
+	[Desc("The player can give this unit the order to follow and protect friendly units with the {0} trait.")]
+	[DescArg(typeof(GuardableInfo))]
 	public class GuardInfo : TraitInfo, Requires<IMoveInfo>
 	{
 		[VoiceReference]

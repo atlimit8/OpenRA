@@ -22,7 +22,8 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Actors that this actor can dock to and get rearmed by.")]
 		public readonly HashSet<string> RearmActors = new HashSet<string> { };
 
-		[Desc("Name(s) of AmmoPool(s) that use this trait to rearm.")]
+		[Desc("Name(s) of {0(s) that use this trait to rearm.")]
+		[DescArg(typeof(AmmoPoolInfo))]
 		public readonly HashSet<string> AmmoPools = new HashSet<string> { "primary" };
 
 		public override object Create(ActorInitializer init) { return new Rearmable(this); }

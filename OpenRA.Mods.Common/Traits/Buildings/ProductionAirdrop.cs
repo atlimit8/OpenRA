@@ -29,7 +29,8 @@ namespace OpenRA.Mods.Common.Traits
 
 		[FieldLoader.Require]
 		[ActorReference(typeof(AircraftInfo))]
-		[Desc("Cargo aircraft used for delivery. Must have the `" + nameof(Aircraft) + "` trait.")]
+		[Desc("Cargo aircraft used for delivery. Must have the {0} trait.")]
+		[DescArg(typeof(AircraftInfo))]
 		public readonly string ActorType = null;
 
 		[Desc("The cargo aircraft will spawn at the player baseline (map edge closest to the player spawn)")]

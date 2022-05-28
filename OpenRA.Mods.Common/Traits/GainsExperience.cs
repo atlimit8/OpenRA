@@ -17,7 +17,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("This actor's experience increases when it has killed a GivesExperience actor.")]
+	[Desc("This actor's experience increases when it has killed a {0} actor.")]
+	[DescArg(typeof(GivesExperienceInfo))]
 	public class GainsExperienceInfo : TraitInfo
 	{
 		[FieldLoader.Require]
@@ -33,7 +34,8 @@ namespace OpenRA.Mods.Common.Traits
 		public readonly string LevelUpImage = null;
 
 		[SequenceReference(nameof(LevelUpImage), allowNullImage: true)]
-		[Desc("Sequence for the level up sprite. Needs to be present on LevelUpImage.")]
+		[Desc("Sequence for the level up sprite. Needs to be present on {0}.")]
+		[DescArg(nameof(LevelUpImage))]
 		public readonly string LevelUpSequence = "levelup";
 
 		[PaletteReference]

@@ -15,10 +15,12 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Tag trait for actors with `DeliversCash`.")]
+	[Desc("Tag trait for actors with {0}.")]
+	[DescArg(typeof(DeliversCashInfo))]
 	public class AcceptsDeliveredCashInfo : TraitInfo
 	{
-		[Desc("Accepted `DeliversCash` types. Leave empty to accept all types.")]
+		[Desc("Accepted {0} types. Leave empty to accept all types.")]
+		[DescArg(typeof(DeliversCashInfo))]
 		public readonly HashSet<string> ValidTypes = new HashSet<string>();
 
 		[Desc("Player relationships the owner of the delivering actor needs.")]

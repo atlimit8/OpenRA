@@ -15,7 +15,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("This actor gives experience to a GainsExperience actor when they are killed.")]
+	[Desc("This actor gives experience to a {0} actor when they are killed.")]
+	[DescArg(typeof(GainsExperienceInfo))]
 	class GivesExperienceInfo : TraitInfo
 	{
 		[Desc("If -1, use the value of the unit cost.")]
@@ -24,10 +25,12 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Player relationships the attacking player needs to receive the experience.")]
 		public readonly PlayerRelationship ValidRelationships = PlayerRelationship.Neutral | PlayerRelationship.Enemy;
 
-		[Desc("Percentage of the `Experience` value that is being granted to the killing actor.")]
+		[Desc("Percentage of the {0} value that is being granted to the killing actor.")]
+		[DescArg(nameof(Experience))]
 		public readonly int ActorExperienceModifier = 10000;
 
-		[Desc("Percentage of the `Experience` value that is being granted to the player owning the killing actor.")]
+		[Desc("Percentage of the {0} value that is being granted to the player owning the killing actor.")]
+		[DescArg(nameof(Experience))]
 		public readonly int PlayerExperienceModifier = 0;
 
 		public override object Create(ActorInitializer init) { return new GivesExperience(this); }

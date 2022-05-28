@@ -13,7 +13,9 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Place a different building when PlaceBuilding's ToggleVariantKey hotkey is pressed while the PlaceBuildingOrderGenerator is active.")]
+	[Desc("Place a different building when {0}'s {1} hotkey is pressed while the PlaceBuildingOrderGenerator is active.")]
+	[DescArg(typeof(PlaceBuildingInfo))]
+	[DescArg(nameof(PlaceBuildingInfo.ToggleVariantKey))]
 	public class PlaceBuildingVariantsInfo : TraitInfo<PlaceBuildingVariants>, Requires<BuildingInfo>, Requires<BuildableInfo>
 	{
 		[FieldLoader.Require]

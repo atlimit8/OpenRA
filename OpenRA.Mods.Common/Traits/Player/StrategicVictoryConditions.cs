@@ -16,7 +16,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Used to mark a place that needs to be in possession for StrategicVictoryConditions.")]
+	[Desc("Used to mark a place that needs to be in possession for {0}.")]
+	[DescArg(typeof(StrategicVictoryConditionsInfo))]
 	public class StrategicPointInfo : TraitInfo<StrategicPoint> { }
 	public class StrategicPoint { }
 

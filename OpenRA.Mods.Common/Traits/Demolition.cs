@@ -34,7 +34,8 @@ namespace OpenRA.Mods.Common.Traits
 		public readonly int FlashInterval = 4;
 
 		[Desc("Behaviour when entering the structure.",
-			"Possible values are Exit, Suicide, Dispose.")]
+			"Possible values are {0}.")]
+		[DescArg(DescArgType.EnumNamesWithOr)]
 		public readonly EnterBehaviour EnterBehaviour = EnterBehaviour.Exit;
 
 		[Desc("Types of damage that this trait causes. Leave empty for no damage types.")]

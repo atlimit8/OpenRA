@@ -17,13 +17,15 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Can be paradropped by a ParaDrop actor.")]
+	[Desc("Can be paradropped by a {0} actor.")]
+	[DescArg(typeof(ParaDropInfo))]
 	public class ParachutableInfo : TraitInfo, Requires<IPositionableInfo>
 	{
 		[Desc("If we land on invalid terrain for my actor type should we be killed?")]
 		public readonly bool KilledOnImpassableTerrain = true;
 
-		[Desc("Types of damage that this trait causes to self when 'KilledOnImpassableTerrain' is true. Leave empty for no damage types.")]
+		[Desc("Types of damage that this trait causes to self when {0} is true. Leave empty for no damage types.")]
+		[DescArg(nameof(KilledOnImpassableTerrain))]
 		public readonly BitSet<DamageType> DamageTypes = default(BitSet<DamageType>);
 
 		[Desc("Image where Ground/WaterCorpseSequence is looked up.")]

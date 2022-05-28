@@ -32,7 +32,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		public readonly string EmptySequence = "pip-empty";
 
 		[SequenceReference(nameof(Image))]
-		[Desc("Sequence used for full pips that aren't defined in ResourceSequences.")]
+		[Desc("Sequence used for full pips that aren't defined in {0}.")]
+		[DescArg(nameof(ResourceSequences))]
 		public readonly string FullSequence = "pip-green";
 
 		[SequenceReference(nameof(Image), dictionaryReference: LintDictionaryReference.Values)]

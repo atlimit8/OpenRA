@@ -13,7 +13,8 @@ using System.Collections.Generic;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("An actor with this trait indicates a valid spawn point for actors of ActorSpawnManager.")]
+	[Desc("An actor with this trait indicates a valid spawn point for actors of {0}.")]
+	[DescArg(typeof(ActorSpawnManagerInfo))]
 	public class ActorSpawnerInfo : ConditionalTraitInfo
 	{
 		[Desc("Type of ActorSpawner with which it connects.")]

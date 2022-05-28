@@ -18,9 +18,11 @@ using OpenRA.Traits;
 namespace OpenRA.Mods.Common.Traits
 {
 	[Desc("Attach this to the player actor (not a building!) to define a new shared build queue.",
-		"Will only work together with the Production: trait on the actor that actually does the production.",
-		"You will also want to add PrimaryBuildings: to let the user choose where new units should exit.",
+		"Will only work together with the {0}: trait on the actor that actually does the production.",
+		"You will also want to add {1}s: to let the user choose where new units should exit.",
 		"The production speed depends on the number of production buildings and units queued at the same time.")]
+	[DescArg(typeof(ProductionInfo))]
+	[DescArg(typeof(PrimaryBuildingInfo))]
 	[TraitLocation(SystemActors.Player)]
 	public class ClassicParallelProductionQueueInfo : ProductionQueueInfo, Requires<TechTreeInfo>, Requires<PlayerResourcesInfo>
 	{

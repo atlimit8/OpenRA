@@ -28,8 +28,10 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("If > 0, force visibility to be recalculated if the unit moves within a cell by more than this distance.")]
 		public readonly WDist MoveRecalculationThreshold = new WDist(256);
 
-		[Desc("Possible values are CenterPosition (measure range from the center) and ",
-			"Footprint (measure range from the footprint)")]
+		[Desc("Possible values are {0} (measure range from the center) and ",
+			"{1} (measure range from the footprint)")]
+		[DescArg(nameof(VisibilityType.CenterPosition))]
+		[DescArg(nameof(VisibilityType.Footprint))]
 		public readonly VisibilityType Type = VisibilityType.Footprint;
 	}
 

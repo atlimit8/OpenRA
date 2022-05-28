@@ -18,7 +18,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Donate money to actors with the `" + nameof(AcceptsDeliveredCash) + "` trait.")]
+	[Desc("Donate money to actors with the {0} trait.")]
+	[DescArg(typeof(AcceptsDeliveredCashInfo))]
 	class DeliversCashInfo : TraitInfo
 	{
 		[Desc("The amount of cash the owner receives.")]
@@ -27,7 +28,8 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("The amount of experience the donating player receives.")]
 		public readonly int PlayerExperience = 0;
 
-		[Desc("Identifier checked against AcceptsDeliveredCash.ValidTypes. Only needed if the latter is not empty.")]
+		[Desc("Identifier checked against {0}. Only needed if the latter is not empty.")]
+		[DescArg(typeof(AcceptsDeliveredCashInfo), nameof(AcceptsDeliveredCashInfo.ValidTypes))]
 		public readonly string Type = null;
 
 		[Desc("Sound to play when delivering cash")]

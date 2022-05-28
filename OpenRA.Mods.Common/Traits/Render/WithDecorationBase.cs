@@ -25,7 +25,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Position in the actor's selection box to draw the decoration.")]
 		public readonly string Position = "TopLeft";
 
-		[Desc("Player relationships who can view the decoration.")]
+		[Desc("Player relationships who can view the decoration. Possible values: {0}.")]
+		[DescArg(DescArgType.EnumNamesWithAndOr)]
 		public readonly PlayerRelationship ValidRelationships = PlayerRelationship.Ally;
 
 		[Desc("Should this be visible only when selected?")]
@@ -41,7 +42,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("The number of ticks that each step in the blink pattern in active.")]
 		public readonly int BlinkInterval = 5;
 
-		[Desc("A pattern of ticks (BlinkInterval long) where the decoration is visible or hidden.")]
+		[Desc("A pattern of ticks ({0} long) where the decoration is visible or hidden.")]
+		[DescArg(nameof(BlinkInterval))]
 		public readonly BlinkState[] BlinkPattern = Array.Empty<BlinkState>();
 
 		[Desc("Override blink conditions to use when defined conditions are enabled.",

@@ -13,7 +13,8 @@ using System.Linq;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Can be carried by units with the trait `Carryall`.")]
+	[Desc("Can be carried by units with the trait {0}.")]
+	[DescArg(typeof(CarryallInfo))]
 	public class AutoCarryableInfo : CarryableInfo
 	{
 		[Desc("Required distance away from destination before requesting a pickup. Default is 6 cells.")]

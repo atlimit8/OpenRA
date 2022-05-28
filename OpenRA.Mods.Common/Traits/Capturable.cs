@@ -14,12 +14,16 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("This actor can be captured by a unit with Captures: trait.",
-		"This trait should not be disabled if the actor also uses FrozenUnderFog.")]
+	[Desc("This actor can be captured by a unit with {0}: trait.",
+		"This trait should not be disabled if the actor also uses {1}.")]
+	[DescArg(typeof(CapturesInfo))]
+	[DescArg(typeof(FrozenUnderFogInfo))]
 	public class CapturableInfo : ConditionalTraitInfo, Requires<CaptureManagerInfo>
 	{
 		[FieldLoader.Require]
-		[Desc("CaptureTypes (from the Captures trait) that are able to capture this.")]
+		[Desc("{0} (from the {1} trait) that are able to capture this.")]
+		[DescArg(nameof(CapturesInfo.CaptureTypes))]
+		[DescArg(typeof(CapturesInfo))]
 		public readonly BitSet<CaptureType> Types = default(BitSet<CaptureType>);
 
 		[Desc("What player relationships the target's owner needs to be captured by this actor.")]

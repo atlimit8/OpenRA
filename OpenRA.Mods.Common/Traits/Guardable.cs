@@ -13,7 +13,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("This unit can be guarded (followed and protected) by a Guard unit.")]
+	[Desc("This unit can be guarded (followed and protected) by a {0} unit.")]
+	[DescArg(typeof(GuardInfo))]
 	public class GuardableInfo : TraitInfo<Guardable>
 	{
 		[Desc("Maximum range that guarding actors will maintain.")]

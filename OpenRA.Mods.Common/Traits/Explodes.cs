@@ -32,7 +32,8 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Fallback weapon to use for explosion if empty (no ammo/payload).")]
 		public readonly string EmptyWeapon = "UnitExplode";
 
-		[Desc("Chance that the explosion will use Weapon instead of EmptyWeapon when exploding, provided the actor has ammo/payload.")]
+		[Desc("Chance that the explosion will use Weapon instead of {0} when exploding, provided the actor has ammo/payload.")]
+		[DescArg(nameof(EmptyWeapon))]
 		public readonly int LoadedChance = 100;
 
 		[Desc("Chance that this actor will explode at all.")]
@@ -45,11 +46,14 @@ namespace OpenRA.Mods.Common.Traits
 		public readonly BitSet<DamageType> DeathTypes = default(BitSet<DamageType>);
 
 		[Desc("Who is counted as source of damage for explosion.",
-			"Possible values are Self and Killer.")]
+			"Possible values are {0}.")]
+		[DescArg(DescArgType.EnumNamesWithAnd)]
 		public readonly DamageSource DamageSource = DamageSource.Self;
 
-		[Desc("Possible values are CenterPosition (explosion at the actors' center) and ",
-			"Footprint (explosion on each occupied cell).")]
+		[Desc("Possible values are {0} (explosion at the actors' center) and ",
+			"{1} (explosion on each occupied cell).")]
+		[DescArg(nameof(ExplosionType.CenterPosition))]
+		[DescArg(nameof(ExplosionType.Footprint))]
 		public readonly ExplosionType Type = ExplosionType.CenterPosition;
 
 		[Desc("Offset of the explosion from the center of the exploding actor (or cell).")]

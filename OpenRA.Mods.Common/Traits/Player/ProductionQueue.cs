@@ -19,7 +19,8 @@ namespace OpenRA.Mods.Common.Traits
 {
 	[Desc("Attach this to an actor (usually a building) to let it produce units or construct buildings.",
 		"If one builds another actor of this type, he will get a separate queue to create two actors",
-		"at the same time. Will only work together with the Production: trait.")]
+		"at the same time. Will only work together with the {0} trait.")]
+	[DescArg(typeof(ProductionInfo))]
 	public class ProductionQueueInfo : TraitInfo, IRulesetLoaded
 	{
 		[FieldLoader.Require]

@@ -1,6 +1,6 @@
 #region Copyright & License Information
 /*
- * Copyright 2007-2021 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2022 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
@@ -17,13 +17,15 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("This actor can grant experience levels equal to it's own current level via entering to other actors with the `" + nameof(AcceptsDeliveredExperience) + "` trait.")]
+	[Desc("This actor can grant experience levels equal to it's own current level via entering to other actors with the {0}.")]
+	[DescArg(typeof(AcceptsDeliveredExperienceInfo), DescArgType.LabeledYamlType)]
 	class DeliversExperienceInfo : TraitInfo, Requires<GainsExperienceInfo>
 	{
 		[Desc("The amount of experience the donating player receives.")]
 		public readonly int PlayerExperience = 0;
 
-		[Desc("Identifier checked against AcceptsDeliveredExperience.ValidTypes. Only needed if the latter is not empty.")]
+		[Desc("Identifier checked against {0}. Only needed if the latter is not empty.")]
+		[DescArg(typeof(AcceptsDeliveredExperienceInfo), nameof(AcceptsDeliveredExperienceInfo.ValidTypes))]
 		public readonly string Type = null;
 
 		[CursorReference]

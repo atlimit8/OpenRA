@@ -31,19 +31,23 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Perceptual color threshold for determining whether two colors are too similar.")]
 		public readonly float SimilarityThreshold = 0.314f;
 
-		[Desc("List of hue components for the preset colors in the palette tab. Each entry must have a corresponding PresetSaturations definition.")]
+		[Desc("List of hue components for the preset colors in the palette tab. Each entry must have a corresponding {0} definition.")]
+		[DescArg(nameof(PresetSaturations))]
 		public readonly float[] PresetHues = Array.Empty<float>();
 
-		[Desc("List of saturation components for the preset colors in the palette tab. Each entry must have a corresponding PresetHues definition.")]
+		[Desc("List of saturation components for the preset colors in the palette tab. Each entry must have a corresponding {0} definition.")]
+		[DescArg(nameof(PresetHues))]
 		public readonly float[] PresetSaturations = Array.Empty<float>();
 
 		[ActorReference]
-		[Desc("Actor type to show in the color picker. This can be overridden for specific factions with FactionPreviewActors.")]
+		[Desc("Actor type to show in the color picker. This can be overridden for specific factions with {0}.")]
+		[DescArg(nameof(FactionPreviewActors))]
 		public readonly string PreviewActor = null;
 
 		[SequenceReference(dictionaryReference: LintDictionaryReference.Values)]
-		[Desc("Actor type to show in the color picker for specific factions. Overrides PreviewActor.",
+		[Desc("Actor type to show in the color picker for specific factions. Overrides {0}.",
 			"A dictionary of [faction name]: [actor name].")]
+		[DescArg(nameof(PreviewActor))]
 		public readonly Dictionary<string, string> FactionPreviewActors = new Dictionary<string, string>();
 
 		public void RulesetLoaded(Ruleset rules, ActorInfo ai)

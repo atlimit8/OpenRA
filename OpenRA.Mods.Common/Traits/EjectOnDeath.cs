@@ -18,7 +18,8 @@ namespace OpenRA.Mods.Common.Traits
 	public class EjectOnDeathInfo : ConditionalTraitInfo
 	{
 		[ActorReference]
-		[Desc("Name of the unit to eject. This actor type needs to have the Parachutable trait defined.")]
+		[Desc("Name of the unit to eject. This actor type needs to have the {0} trait defined.")]
+		[DescArg(typeof(ParachutableInfo))]
 		public readonly string PilotActor = "E1";
 
 		[Desc("Probability that the aircraft's pilot gets ejected once the aircraft is destroyed.")]
@@ -33,7 +34,8 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Can a destroyed aircraft eject its pilot when it falls to ground level?")]
 		public readonly bool EjectOnGround = false;
 
-		[Desc("Risks stuck units when they don't have the Paratrooper trait.")]
+		[Desc("Risks stuck units when they don't have the {0} trait.")]
+		[DescArg(typeof(ParachutableInfo))]
 		public readonly bool AllowUnsuitableCell = false;
 
 		public override object Create(ActorInitializer init) { return new EjectOnDeath(this); }

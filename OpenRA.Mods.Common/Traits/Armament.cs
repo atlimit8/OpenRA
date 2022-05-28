@@ -40,7 +40,8 @@ namespace OpenRA.Mods.Common.Traits
 		public readonly int FireDelay = 0;
 
 		[Desc("Muzzle position relative to turret or body, (forward, right, up) triples.",
-			"If weapon Burst = 1, it cycles through all listed offsets, otherwise the offset corresponding to current burst is used.")]
+			"If weapon {0} = 1, it cycles through all listed offsets, otherwise the offset corresponding to current burst is used.")]
+		[DescArg(nameof(GameRules.WeaponInfo.Burst))]
 		public readonly WVec[] LocalOffset = Array.Empty<WVec>();
 
 		[Desc("Muzzle yaw relative to turret or body.")]

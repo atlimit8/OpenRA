@@ -1,6 +1,6 @@
 #region Copyright & License Information
 /*
- * Copyright 2007-2021 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2022 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
@@ -19,8 +19,9 @@ namespace OpenRA.Mods.Common.Traits
 	[Desc("Manages AI capturing logic.")]
 	public class CaptureManagerBotModuleInfo : ConditionalTraitInfo
 	{
-		[Desc("Actor types that can capture other actors (via `Captures`).",
+		[Desc("Actor types that can capture other actors (via {0}).",
 			"Leave this empty to disable capturing.")]
+		[DescArg(typeof(CapturesInfo))]
 		public readonly HashSet<string> CapturingActorTypes = new HashSet<string>();
 
 		[Desc("Actor types that can be targeted for capturing.",
@@ -34,7 +35,8 @@ namespace OpenRA.Mods.Common.Traits
 			"If a value less than 1 is given 1 will be used instead.")]
 		public readonly int MaximumCaptureTargetOptions = 10;
 
-		[Desc("Should visibility (Shroud, Fog, Cloak, etc) be considered when searching for capturable targets?")]
+		[Desc("Should visibility (Shroud, Fog, Cloak, etc) be considered when searching for {0} targets?")]
+		[DescArg(typeof(CapturableInfo))]
 		public readonly bool CheckCaptureTargetsForVisibility = true;
 
 		[Desc("Player relationships that capturers should attempt to target.")]

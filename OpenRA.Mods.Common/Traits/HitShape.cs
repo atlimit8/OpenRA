@@ -25,10 +25,12 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Name of turret this shape is linked to. Leave empty to link shape to body.")]
 		public readonly string Turret = null;
 
-		[Desc("Create a targetable position for each offset listed here (relative to CenterPosition).")]
+		[Desc("Create a targetable position for each offset listed here (relative to {0}).")]
+		[DescArg(nameof(Actor.CenterPosition))]
 		public readonly WVec[] TargetableOffsets = { WVec.Zero };
 
-		[Desc("Create a targetable position at the center of each occupied cell. Stacks with TargetableOffsets.")]
+		[Desc("Create a targetable position at the center of each occupied cell. Stacks with {0}.")]
+		[DescArg(nameof(TargetableOffsets))]
 		public readonly bool UseTargetableCellsOffsets = false;
 
 		[Desc("Defines which Armor types apply when the actor receives damage to this HitShape.",

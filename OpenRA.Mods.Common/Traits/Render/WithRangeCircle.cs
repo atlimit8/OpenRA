@@ -37,14 +37,17 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Range circle border width.")]
 		public readonly float BorderWidth = 3;
 
-		[Desc("If set, the color of the owning player will be used instead of `Color`.")]
+		[Desc("If set, the color of the owning player will be used instead of {0}.")]
+		[DescArg(nameof(Color))]
 		public readonly bool UsePlayerColor = false;
 
 		[Desc("Player relationships which will be able to see the circle.",
-			"Valid values are combinations of `None`, `Ally`, `Enemy` and `Neutral`.")]
+			"Valid values are combinations of {0}.")]
+		[DescArg(DescArgType.EnumNamesWithAnd)]
 		public readonly PlayerRelationship ValidRelationships = PlayerRelationship.Ally;
 
-		[Desc("When to show the range circle. Valid values are `Always`, and `WhenSelected`")]
+		[Desc("When to show the range circle. Valid values are {0}.")]
+		[DescArg(DescArgType.EnumNamesWithAnd)]
 		public readonly RangeCircleVisibility Visible = RangeCircleVisibility.WhenSelected;
 
 		[Desc("Range of the circle")]

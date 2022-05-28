@@ -21,9 +21,11 @@ namespace OpenRA.Mods.Common.Traits
 	public class ProximityCapturableInfo : TraitInfo, IRulesetLoaded
 	{
 		[Desc("Maximum range at which a ProximityCaptor actor can initiate the capture.")]
+		[DescArg(typeof(ProximityCaptorInfo))]
 		public readonly WDist Range = WDist.FromCells(5);
 
-		[Desc("Allowed ProximityCaptor actors to capture this actor.")]
+		[Desc("Allowed {0} actors to capture this actor.")]
+		[DescArg(typeof(ProximityCaptorInfo))]
 		public readonly BitSet<CaptureType> CaptorTypes = new BitSet<CaptureType>("Player", "Vehicle", "Tank", "Infantry");
 
 		[Desc("If set, the capturing process stops immediately after another player comes into Range.")]

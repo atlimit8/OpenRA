@@ -25,13 +25,15 @@ namespace OpenRA.Mods.Common.Traits.Render
 		public readonly string DeathSequence = "die";
 
 		[PaletteReference(nameof(DeathPaletteIsPlayerPalette))]
-		[Desc("The palette used for `DeathSequence`.")]
+		[Desc("The palette used for {0}.")]
+		[DescArg(nameof(DeathSequence))]
 		public readonly string DeathSequencePalette = "player";
 
 		[Desc("Custom death animation palette is a player palette BaseName")]
 		public readonly bool DeathPaletteIsPlayerPalette = true;
 
-		[Desc("Should DeathType-specific sequences be used (sequence name = DeathSequence + DeathType).")]
+		[Desc("Should DeathType-specific sequences be used (sequence name = {0} + DeathType).")]
+		[DescArg(nameof(DeathSequence))]
 		public readonly bool UseDeathTypeSuffix = true; // TODO: check the complete sequence with lint rules
 
 		[SequenceReference]
@@ -39,14 +41,16 @@ namespace OpenRA.Mods.Common.Traits.Render
 		public readonly string CrushedSequence = null;
 
 		[PaletteReference(nameof(CrushedPaletteIsPlayerPalette))]
-		[Desc("The palette used for `CrushedSequence`.")]
+		[Desc("The palette used for {0}.")]
+		[DescArg(nameof(CrushedSequence))]
 		public readonly string CrushedSequencePalette = "effect";
 
 		[Desc("Custom crushed animation palette is a player palette BaseName")]
 		public readonly bool CrushedPaletteIsPlayerPalette = false;
 
 		[Desc("Death animations to use for each damage type (defined on the warheads).",
-			"Is only used if UseDeathTypeSuffix is `True`.")]
+			"Is only used if {0} is `True`.")]
+		[DescArg(nameof(UseDeathTypeSuffix))]
 		public readonly Dictionary<string, string[]> DeathTypes = new Dictionary<string, string[]>();
 
 		[SequenceReference]

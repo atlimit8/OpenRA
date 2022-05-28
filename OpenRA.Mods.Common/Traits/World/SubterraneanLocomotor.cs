@@ -14,7 +14,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Used by Mobile. Required for subterranean actors. Attach these to the world actor. You can have multiple variants by adding @suffixes.")]
+	[Desc("Used by {0}. Required for subterranean actors. Attach these to the world actor. You can have multiple variants by adding @suffixes.")]
+	[DescArg(typeof(MobileInfo))]
 	[TraitLocation(SystemActors.World | SystemActors.EditorWorld)]
 	public class SubterraneanLocomotorInfo : LocomotorInfo
 	{

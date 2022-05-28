@@ -14,7 +14,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Can be carried by actors with the `" + nameof(Carryall) + "` trait.")]
+	[Desc("Can be carried by actors with the {0} trait.")]
+	[DescArg(typeof(CarryallInfo))]
 	public class CarryableInfo : ConditionalTraitInfo
 	{
 		[GrantedConditionReference]

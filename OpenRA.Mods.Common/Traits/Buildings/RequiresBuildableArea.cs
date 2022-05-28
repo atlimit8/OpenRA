@@ -14,14 +14,16 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("This actor requires another actor with 'GivesBuildableArea' trait around to be placed.")]
+	[Desc("This actor requires another actor with {0} trait around to be placed.")]
+	[DescArg(typeof(GivesBuildableAreaInfo))]
 	public class RequiresBuildableAreaInfo : TraitInfo<RequiresBuildableArea>, Requires<BuildingInfo>
 	{
 		[FieldLoader.Require]
 		[Desc("Types of buildable are this actor requires.")]
 		public readonly HashSet<string> AreaTypes = new HashSet<string>();
 
-		[Desc("Maximum range from the actor with 'GivesBuildableArea' this can be placed at.")]
+		[Desc("Maximum range from the actor with {0} this can be placed at.")]
+		[DescArg(typeof(GivesBuildableAreaInfo))]
 		public readonly int Adjacent = 2;
 	}
 

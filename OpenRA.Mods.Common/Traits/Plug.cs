@@ -16,7 +16,8 @@ namespace OpenRA.Mods.Common.Traits
 	public class PlugInfo : TraitInfo<Plug>
 	{
 		[FieldLoader.Require]
-		[Desc("Plug type (matched against Conditions in Pluggable)")]
+		[Desc("Plug type (matched against Conditions in {0})")]
+		[DescArg(typeof(PluggableInfo))]
 		public readonly string Type = null;
 	}
 

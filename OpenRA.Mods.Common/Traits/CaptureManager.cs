@@ -24,7 +24,9 @@ namespace OpenRA.Mods.Common.Traits
 		void Update(Actor self, Actor captor, Actor target, int progress, int total);
 	}
 
-	[Desc("Manages Captures and Capturable traits on an actor.")]
+	[Desc("Manages {0} and {1} traits on an actor.")]
+	[DescArg(typeof(CapturesInfo))]
+	[DescArg(typeof(CapturableInfo))]
 	public class CaptureManagerInfo : TraitInfo
 	{
 		[GrantedConditionReference]

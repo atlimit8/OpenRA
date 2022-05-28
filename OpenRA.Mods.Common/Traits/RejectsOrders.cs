@@ -17,11 +17,13 @@ namespace OpenRA.Mods.Common.Traits
 	[Desc("Can be used to make a unit partly uncontrollable by the player.")]
 	public class RejectsOrdersInfo : ConditionalTraitInfo
 	{
-		[Desc("Explicit list of rejected orders. Leave empty to reject all minus those listed under Except.")]
+		[Desc("Explicit list of rejected orders. Leave empty to reject all minus those listed under {0}.")]
+		[DescArg(nameof(Except))]
 		public readonly HashSet<string> Reject = new HashSet<string>();
 
 		[Desc("List of orders that should *not* be rejected.",
-			"Also overrides other instances of this trait's Reject fields.")]
+			"Also overrides other instances of this trait's {0} fields.")]
+		[DescArg(nameof(Reject))]
 		public readonly HashSet<string> Except = new HashSet<string>();
 
 		public override object Create(ActorInitializer init) { return new RejectsOrders(this); }

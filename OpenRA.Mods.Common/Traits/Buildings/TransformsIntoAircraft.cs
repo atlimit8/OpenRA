@@ -18,7 +18,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Add to a building to expose a move cursor that triggers Transforms and issues a move order to the transformed actor.")]
+	[Desc("Add to a building to expose a move cursor that triggers {0} and issues a move order to the transformed actor.")]
+	[DescArg(typeof(TransformsInfo))]
 	public class TransformsIntoAircraftInfo : ConditionalTraitInfo, Requires<TransformsInfo>
 	{
 		[Desc("Can the actor be ordered to move in to shroud?")]

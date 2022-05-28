@@ -32,16 +32,23 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("The palette to use.")]
 		public readonly string TerrainFlashPalette = null;
 
-		[Desc("The type of effect to apply to targeted (frozen) actors. Accepts values Overlay and Tint.")]
+		[Desc("The type of effect to apply to targeted (frozen) actors. Accepts values {0}.")]
+		[DescArg(DescArgType.EnumNamesWithAnd)]
 		public readonly ActorFlashType ActorFlashType = ActorFlashType.Overlay;
 
-		[Desc("The overlay color to display when ActorFlashType is Overlay.")]
+		[Desc("The overlay color to display when {0} is {1}.")]
+		[DescArg(nameof(ActorFlashType))]
+		[DescArg(nameof(ActorFlashType.Overlay))]
 		public readonly Color ActorFlashOverlayColor = Color.White;
 
-		[Desc("The overlay transparency to display when ActorFlashType is Overlay.")]
+		[Desc("The overlay transparency to display when {0} is {1}.")]
+		[DescArg(nameof(ActorFlashType))]
+		[DescArg(nameof(ActorFlashType.Overlay))]
 		public readonly float ActorFlashOverlayAlpha = 0.5f;
 
-		[Desc("The tint to apply when ActorFlashType is Tint.")]
+		[Desc("The tint to apply when {0} is {1}.")]
+		[DescArg(nameof(ActorFlashType))]
+		[DescArg(nameof(ActorFlashType.Tint))]
 		public readonly float3 ActorFlashTint = new float3(1.4f, 1.4f, 1.4f);
 
 		[Desc("Number of times to flash (frozen) actors.")]

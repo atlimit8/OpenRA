@@ -14,19 +14,23 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Provides a target for players to issue orders for units to move through a TerrainTunnel.",
-		"The host actor should be placed so that the Sensor position overlaps one of the TerrainTunnel portal cells.")]
+	[Desc("Provides a target for players to issue orders for units to move through a {0}.",
+		"The host actor should be placed so that the Sensor position overlaps one of the {0} portal cells.")]
+	[DescArg(typeof(TerrainTunnelInfo))]
 	public class TunnelEntranceInfo : TraitInfo
 	{
 		[FieldLoader.Require]
 		[Desc("Offset to use as a staging point for actors entering or exiting the tunnel.",
-			"Should be at least Margin cells away from the actual entrance.")]
+			"Should be at least {0} cells away from the actual entrance.")]
+		[DescArg(nameof(Margin))]
 		public readonly CVec RallyPoint = CVec.Zero;
 
-		[Desc("Cell radius to use as a staging area around the RallyPoint.")]
+		[Desc("Cell radius to use as a staging area around the {0}.")]
+		[DescArg(nameof(RallyPoint))]
 		public readonly int Margin = 2;
 
-		[Desc("Offset to check for the corresponding TerrainTunnel portal cell(s).")]
+		[Desc("Offset to check for the corresponding {0} portal cell(s).")]
+		[DescArg(typeof(TerrainTunnelInfo))]
 		public readonly CVec Sensor = CVec.Zero;
 
 		public override object Create(ActorInitializer init) { return new TunnelEntrance(init.Self, this); }

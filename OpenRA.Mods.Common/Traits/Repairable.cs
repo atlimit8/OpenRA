@@ -28,7 +28,9 @@ namespace OpenRA.Mods.Common.Traits
 		[VoiceReference]
 		public readonly string Voice = "Action";
 
-		[Desc("The amount the unit will be repaired at each step. Use -1 for fallback behavior where HpPerStep from RepairsUnits trait will be used.")]
+		[Desc("The amount the unit will be repaired at each step. Use -1 for fallback behavior where {0} from {1} trait will be used.")]
+		[DescArg(nameof(RepairsUnitsInfo.HpPerStep))]
+		[DescArg(typeof(RepairsUnitsInfo))]
 		public readonly int HpPerStep = -1;
 
 		[ConsumedConditionReference]

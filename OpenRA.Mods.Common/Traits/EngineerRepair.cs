@@ -20,7 +20,8 @@ namespace OpenRA.Mods.Common.Traits
 	[Desc("Can instantly repair other actors, but gets consumed afterwards.")]
 	class EngineerRepairInfo : ConditionalTraitInfo
 	{
-		[Desc("Uses the \"EngineerRepairable\" trait to determine repairability.")]
+		[Desc("Uses the {0} trait to determine repairability.")]
+		[DescArg(typeof(EngineerRepairableInfo))]
 		public readonly BitSet<EngineerRepairType> Types = default(BitSet<EngineerRepairType>);
 
 		[VoiceReference]
@@ -30,7 +31,8 @@ namespace OpenRA.Mods.Common.Traits
 		public readonly Color TargetLineColor = Color.Yellow;
 
 		[Desc("Behaviour when entering the structure.",
-			"Possible values are Exit, Suicide, Dispose.")]
+			"Possible values are {0}.")]
+		[DescArg(DescArgType.EnumNamesWithOr)]
 		public readonly EnterBehaviour EnterBehaviour = EnterBehaviour.Dispose;
 
 		[Desc("What player relationship the target's owner needs to be repaired by this actor.")]

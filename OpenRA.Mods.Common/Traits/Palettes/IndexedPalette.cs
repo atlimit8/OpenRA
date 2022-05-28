@@ -32,11 +32,15 @@ namespace OpenRA.Mods.Common.Traits
 		public readonly string BasePalette = null;
 
 		[FieldLoader.Require]
-		[Desc("Indices from BasePalette to be swapped with ReplaceIndex.")]
+		[Desc("Indices from {0} to be swapped with {1}.")]
+		[DescArg(nameof(BasePalette))]
+		[DescArg(nameof(ReplaceIndex))]
 		public readonly int[] Index = Array.Empty<int>();
 
 		[FieldLoader.Require]
-		[Desc("Indices from BasePalette to replace from Index.")]
+		[Desc("Indices from {0} to replace from {1}.")]
+		[DescArg(nameof(BasePalette))]
+		[DescArg(nameof(Index))]
 		public readonly int[] ReplaceIndex = Array.Empty<int>();
 
 		[Desc("Allow palette modifiers to change the palette.")]

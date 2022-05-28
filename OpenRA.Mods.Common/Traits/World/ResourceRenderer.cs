@@ -20,7 +20,8 @@ using OpenRA.Traits;
 namespace OpenRA.Mods.Common.Traits
 {
 	[TraitLocation(SystemActors.World | SystemActors.EditorWorld)]
-	[Desc("Visualizes the state of the `ResourceLayer`.", " Attach this to the world actor.")]
+	[Desc("Visualizes the state of the {0}.", " Attach this to the world actor.")]
+	[DescArg(typeof(ResourceLayerInfo))]
 	public class ResourceRendererInfo : TraitInfo, Requires<IResourceLayerInfo>, IMapPreviewSignatureInfo
 	{
 		public class ResourceTypeInfo

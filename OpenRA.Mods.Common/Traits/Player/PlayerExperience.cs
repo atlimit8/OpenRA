@@ -14,9 +14,10 @@ using OpenRA.Traits;
 namespace OpenRA.Mods.Common.Traits
 {
 	[TraitLocation(SystemActors.Player)]
-	[Desc("This trait can be used to track player experience based on units killed with the `" + nameof(GivesExperience) + "` trait.",
+	[Desc("This trait can be used to track player experience based on units killed with the {0} trait.",
 		"It can also be used as a point score system in scripted maps, for example.",
 		"Attach this to the player actor.")]
+	[DescArg(typeof(GivesExperienceInfo))]
 	public class PlayerExperienceInfo : TraitInfo
 	{
 		public override object Create(ActorInitializer init) { return new PlayerExperience(); }

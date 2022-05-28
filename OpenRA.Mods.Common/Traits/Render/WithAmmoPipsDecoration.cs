@@ -19,7 +19,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 {
 	public class WithAmmoPipsDecorationInfo : WithDecorationBaseInfo, Requires<AmmoPoolInfo>
 	{
-		[Desc("Number of pips to display. Defaults to the sum of the enabled AmmoPool.Ammo.")]
+		[Desc("Number of pips to display. Defaults to the sum of the enabled {0}.")]
+		[DescArg(typeof(AmmoPoolInfo), nameof(AmmoPoolInfo.Ammo))]
 		public readonly int PipCount = -1;
 
 		[Desc("If non-zero, override the spacing between adjacent pips.")]
@@ -39,7 +40,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[PaletteReference]
 		public readonly string Palette = "chrome";
 
-		[Desc("Name(s) of AmmoPool(s) that use this decoration. Leave empty to include all pools.")]
+		[Desc("Name(s) of {0}(s) that use this decoration. Leave empty to include all pools.")]
+		[DescArg(typeof(AmmoPoolInfo))]
 		public readonly string[] AmmoPools = Array.Empty<string>();
 
 		public override object Create(ActorInitializer init) { return new WithAmmoPipsDecoration(init.Self, this); }

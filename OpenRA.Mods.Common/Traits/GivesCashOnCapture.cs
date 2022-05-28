@@ -20,7 +20,8 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Whether to show the cash tick indicators rising from the actor.")]
 		public readonly bool ShowTicks = true;
 
-		[Desc("How long to show the Amount tick indicator when enabled.")]
+		[Desc("How long to show the {0} tick indicator when enabled.")]
+		[DescArg(nameof(Amount))]
 		public readonly int DisplayDuration = 30;
 
 		[Desc("Amount of money awarded for capturing the actor.")]

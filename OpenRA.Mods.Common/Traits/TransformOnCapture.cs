@@ -26,7 +26,8 @@ namespace OpenRA.Mods.Common.Traits
 
 		public readonly bool SkipMakeAnims = true;
 
-		[Desc("Transform only if the capturer's CaptureTypes overlap with these types. Leave empty to allow all types.")]
+		[Desc("Transform only if the capturer's {0} overlap with these types. Leave empty to allow all types.")]
+		[DescArg(nameof(CapturesInfo.CaptureTypes))]
 		public readonly BitSet<CaptureType> CaptureTypes = default(BitSet<CaptureType>);
 
 		public override object Create(ActorInitializer init) { return new TransformOnCapture(init, this); }

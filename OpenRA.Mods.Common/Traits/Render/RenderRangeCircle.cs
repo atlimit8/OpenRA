@@ -29,7 +29,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Range to draw if no armaments are available.")]
 		public readonly WDist FallbackRange = WDist.Zero;
 
-		[Desc("Which circle to show. Valid values are `Maximum`, and `Minimum`.")]
+		[Desc("Which circle to show. Valid values are {0}.")]
+		[DescArg(DescArgType.EnumNames)]
 		public readonly RangeCircleMode RangeCircleMode = RangeCircleMode.Maximum;
 
 		[Desc("Color of the circle.")]

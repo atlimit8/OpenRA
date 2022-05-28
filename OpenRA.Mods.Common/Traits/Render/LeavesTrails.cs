@@ -33,8 +33,10 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Only leave trail on listed terrain types. Leave empty to leave trail on all terrain types.")]
 		public readonly HashSet<string> TerrainTypes = new HashSet<string>();
 
-		[Desc("Accepts values: Cell to draw the trail sprite in the center of the current cell,",
-			"CenterPosition to draw the trail sprite at the current position.")]
+		[Desc("Accepts values: {0} to draw the trail sprite in the center of the current cell,",
+			"{1} to draw the trail sprite at the current position.")]
+		[DescArg(nameof(TrailType.Cell))]
+		[DescArg(nameof(TrailType.CenterPosition))]
 		public readonly TrailType Type = TrailType.Cell;
 
 		[Desc("Should the trail be visible through fog.")]

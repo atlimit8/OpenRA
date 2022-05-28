@@ -17,7 +17,9 @@ using OpenRA.Traits;
 namespace OpenRA.Mods.Common.Traits.Render
 {
 	[Desc("Renders an animation when the Production trait of the actor is activated.",
-		"Works both with per player ClassicProductionQueue and per building ProductionQueue, but needs any of these.")]
+		"Works both with per player {0} and per building {1}, but needs any of these.")]
+	[DescArg(typeof(ClassicProductionQueueInfo))]
+	[DescArg(typeof(ProductionQueueInfo))]
 	public class WithProductionOverlayInfo : PausableConditionalTraitInfo, Requires<RenderSpritesInfo>, Requires<BodyOrientationInfo>, Requires<ProductionInfo>
 	{
 		[Desc("Queues that should be producing for this overlay to render.")]
@@ -34,7 +36,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Custom palette name")]
 		public readonly string Palette = null;
 
-		[Desc("Custom palette is a player palette BaseName")]
+		[Desc("Custom palette is a player palette {0}")]
+		[DescArg(nameof(IndexedPaletteInfo.BasePalette))]
 		public readonly bool IsPlayerPalette = false;
 
 		public override object Create(ActorInitializer init) { return new WithProductionOverlay(init.Self, this); }

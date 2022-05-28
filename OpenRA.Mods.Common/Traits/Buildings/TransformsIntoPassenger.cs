@@ -18,7 +18,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Add to a building to expose a move cursor that triggers Transforms and issues an EnterTransport order to the transformed actor.")]
+	[Desc("Add to a building to expose a move cursor that triggers {0} and issues an EnterTransport order to the transformed actor.")]
+	[DescArg(typeof(TransformsInfo))]
 	public class TransformsIntoPassengerInfo : ConditionalTraitInfo, Requires<TransformsInfo>
 	{
 		public readonly string CargoType = null;

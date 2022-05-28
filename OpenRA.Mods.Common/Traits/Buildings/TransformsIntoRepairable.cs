@@ -18,7 +18,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Add to a building to expose a move cursor that triggers Transforms and issues a repair order to the transformed actor.")]
+	[Desc("Add to a building to expose a move cursor that triggers {0} and issues a repair order to the transformed actor.")]
+	[DescArg(typeof(TransformsInfo))]
 	public class TransformsIntoRepairableInfo : ConditionalTraitInfo, Requires<TransformsInfo>, Requires<IHealthInfo>
 	{
 		[ActorReference]

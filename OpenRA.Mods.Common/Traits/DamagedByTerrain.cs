@@ -20,7 +20,8 @@ namespace OpenRA.Mods.Common.Traits
 	public class DamagedByTerrainInfo : ConditionalTraitInfo, Requires<IHealthInfo>, Requires<IOccupySpaceInfo>
 	{
 		[FieldLoader.Require]
-		[Desc("Amount of damage received per DamageInterval ticks.")]
+		[Desc("Amount of damage received per {0} ticks.")]
+		[DescArg(nameof(DamageInterval))]
 		public readonly int Damage = 0;
 
 		[Desc("Delay between receiving damage.")]

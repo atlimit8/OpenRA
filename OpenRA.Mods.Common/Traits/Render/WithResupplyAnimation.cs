@@ -24,7 +24,9 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Which sprite body to play the animation on.")]
 		public readonly string Body = "body";
 
-		[Desc("Events leading to the animation getting played. Possible values currently are: Rearm, Repair.")]
+		[Desc("Events leading to the animation getting played. Possible values currently are: {0}, {1}.")]
+		[DescArg(nameof(ResupplyType.Rearm))]
+		[DescArg(nameof(ResupplyType.Repair))]
 		public readonly ResupplyType PlayAnimationOn = ResupplyType.Rearm | ResupplyType.Repair;
 
 		public override object Create(ActorInitializer init) { return new WithResupplyAnimation(init.Self, this); }

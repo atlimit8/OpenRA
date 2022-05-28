@@ -19,7 +19,8 @@ namespace OpenRA.Mods.Common.Traits
 	public class LineBuildSegmentExternalConditionInfo : ConditionalTraitInfo, Requires<LineBuildInfo>
 	{
 		[FieldLoader.Require]
-		[Desc("The condition to apply. Must be included in the target actor's ExternalConditions list.")]
+		[Desc("The condition to apply. Must be included in the target actor's {0}s list.")]
+		[DescArg(typeof(ExternalConditionInfo), nameof(ExternalConditionInfo.Condition))]
 		public readonly string Condition = null;
 
 		public override object Create(ActorInitializer init) { return new LineBuildSegmentExternalCondition(this); }

@@ -19,7 +19,9 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("This actor can interact with TunnelEntrances to move through TerrainTunnels.")]
+	[Desc("This actor can interact with {0}s to move through {1}s.")]
+	[DescArg(typeof(TunnelEntranceInfo))]
+	[DescArg(typeof(TerrainTunnelInfo))]
 	public class EntersTunnelsInfo : TraitInfo, Requires<IMoveInfo>, IObservesVariablesInfo
 	{
 		[CursorReference]

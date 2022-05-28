@@ -1,6 +1,6 @@
 #region Copyright & License Information
 /*
- * Copyright 2007-2021 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2022 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
@@ -22,9 +22,13 @@ namespace OpenRA.Mods.Common.Traits
 	public class AttackAircraftInfo : AttackFollowInfo, Requires<AircraftInfo>
 	{
 		[Desc("Attack behavior. Currently supported types are:",
-			"Default: Attack while following the default movement rules.",
-			"Hover: Hover, even if the Aircraft can't hover while idle.",
-			"Strafe: Perform a fixed-length attack run on the target.")]
+			"{0}: Attack while following the default movement rules.",
+			"{1}: Hover, even if the {2} can't hover while idle.",
+			"{3}: Perform a fixed-length attack run on the target.")]
+		[DescArg(nameof(AirAttackType.Default))]
+		[DescArg(nameof(AirAttackType.Hover))]
+		[DescArg(typeof(AircraftInfo))]
+		[DescArg(nameof(AirAttackType.Strafe))]
 		public readonly AirAttackType AttackType = AirAttackType.Default;
 
 		[Desc("Distance the strafing aircraft makes to a target before turning for another pass. When set to WDist.Zero this defaults to the maximum armament range.")]

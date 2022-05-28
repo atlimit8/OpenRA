@@ -14,7 +14,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits.Render
 {
-	[Desc("Building animation to play when ProductionAirdrop is used to deliver units.")]
+	[Desc("Building animation to play when {0} is used to deliver units.")]
+	[DescArg(typeof(ProductionAirdropInfo))]
 	public class WithDeliveryAnimationInfo : ConditionalTraitInfo, Requires<WithSpriteBodyInfo>
 	{
 		[SequenceReference]

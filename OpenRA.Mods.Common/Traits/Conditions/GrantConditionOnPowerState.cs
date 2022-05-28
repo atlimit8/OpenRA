@@ -22,7 +22,8 @@ namespace OpenRA.Mods.Common.Traits
 		public readonly string Condition = null;
 
 		[FieldLoader.Require]
-		[Desc("PowerStates at which the condition is granted. Options are Normal, Low and Critical.")]
+		[Desc("PowerStates at which the condition is granted. Options are {0}.")]
+		[DescArg(DescArgType.EnumNames)]
 		public readonly PowerState ValidPowerStates = PowerState.Low | PowerState.Critical;
 
 		public override object Create(ActorInitializer init) { return new GrantConditionOnPowerState(init.Self, this); }

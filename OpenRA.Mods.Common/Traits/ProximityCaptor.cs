@@ -14,7 +14,8 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Actor can capture ProximityCapturable actors.")]
+	[Desc("Actor can capture {0} actors.")]
+	[DescArg(typeof(ProximityCapturableInfo))]
 	public class ProximityCaptorInfo : TraitInfo<ProximityCaptor>
 	{
 		[FieldLoader.Require]
