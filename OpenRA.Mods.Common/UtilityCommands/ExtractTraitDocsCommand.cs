@@ -58,10 +58,20 @@ namespace OpenRA.Mods.Common.UtilityCommands
 
 				var traitName = t.Name.EndsWith("Info") ? t.Name.Substring(0, t.Name.Length - 4) : t.Name;
 				var traitDescLines = t.GetCustomAttributes<DescAttribute>(false).SelectMany(d => d.Lines);
+				var traitDescArgs = t.GetCustomAttributes<DescArgAttribute>(false).Select(a => a.ToMarkdown()).ToArray();
 				doc.AppendLine();
 				doc.AppendLine($"### {traitName}");
 				foreach (var line in traitDescLines)
-					doc.AppendLine(line);
+				{
+					try
+					{
+						doc.AppendLine(string.Format(line, traitDescArgs));
+					}
+					catch (FormatException)
+					{
+						Console.Error.WriteLine($"Format error in Desc(\"\") for {t.FullName}.");
+					}
+				}
 
 				var requires = RequiredTraitTypes(t);
 				var reqCount = requires.Length;
@@ -92,10 +102,20 @@ namespace OpenRA.Mods.Common.UtilityCommands
 				foreach (var info in infos)
 				{
 					var fieldDescLines = info.Field.GetCustomAttributes<DescAttribute>(true).SelectMany(d => d.Lines);
+					var fieldDescArgs = info.Field.GetCustomAttributes<DescArgAttribute>(true).Select(a => a.ToMarkdown(t, info.Field.Name, info.Field.FieldType, info.YamlName)).ToArray();
 					var fieldType = Util.FriendlyTypeName(info.Field.FieldType);
 					var loadInfo = info.Field.GetCustomAttributes<FieldLoader.SerializeAttribute>(true).FirstOrDefault();
 					var defaultValue = loadInfo != null && loadInfo.Required ? "*(required)*" : FieldSaver.SaveField(liveTraitInfo, info.Field.Name).Value.Value;
 					doc.Append($"| {info.YamlName} | {defaultValue} | {fieldType} | ");
+					try
+					{
+						fieldDescLines = fieldDescLines.Select(line => string.Format(line, fieldDescArgs)).ToArray();
+					}
+					catch (FormatException)
+					{
+						Console.Error.WriteLine($"Format error in Desc(\"\") for {t.FullName}.{info.Field.Name}.");
+					}
+
 					foreach (var line in fieldDescLines)
 						doc.Append(line + " ");
 					doc.AppendLine("|");

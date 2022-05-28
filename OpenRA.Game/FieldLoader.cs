@@ -17,8 +17,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using OpenRA.GameRules;
 using OpenRA.Primitives;
 using OpenRA.Support;
+using OpenRA.Traits;
 
 namespace OpenRA
 {
@@ -817,5 +819,240 @@ namespace OpenRA
 	{
 		public readonly string[] Lines;
 		public DescAttribute(params string[] lines) { Lines = lines; }
+	}
+
+	public enum DescArgType
+	{
+		// Plain string passed to the constructor or the name of the type passed.
+		String,
+
+		// String of code passed to the constructor or the name of the type passed.
+		CodeString,
+
+		// MiniYaml trait or projectile type.
+		YamlRuleTypeName,
+
+		// MiniYaml trait or projectile type followed by 'trait' or 'projectile'.
+		LabeledYamlType,
+
+		// MiniYaml {yamlType}.{fieldName}
+		YamlName,
+
+		// MiniYaml {fieldName}
+		YamlFieldName,
+
+		// Gives the names of the enum constants
+		EnumNames,
+
+		// Gives the names of the enum constants with "and" as the last delimiter
+		EnumNamesWithAnd,
+
+		// Gives the names of the enum constants with "or" as the last delimiter
+		EnumNamesWithOr,
+
+		// Gives the names of the enum constants with "and/or" as the last delimiter
+		EnumNamesWithAndOr,
+	}
+
+	[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+	public sealed class DescArgAttribute : Attribute
+	{
+		public readonly Type Type;
+		public readonly string String;
+		public readonly DescArgType ArgType;
+
+		Type GetTypeToUse(MemberInfo memberInfo)
+		{
+			if (Type != null)
+				return Type;
+			if (memberInfo is FieldInfo fieldInfo)
+				return fieldInfo.FieldType;
+			if (memberInfo is PropertyInfo propertyInfo)
+				return propertyInfo.PropertyType;
+			return null;
+		}
+
+		static (string, string) GetYamlNameAndRuleType(Type type)
+		{
+			if (type == null)
+				return (null, null);
+			if (type.BaseTypes().Contains(typeof(TraitInfo)))
+				return (type.Name.EndsWith("Info") ? type.Name.Substring(0, type.Name.Length - 4) : type.Name, "trait");
+			if (type.GetInterfaces().Contains(typeof(IProjectileInfo)))
+				return (type.Name.EndsWith("Info") ? type.Name.Substring(0, type.Name.Length - 4) : type.Name, "projectile");
+			return (type.Name, null);
+		}
+
+		string GetYamlFieldName(Type type, string memberName, string yamlFieldName = null)
+		{
+			if (type == null)
+				return String ?? yamlFieldName ?? memberName ?? "?";
+			var name = String ?? memberName;
+			if (name == null)
+				return yamlFieldName;
+			var serializeAttribute = type.GetMember(name)
+				.SelectMany(m => m.GetCustomAttributes<FieldLoader.SerializeAttribute>(true))
+				.FirstOrDefault();
+			return serializeAttribute?.YamlName ?? name ?? yamlFieldName;
+		}
+
+		private string ArrayToListText(string[] entries, string lastDelimiter)
+		{
+			if (entries == null || entries.Length == 0)
+				return "";
+			if (entries.Length == 1)
+				return entries[0];
+			return $"{entries.SkipLast(1).JoinWith(", ")}{lastDelimiter}{entries.Last()}";
+		}
+
+		public string ToPlainText(Type type = null, string memberName = null, Type fieldType = null, string yamlFieldName = null)
+		{
+			if (ArgType == DescArgType.String || ArgType == DescArgType.CodeString)
+				return String ?? "";
+			if (Type != null)
+				type = Type;
+			var (text, ruleType) = GetYamlNameAndRuleType(type);
+			switch (ArgType)
+			{
+				case DescArgType.YamlRuleTypeName:
+					return text;
+				case DescArgType.LabeledYamlType:
+					return string.IsNullOrEmpty(ruleType) ? text : $"{text} {ruleType}";
+				case DescArgType.YamlName:
+					return $"{text} {GetYamlFieldName(type, memberName, yamlFieldName)}";
+				case DescArgType.YamlFieldName:
+					return GetYamlFieldName(type, memberName, yamlFieldName) ?? "";
+				case DescArgType.EnumNames:
+					var retValue = type.IsEnum ? type.GetEnumNames().JoinWith(", ") : "";
+					return $"{type.Name}  {retValue}";
+			}
+
+			throw new InvalidOperationException($"Unhandled arg type {Enum.GetName(typeof(DescArgType), ArgType)}");
+		}
+
+		public string ToPlainText(MemberInfo memberInfo)
+		{
+			var type = GetTypeToUse(memberInfo);
+			var yamlName = memberInfo.GetCustomAttributes<FieldLoader.SerializeAttribute>(true).FirstOrDefault()?.YamlName;
+			Type fieldType = null;
+			if (memberInfo is FieldInfo fi)
+				fieldType = fi.FieldType;
+			else if (memberInfo is PropertyInfo pi)
+				fieldType = pi.PropertyType;
+			return ToPlainText(type, memberInfo?.Name, fieldType, yamlName);
+		}
+
+		private string ArrayToCodeListMarkdown(string[] entries, string lastDelimiter)
+		{
+			if (entries == null || entries.Length == 0)
+				return "";
+			if (entries.Length == 1)
+				return $"`{entries[0]}`";
+			return $"`{entries.SkipLast(1).JoinWith("`, `")}`{lastDelimiter}`{entries.Last()}`";
+		}
+
+		public string ToMarkdown(Type type = null, string memberName = null, Type fieldType = null, string yamlFieldName = null)
+		{
+			if (ArgType == DescArgType.String)
+				return String ?? "";
+			if (ArgType == DescArgType.CodeString)
+				return $"`{String ?? ""}`";
+			if (Type != null)
+				type = Type;
+			var (text, ruleType) = GetYamlNameAndRuleType(type);
+			if (text != null)
+				text = $"[`{text}`](#{text.ToLowerInvariant()})";
+
+			switch (ArgType)
+			{
+				case DescArgType.YamlRuleTypeName:
+					return text;
+				case DescArgType.LabeledYamlType:
+					return string.IsNullOrEmpty(ruleType) ? text : $"{text} {ruleType}";
+				case DescArgType.YamlName:
+					return $"{text} `{GetYamlFieldName(type, memberName, yamlFieldName)}`";
+				case DescArgType.YamlFieldName:
+					return $"++`{GetYamlFieldName(type, memberName, yamlFieldName) ?? ""}`";
+				case DescArgType.EnumNames:
+					{
+						type = Type ?? fieldType ?? type;
+						if (type == null)
+							return "";
+						return ArrayToCodeListMarkdown(type.GetEnumNames(), " and ");
+					}
+
+				case DescArgType.EnumNamesWithAnd:
+					{
+						type = Type ?? fieldType ?? type;
+						if (type == null || !type.IsEnum)
+							return "";
+						return ArrayToCodeListMarkdown(type.GetEnumNames(), " or ");
+					}
+
+				case DescArgType.EnumNamesWithOr:
+					{
+						type = Type ?? fieldType ?? type;
+						if (type == null || !type.IsEnum)
+							return "";
+						return ArrayToCodeListMarkdown(type.GetEnumNames(), " or ");
+					}
+
+				case DescArgType.EnumNamesWithAndOr:
+					{
+						type = Type ?? fieldType ?? type;
+						if (type == null || !type.IsEnum)
+							return "";
+						return ArrayToCodeListMarkdown(type.GetEnumNames(), " and/or ");
+					}
+			}
+
+			throw new InvalidOperationException($"Unhandled arg type {Enum.GetName(typeof(DescArgType), ArgType)}");
+		}
+
+		public string ToMarkdown(MemberInfo memberInfo)
+		{
+			var type = GetTypeToUse(memberInfo);
+			var yamlName = memberInfo.GetCustomAttributes<FieldLoader.SerializeAttribute>(true).FirstOrDefault()?.YamlName;
+			Type fieldType = null;
+			if (memberInfo is FieldInfo fi)
+				fieldType = fi.FieldType;
+			else if (memberInfo is PropertyInfo pi)
+				fieldType = pi.PropertyType;
+			return ToMarkdown(type, memberInfo?.Name, fieldType, yamlName);
+		}
+
+		public DescArgAttribute(Type type, DescArgType argType = DescArgType.YamlRuleTypeName)
+		{
+			if (argType == DescArgType.YamlName || argType == DescArgType.YamlFieldName )
+				throw new ArgumentException("Missing nameof(Type.Field).");
+			Type = type;
+			String = null;
+			ArgType = argType;
+		}
+
+		public DescArgAttribute(DescArgType argType = DescArgType.YamlRuleTypeName)
+		{
+			if (argType == DescArgType.YamlName || argType == DescArgType.YamlFieldName )
+				throw new ArgumentException("Missing nameof(Type.Field).");
+			Type = null;
+			String = null;
+			ArgType = argType;
+		}
+
+		public DescArgAttribute(Type type, string memberName, DescArgType argType = DescArgType.YamlName)
+		{
+			Type = type;
+			String = memberName;
+			ArgType = argType;
+			if (Type.GetMember(String).Length == 0)
+				throw new ArgumentException($"{String} is not a member of {Type.Name}.");
+		}
+
+		public DescArgAttribute(string value, bool code = true)
+		{
+			String = value;
+			Type = null;
+			ArgType = code ? DescArgType.CodeString : DescArgType.String;
+		}
 	}
 }

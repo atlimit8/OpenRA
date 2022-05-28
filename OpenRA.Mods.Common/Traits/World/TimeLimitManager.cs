@@ -1,6 +1,6 @@
 #region Copyright & License Information
 /*
- * Copyright 2007-2021 The OpenRA Developers (see AUTHORS)
+ * Copyright 2007-2022 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
  * available to you under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
@@ -41,7 +41,8 @@ namespace OpenRA.Mods.Common.Traits
 			{ 10, null },
 		};
 
-		[Desc("Default selection for the time limit option in the lobby. Needs to use one of the TimeLimitOptions.")]
+		[Desc("Default selection for the time limit option in the lobby. Needs to use one of the {0}.")]
+		[DescArg(nameof(TimeLimitOptions))]
 		public readonly int TimeLimitDefault = 0;
 
 		[Desc("Prevent the time limit option from being changed in the lobby.")]
@@ -53,13 +54,14 @@ namespace OpenRA.Mods.Common.Traits
 		[Desc("Display order for the time limit dropdown in the lobby.")]
 		public readonly int TimeLimitDisplayOrder = 0;
 
-		[Desc("Notification text for time limit warnings. The string '{0}' will be replaced by the remaining time in minutes, '{1}' is used for the plural form.")]
+		[Desc("Notification text for time limit warnings. The string '{{0}}' will be replaced by the remaining time in minutes, '{{1}}' is used for the plural form.")]
 		public readonly string Notification = "{0} minute{1} remaining.";
 
 		[Desc("ID of the LabelWidget used to display a text ingame that will be updated every second.")]
 		public readonly string CountdownLabel = null;
 
-		[Desc("Text to be shown using the CountdownLabel. The string '{0}' will be replaced by the time in hh:mm:ss format.")]
+		[Desc("Text to be shown using the {0}. The string '{{0}}' will be replaced by the time in hh:mm:ss format.")]
+		[DescArg(nameof(CountdownLabel))]
 		public readonly string CountdownText = null;
 
 		[Desc("Will prevent showing/playing the built-in time limit warnings when set to true.")]
