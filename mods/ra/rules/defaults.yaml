@@ -262,7 +262,16 @@
 		ValidDamageStates: Light, Medium, Heavy, Critical
 	Repairable:
 		RepairActors: fix
-	Chronoshiftable:
+	Chronoshiftable@CHRONOSHIFTABLE:
+		RequiresCondition: chronoshiftable && !safe-chronoshiftable
+		ExplodeInstead: true
+	Chronoshiftable@SAFE_CHRONOSHIFTABLE:
+		RequiresCondition: safe-chronoshiftable
+		PauseOnCondition: chronoshiftable
+	ExternalCondition@CHRONOSHIFTABLE:
+		Condition: chronoshiftable
+	ExternalCondition@SAFE_CHRONOSHIFTABLE:
+		Condition: safe-chronoshiftable
 	Passenger:
 		CargoType: Vehicle
 	AttackMove:
@@ -525,7 +534,16 @@
 		TextNotification: notification-naval-unit-lost
 	ProximityCaptor:
 		Types: Ship
-	Chronoshiftable:
+	Chronoshiftable@CHRONOSHIFTABLE:
+		RequiresCondition: chronoshiftable && !safe-chronoshiftable
+		ExplodeInstead: true
+	Chronoshiftable@SAFE_CHRONOSHIFTABLE:
+		RequiresCondition: safe-chronoshiftable
+		PauseOnCondition: chronoshiftable
+	ExternalCondition@CHRONOSHIFTABLE:
+		Condition: chronoshiftable
+	ExternalCondition@SAFE_CHRONOSHIFTABLE:
+		Condition: safe-chronoshiftable
 	RepairableNear:
 		RepairActors: spen, syrd
 	GpsDot:
@@ -1075,7 +1093,16 @@
 	Targetable:
 		TargetTypes: GroundActor, Husk, NoAutoTarget
 		RequiresForceFire: true
-	Chronoshiftable:
+	Chronoshiftable@CHRONOSHIFTABLE:
+		RequiresCondition: chronoshiftable && !safe-chronoshiftable
+		ExplodeInstead: true
+	Chronoshiftable@SAFE_CHRONOSHIFTABLE:
+		RequiresCondition: safe-chronoshiftable
+		PauseOnCondition: chronoshiftable
+	ExternalCondition@CHRONOSHIFTABLE:
+		Condition: chronoshiftable
+	ExternalCondition@SAFE_CHRONOSHIFTABLE:
+		Condition: safe-chronoshiftable
 	Tooltip:
 		GenericName: meta-husk-generic-name
 

@@ -782,7 +782,7 @@ DTRK:
 	-DamageMultiplier@IRONCURTAIN:
 	KillsSelf:
 		RequiresCondition: invulnerability || triggered
-	Chronoshiftable:
+	Chronoshiftable@SAFE_CHRONOSHIFTABLE:
 		ExplodeInstead: true
 
 CTNK:
@@ -852,8 +852,8 @@ QTNK:
 		RequiresCondition: !deployed
 		PauseOnCondition: being-captured
 		Speed: 46
-	Chronoshiftable:
-		RequiresCondition: !deployed && !being-captured
+	Chronoshiftable@SAFE_CHRONOSHIFTABLE:
+		RequiresCondition: !deployed && !being-captured && safe-chronoshiftable
 	RevealsShroud:
 		MinRange: 4c0
 		Range: 6c0

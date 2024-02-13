@@ -547,6 +547,22 @@ PDOX:
 		SupportPowerPaletteOrder: 30
 		Dimensions: 5, 5
 		Footprint: __x__ _xxx_ xxxxx _xxx_ __x__
+	ProximityExternalCondition@CHRONOSHIFTABLE:
+		RequiresCondition: !disabled
+		Condition: chronoshiftable
+		Range: 25c0
+	WithRangeCircle@CHRONOSHIFTABLE:
+		Range: 25c0
+		Type: cloakgenerator
+		Color: FF510080
+	ProximityExternalCondition@SAFE_CHRONOSHIFTABLE:
+		RequiresCondition: !disabled
+		Condition: safe-chronoshiftable
+		Range: 12c0
+	WithRangeCircle@SAFE_CHRONOSHIFTABLE:
+		Range: 12c0
+		Type: safe-cloakgenerator
+		Color: 40FF0080
 	SupportPowerChargeBar:
 	InfiltrateForSupportPowerReset:
 		Types: SpyInfiltrate

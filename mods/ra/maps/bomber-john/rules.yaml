@@ -147,7 +147,7 @@ MNLYR:
 		Amount: 20
 	RenderSprites:
 		Image: MNLY
-	Chronoshiftable:
+	Chronoshiftable@SAFE_CHRONOSHIFTABLE:
 		ReturnToOrigin: false
 	HitShape:
 

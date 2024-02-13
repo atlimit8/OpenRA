@@ -92,6 +92,11 @@ namespace OpenRA.Mods.Common.UpdateRules
 				new ReplaceCloakPalette(),
 				new AbstractDocking(),
 			}),
+
+			new("testing", new UpdateRule[]
+			{
+				new ChronoshiftableSplitPausable(),
+			}),
 		};
 
 		public static IReadOnlyCollection<UpdateRule> FromSource(ObjectCreator objectCreator, string source, bool chain = true)
